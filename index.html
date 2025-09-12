@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -5,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>بوابة طلبات الشراء | بيت الإباء</title>
 
-<!-- خطوط -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -13,9 +13,7 @@
     --brand:#6c1d2c; --brand-600:#5f1926; --brand-500:#6c1d2c; --brand-400:#8a2a3b;
     --ink:#0f172a; --muted:#64748b; --bg:#fbf7f8; --card:#ffffff;
     --shadow:0 10px 30px rgba(108,29,44,.15); --radius:14px;
-
-    /* تكبير الشعار ~40% (من ~57px إلى ~80px) */
-    --logo-size: 80px;
+    --logo-size: 80px; /* ~40% أكبر */
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);font-family:"Tajawal","Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
@@ -54,7 +52,7 @@
   .msg.error{background:#fef2f2;color:#7f1d1d;border:1px solid #fecaca}
   .helper{color:var(--muted);font-size:13px;margin-top:6px}
 
-  /* Sections (تطبق فقط على معلومات المشروع والأصناف) */
+  /* Sections (فقط معلومات المشروع + الأصناف) */
   .section-box{margin:14px 0 8px;text-align:center;font-weight:800;padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,#fff,#f7eef0);color:#3b121b;border:1px solid #f0dbe0}
 
   /* Table */
@@ -99,9 +97,20 @@
     header,.view:not(.printable),.modal .close-x,.modal .backdrop{display:none !important}
     .modal-card{box-shadow:none;width:auto;padding:0}
   }
+
+  /* ======= قفل صارم للواجهات حسب حالة المصادقة ======= */
+  .view{display:none !important;}
+  .view.active{display:block !important;}
+  body.auth-out #view-login{display:block !important;}
+  body.auth-out #view-new,
+  body.auth-out #view-my,
+  body.auth-out #view-admin{display:none !important;}
+
+  /* (اختياري) تعطيل أي تفاعل لباقي الأقسام قبل الدخول */
+  body.auth-out .container > :not(#view-login){pointer-events:none;user-select:none}
 </style>
 </head>
-<body>
+<body class="auth-out"><!-- نبدأ كـ خارج حتى يشتغل JS -->
 
 <header>
   <nav class="nav">
@@ -228,7 +237,7 @@
   </section>
 </div>
 
-<!-- DETAILS MODAL (عرض/طباعة فقط) -->
+<!-- DETAILS MODAL -->
 <div id="detailsModal" class="modal" aria-hidden="true">
   <div class="backdrop"></div>
   <div class="modal-card printable">
@@ -251,12 +260,12 @@
 <script>
 /* ---------- Firebase ---------- */
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "XXXXXXXXXXXX",
-  appId: "1:XXXXXXXXXXXX:web:XXXXXXXXXXXXXX"
+  apiKey: "AIzaSy...yourKey...",
+  authDomain: "your-project-id.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project-id.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef123456",
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -271,8 +280,27 @@ const routes = { "#/login":"view-login", "#/new":"view-new", "#/my":"view-my", "
 function setActive(hash){ navLinks.querySelectorAll("a").forEach(a=>a.classList.toggle("active", a.getAttribute("href")==hash)); }
 function showMsg(el, text, type="success"){ el.textContent=text; el.className="msg "+type; el.style.display="block"; }
 function hideMsg(el){ el.style.display="none"; }
-function showView(id){ document.querySelectorAll(".view").forEach(v=>v.classList.remove("active")); const el=document.getElementById(id); el.classList.add("active"); window.scrollTo({top:0,behavior:"smooth"}); }
-function route(){ const h=location.hash||"#/login"; setActive(h); if(!currentUser && h!=="#/login"){ location.hash="#/login"; return; } if(!canSeeAdmin && h==="#/admin"){ location.hash="#/new"; return; } showView(routes[h]); }
+function showView(id){ document.querySelectorAll(".view").forEach(v=>v.classList.remove("active")); document.getElementById(id).classList.add("active"); window.scrollTo({top:0,behavior:"smooth"}); }
+
+function route(){
+  const h = location.hash || "#/login";
+
+  // منع الوصول قبل الدخول
+  if (!currentUser && h !== "#/login") {
+    location.hash = "#/login";
+    setActive("#/login");
+    showView("view-login");
+    return;
+  }
+  // منع الإدارة لغير المدير
+  if (!canSeeAdmin && h === "#/admin") {
+    location.hash = "#/new";
+  }
+
+  const target = routes[location.hash] || "view-login";
+  setActive(location.hash);
+  showView(target);
+}
 window.addEventListener("hashchange", route);
 
 /* ---------- state ---------- */
@@ -311,17 +339,28 @@ function displayNameOrEmail(u, profile){
 }
 
 auth.onAuthStateChanged(async (user)=>{
-  currentUser=user;
-  if(!user){
+  currentUser = user;
+
+  // حدّد كلاس الحالة للـ CSS Gate
+  document.body.classList.toggle('auth-out', !user);
+  document.body.classList.toggle('auth-in',  !!user);
+
+  if (!user) {
     userProfile=null; canSeeAdmin=false;
     navLinks.querySelectorAll("[data-auth]").forEach(a=>a.style.display="none");
     sessionBtn.textContent="دخول"; sessionBtn.setAttribute("href","#/login");
     if (myUnsub) { myUnsub(); myUnsub=null; }
-    location.hash="#/login"; route();
+    if (location.hash !== "#/login") location.hash = "#/login";
+    showView("view-login"); setActive("#/login");
     return;
   }
+
   const snap=await db.collection("users").doc(user.uid).get();
-  if(!snap.exists){ showMsg(loginMsg,"حسابك غير مهيأ. تواصل مع الإدارة لإسناد فرع لك.","error"); await auth.signOut(); return; }
+  if(!snap.exists){
+    showMsg(loginMsg,"حسابك غير مهيأ. تواصل مع الإدارة لإسناد فرع لك.","error");
+    await auth.signOut();
+    return;
+  }
   userProfile=snap.data(); canSeeAdmin=!!userProfile.isAdmin || userProfile.branch==="HQ";
 
   const badge=`مرحباً، ${displayNameOrEmail(user,userProfile)} — الفرع: ${userProfile.branch}${canSeeAdmin?' — إدارة':''}`;
@@ -332,7 +371,7 @@ auth.onAuthStateChanged(async (user)=>{
   });
   sessionBtn.textContent="خروج"; sessionBtn.setAttribute("href","#/login");
 
-  if(location.hash==="#/login"){ location.hash="#/new"; }
+  if (location.hash === "#/login" || !location.hash) location.hash="#/new";
   route();
   subscribeMyOrders();
   if(canSeeAdmin) loadAdminOrders();
@@ -423,13 +462,12 @@ submitOrderBtn.addEventListener("click", async ()=>{
 
     await db.collection("orders").doc(tracking).set({
       tracking, branch, projectName, customerName,
-      items, attachments,                // روابط فقط
-      createdBy: currentUser.uid, status:"created",
+      items, attachments, createdBy: currentUser.uid,
+      status:"created",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     showMsg(newMsg,`تم تسجيل الطلب. رقم التتبّع: ${tracking}`,"success");
-    // reset
     $("#projectName").value=""; $("#customerName").value="";
     itemsWrap.innerHTML=""; ensureAtLeastOneRow();
     linksWrap.innerHTML=""; addLinkBtn.disabled=false;
@@ -454,6 +492,7 @@ function subscribeMyOrders(){
     renderMy(myRows);
   },(err)=>{ console.error(err); showMsg(document.getElementById("newMsg"),"تعذّر تحميل طلباتك: "+(err.message||err),"error"); });
 }
+const myTableBody = $("#myOrdersBody");
 function renderMy(rows){
   const term=(mySearch.value||"").toLowerCase();
   rows=rows.filter(r=>{
@@ -464,7 +503,7 @@ function renderMy(rows){
     ? (b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)
     : (a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0)));
 
-  myBody.innerHTML=rows.map(r=>{
+  myTableBody.innerHTML=rows.map(r=>{
     const items=r.items||[];
     const firstCode = items[0]?.itemCode || "";
     const extra = items.length>1 ? ` (+${items.length-1})` : "";
@@ -488,7 +527,7 @@ function renderMy(rows){
 mySearch.addEventListener("input",()=>renderMy(myRows));
 mySort.addEventListener("change",()=>renderMy(myRows));
 
-/* تفاصيل + طباعة فقط */
+/* تفاصيل + طباعة */
 const modal=$("#detailsModal"), closeDetails=$("#closeDetails"), detailsBody=$("#detailsBody"), printBtn=$("#printDetailsBtn");
 function openDetails(tracking){
   const r = myRows.find(x=>x.tracking===tracking);
