@@ -1,43 +1,96 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <title>نموذج طلب شراء</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body { font-family: Arial, sans-serif; direction: rtl; background:#f4f4f4; padding:20px }
-    .form-container { background:#fff; padding:20px; border-radius:8px; width:90%; max-width:500px; margin:auto; box-shadow:0 2px 8px rgba(0,0,0,.1) }
-    h2 { text-align:center }
-    label { font-weight:bold }
-    input,button { display:block; width:100%; padding:10px; margin-top:10px; font-size:16px; box-sizing:border-box }
-    button { background:#22c55e; color:#fff; border:0; cursor:pointer }
-    button:hover { opacity:.95 }
-    .msg { margin-top:12px; padding:10px; border-radius:6px; display:none }
-    .msg.success { background:#e8f7ee; color:#14532d; border:1px solid #bbefcf }
-    .msg.error   { background:#fde8e8; color:#7f1d1d; border:1px solid #fecaca }
-  </style>
+<meta charset="UTF-8" />
+<title>بوابة طلبات الشراء</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  body{font-family:Arial,sans-serif;direction:rtl;background:#f4f4f4;padding:20px}
+  .card{background:#fff;padding:20px;border-radius:10px;max-width:560px;margin:auto;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+  h2{text-align:center;margin-top:0}
+  label{font-weight:bold}
+  input,select,button{width:100%;padding:10px;margin-top:10px;font-size:16px;box-sizing:border-box}
+  button{background:#22c55e;color:#fff;border:0;cursor:pointer;border-radius:8px}
+  button.secondary{background:#475569}
+  button:hover{opacity:.95}
+  .row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+  .muted{color:#64748b;font-size:14px}
+  .msg{margin-top:12px;padding:10px;border-radius:8px;display:none}
+  .msg.success{background:#e8f7ee;color:#14532d;border:1px solid #bbefcf}
+  .msg.error{background:#fde8e8;color:#7f1d1d;border:1px solid #fecaca}
+  .badge{display:inline-block;background:#e2e8f0;color:#0f172a;border-radius:999px;padding:4px 10px;font-size:12px;margin-inline-start:8px}
+  .hidden{display:none}
+</style>
 </head>
 <body>
 
-  <div class="form-container">
-    <h2>تسجيل طلب شراء</h2>
-    <form id="orderForm" novalidate>
-      <label for="itemCode">كود الصنف:</label>
-      <input type="text" id="itemCode" required placeholder="مثال: F47.103.125-1C25P" />
+<div class="card" id="authCard">
+  <h2>تسجيل الدخول</h2>
+  <div id="authTabs" class="row">
+    <button id="loginTab" class="secondary" style="flex:1">دخول</button>
+    <button id="signupTab" class="secondary" style="flex:1">تسجيل مستخدم جديد</button>
+  </div>
+  <div id="authForms">
+    <!-- Login -->
+    <form id="loginForm" style="margin-top:10px">
+      <label for="loginEmail">الإيميل:</label>
+      <input id="loginEmail" type="email" required placeholder="example@company.com" />
+      <label for="loginPassword">كلمة المرور:</label>
+      <input id="loginPassword" type="password" required placeholder="••••••••" />
+      <button type="submit">دخول</button>
+      <div id="loginMsg" class="msg"></div>
+    </form>
 
-      <label for="quantity">الكمية المطلوبة:</label>
-      <input type="number" id="quantity" required min="1" step="1" placeholder="مثال: 10" />
-
-      <label for="price">سعر البيع:</label>
-      <input type="number" id="price" required min="0" step="0.01" placeholder="مثال: 125.50" />
-
-      <button type="submit">إرسال الطلب</button>
-      <div id="msg" class="msg"></div>
+    <!-- Signup -->
+    <form id="signupForm" class="hidden" style="margin-top:10px">
+      <label for="signupEmail">الإيميل:</label>
+      <input id="signupEmail" type="email" required placeholder="coordinator@company.com" />
+      <label for="signupPassword">كلمة المرور:</label>
+      <input id="signupPassword" type="password" required minlength="6" placeholder="على الأقل 6 أحرف" />
+      <label for="signupBranch">الفرع:</label>
+      <select id="signupBranch" required>
+        <option value="" disabled selected>اختر الفرع</option>
+        <option>Riyadh</option>
+        <option>Dammam</option>
+        <option>Jeddah</option>
+        <option>Makkah</option>
+        <option>Madina</option>
+      </select>
+      <button type="submit">تسجيل وإنشاء الحساب</button>
+      <div class="muted">ملاحظة: يمكن تعديل الفرع لاحقًا من لوحة الإدارة.</div>
+      <div id="signupMsg" class="msg"></div>
     </form>
   </div>
+</div>
 
- <!-- Firebase عبر CDN (Compat) -->
+<br/>
+
+<div class="card hidden" id="appCard">
+  <div class="row" style="margin-bottom:10px">
+    <div class="muted" id="whoami">—</div>
+    <button id="logoutBtn" class="secondary" style="width:auto">تسجيل الخروج</button>
+  </div>
+
+  <h2>تسجيل طلب شراء</h2>
+
+  <form id="orderForm" novalidate>
+    <label for="itemCode">كود الصنف:</label>
+    <input type="text" id="itemCode" required placeholder="مثال: F47.103.125-1C25P" />
+
+    <label for="quantity">الكمية المطلوبة:</label>
+    <input type="number" id="quantity" required min="1" step="1" placeholder="مثال: 10" />
+
+    <label for="price">سعر البيع:</label>
+    <input type="number" id="price" required min="0" step="0.01" placeholder="مثال: 125.50" />
+
+    <button type="submit">إرسال الطلب</button>
+    <div id="msg" class="msg"></div>
+  </form>
+</div>
+
+<!-- Firebase CDN (Compat) -->
 <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore-compat.js"></script>
 
 <script>
@@ -46,88 +99,131 @@
     apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
     authDomain: "purchase-order-req.firebaseapp.com",
     projectId: "purchase-order-req",
-    storageBucket: "purchase-order-req.firebasestorage.app",
+    storageBucket: "purchase-order-req.appspot.com",
     messagingSenderId: "72898448492",
     appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
   };
 
-  // تهيئة Firebase و Firestore
+  // تهيئة
   firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
 
-  const form = document.getElementById("orderForm");
-  const msg  = document.getElementById("msg");
-  const btn  = form.querySelector("button[type=submit]");
+  // عناصر الواجهة
+  const authCard   = document.getElementById("authCard");
+  const appCard    = document.getElementById("appCard");
+  const whoami     = document.getElementById("whoami");
+  const msg        = document.getElementById("msg");
+  const orderForm  = document.getElementById("orderForm");
+  const logoutBtn  = document.getElementById("logoutBtn");
 
-  function showMsg(text, type="success") {
-    msg.textContent = text;
-    msg.className = "msg " + type;
-    msg.style.display = "block";
-  }
+  const loginTab   = document.getElementById("loginTab");
+  const signupTab  = document.getElementById("signupTab");
+  const loginForm  = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+  const loginMsg   = document.getElementById("loginMsg");
+  const signupMsg  = document.getElementById("signupMsg");
 
-  function genTracking() {
-    return "ORD-" + Date.now().toString(36).toUpperCase();
-  }
+  function show(el){el.classList.remove("hidden")}
+  function hide(el){el.classList.add("hidden")}
+  function flash(el, text, type="success"){ el.textContent=text; el.className="msg "+type; el.style.display="block" }
 
-  // التقط أي خطأ عام واعرضه في الرسائل
-  window.addEventListener("error", (e) => {
-    showMsg("خطأ عام: " + (e.error?.message || e.message), "error");
+  // تبويبات دخول/تسجيل
+  loginTab.onclick=()=>{ show(loginForm); hide(signupForm); }
+  signupTab.onclick=()=>{ hide(loginForm); show(signupForm); }
+
+  // تسجيل مستخدم جديد + إنشاء وثيقة users/{uid}
+  signupForm.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const email  = document.getElementById("signupEmail").value.trim();
+    const pass   = document.getElementById("signupPassword").value;
+    const branch = document.getElementById("signupBranch").value;
+    try{
+      const { user } = await auth.createUserWithEmailAndPassword(email, pass);
+      // وثيقة المستخدم (فرع + isAdmin=false مبدئيًا)
+      await db.collection("users").doc(user.uid).set({
+        email, branch, isAdmin: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge:true });
+      flash(signupMsg,"تم إنشاء الحساب. تم تسجيل الدخول تلقائياً.","success");
+    }catch(err){
+      console.error(err); flash(signupMsg, "خطأ: "+(err.message||err), "error");
+    }
   });
 
-  form.addEventListener("submit", async (e) => {
+  // دخول
+  loginForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
+    const email = document.getElementById("loginEmail").value.trim();
+    const pass  = document.getElementById("loginPassword").value;
+    try{
+      await auth.signInWithEmailAndPassword(email, pass);
+      flash(loginMsg,"تم تسجيل الدخول.","success");
+    }catch(err){
+      console.error(err); flash(loginMsg, "خطأ: "+(err.message||err), "error");
+    }
+  });
 
+  // خروج
+  logoutBtn.onclick = ()=> auth.signOut();
+
+  // متابعة حالة الدخول
+  let userProfile=null;
+  auth.onAuthStateChanged(async (user)=>{
+    if(!user){
+      userProfile=null;
+      hide(appCard); show(authCard);
+      return;
+    }
+    // اجلب وثيقة المستخدم (للحصول على الفرع والصلاحيات)
+    const snap = await db.collection("users").doc(user.uid).get();
+    userProfile = snap.exists ? snap.data() : null;
+
+    // لو أول مرة يدخل وما عنده وثيقة، أنشئ واحدة بفرع افتراضي للتذكير
+    if(!userProfile){
+      await db.collection("users").doc(user.uid).set({email:user.email, branch:"UNASSIGNED", isAdmin:false});
+      userProfile={email:user.email, branch:"UNASSIGNED", isAdmin:false};
+    }
+
+    whoami.innerHTML = `مرحباً، ${user.email} <span class="badge">الفرع: ${userProfile.branch}</span> ${userProfile.isAdmin?'<span class="badge">مدير</span>':''}`;
+    hide(authCard); show(appCard);
+  });
+
+  // إرسال الطلب (يرتبط بفرع المستخدم)
+  orderForm.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const btn = orderForm.querySelector("button[type=submit]");
     const itemCode = document.getElementById("itemCode").value.trim();
     const quantity = Number(document.getElementById("quantity").value);
     const price    = Number(document.getElementById("price").value);
 
-    if (!itemCode || !Number.isFinite(quantity) || quantity < 1 || !Number.isFinite(price) || price < 0) {
-      showMsg("تحقق من إدخال القيم بشكل صحيح.", "error");
-      return;
+    if(!auth.currentUser || !userProfile){ flash(msg,"يجب تسجيل الدخول أولاً.","error"); return; }
+    if(!itemCode || !Number.isFinite(quantity) || quantity<1 || !Number.isFinite(price) || price<0){
+      flash(msg,"تحقق من إدخال القيم بشكل صحيح.","error"); return;
     }
 
-    // قفل الزر أثناء الإرسال
-    btn.disabled = true;
-    const oldText = btn.textContent;
-    btn.textContent = "جارٍ الإرسال...";
+    btn.disabled=true; const old=btn.textContent; btn.textContent="جارٍ الإرسال...";
+    const tracking = "ORD-" + Date.now().toString(36).toUpperCase();
 
-    // حماية من التعليق الطويل
-    let timedOut = false;
-    const t = setTimeout(() => {
-      timedOut = true;
-      showMsg("تعذّر الاتصال بالخادم. تحقق من قواعد Firestore أو الشبكة.", "error");
-      btn.disabled = false;
-      btn.textContent = oldText;
-    }, 10000); // 10 ثواني
-
-    try {
-      const tracking = genTracking();
+    try{
       const docRef = await db.collection("orders").add({
         itemCode, quantity, price,
+        branch: userProfile.branch,
+        createdBy: auth.currentUser.uid,
         status: "created",
         tracking,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-
-      if (!timedOut) {
-        clearTimeout(t);
-        showMsg(`تم تسجيل الطلب. رقم التتبع: ${tracking} (ID: ${docRef.id})`, "success");
-        form.reset();
-      }
-    } catch (err) {
-      if (!timedOut) {
-        clearTimeout(t);
-        console.error(err);
-        showMsg("خطأ أثناء الإرسال: " + (err.message || err), "error");
-      }
-    } finally {
-      if (!timedOut) {
-        btn.disabled = false;
-        btn.textContent = oldText;
-      }
+      flash(msg, `تم تسجيل الطلب. رقم التتبع: ${tracking} (ID: ${docRef.id})`, "success");
+      orderForm.reset();
+    }catch(err){
+      console.error(err); flash(msg,"خطأ أثناء الإرسال: "+(err.message||err),"error");
+    }finally{
+      btn.disabled=false; btn.textContent=old;
     }
   });
+
+  // التقط أخطاء عامة
+  window.addEventListener("error",(e)=>{ if(msg){ flash(msg,"خطأ عام: "+(e.error?.message||e.message),"error"); }});
 </script>
 </body>
 </html>
-
