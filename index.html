@@ -7,13 +7,14 @@
   <style>
     body { font-family: Arial, sans-serif; direction: rtl; background:#f4f4f4; padding:20px }
     .form-container { background:#fff; padding:20px; border-radius:8px; width:90%; max-width:500px; margin:auto; box-shadow:0 2px 8px rgba(0,0,0,.1) }
+    h2 { text-align:center }
     label { font-weight:bold }
     input,button { display:block; width:100%; padding:10px; margin-top:10px; font-size:16px; box-sizing:border-box }
     button { background:#22c55e; color:#fff; border:0; cursor:pointer }
     button:hover { opacity:.95 }
     .msg { margin-top:12px; padding:10px; border-radius:6px; display:none }
     .msg.success { background:#e8f7ee; color:#14532d; border:1px solid #bbefcf }
-    .msg.error { background:#fde8e8; color:#7f1d1d; border:1px solid #fecaca }
+    .msg.error   { background:#fde8e8; color:#7f1d1d; border:1px solid #fecaca }
   </style>
 </head>
 <body>
@@ -35,20 +36,20 @@
     </form>
   </div>
 
-  <!-- Firebase via CDN (Compat لأبسط دمج بملف واحد) -->
+  <!-- Firebase عبر CDN (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // الصق إعداداتك من شاشة Firebase هنا:
-  const firebaseConfig = {
-    apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
-    authDomain: "purchase-order-req.firebaseapp.com",
-    projectId: "purchase-order-req",
-    storageBucket: "purchase-order-req.firebasestorage.app",
-    messagingSenderId: "72898448492",
-    appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
-  };
+    // إعدادات مشروعك – لا تحفظها في أي مكان عام آخر إلا إذا أردت النشر
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
+      authDomain: "purchase-order-req.firebaseapp.com",
+      projectId: "purchase-order-req",
+      storageBucket: "purchase-order-req.firebasestorage.app",
+      messagingSenderId: "72898448492",
+      appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
+    };
 
     // تهيئة Firebase و Firestore
     firebase.initializeApp(firebaseConfig);
@@ -56,6 +57,7 @@
 
     const form = document.getElementById("orderForm");
     const msg  = document.getElementById("msg");
+    const btn  = form.querySelector("button[type=submit]");
 
     function showMsg(text, type="success") {
       msg.textContent = text;
@@ -79,6 +81,10 @@
         return;
       }
 
+      btn.disabled = true;
+      const oldText = btn.textContent;
+      btn.textContent = "جارٍ الإرسال...";
+
       try {
         const tracking = genTracking();
         const docRef = await db.collection("orders").add({
@@ -93,6 +99,9 @@
       } catch (err) {
         console.error(err);
         showMsg("خطأ أثناء الإرسال. تحقق من إعدادات Firebase/قواعد الأمان.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = oldText;
       }
     });
   </script>
