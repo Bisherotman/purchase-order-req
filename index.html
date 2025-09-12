@@ -578,6 +578,44 @@ function statusClass(s){ return {created:"s-created",ordered:"s-ordered",shipped
 
 /* ---------- init ---------- */
 route();
+(function () {
+  const emailInput   = document.getElementById('loginEmail');
+  const emailWrap    = emailInput.closest('.input-wrap');
+  const emailClear   = document.getElementById('clearEmail');
+
+  const passInput    = document.getElementById('loginPassword');
+  const passWrap     = passInput.closest('.input-wrap');
+  const passToggle   = document.getElementById('togglePwd');
+  const passClear    = document.getElementById('clearPwd');
+
+  function bindInputState(input, wrap){
+    const update = () => wrap.classList.toggle('has-value', !!input.value.trim());
+    input.addEventListener('input', update);
+    update();
+  }
+
+  bindInputState(emailInput, emailWrap);
+  emailClear.addEventListener('click', () => {
+    emailInput.value = '';
+    emailInput.focus();
+    emailWrap.classList.remove('has-value');
+  });
+
+  bindInputState(passInput, passWrap);
+  passToggle.addEventListener('click', () => {
+    const show = passInput.type === 'password';
+    passInput.type = show ? 'text' : 'password';
+    passToggle.textContent = show ? 'إخفاء' : 'إظهار';
+    passInput.focus();
+  });
+  passClear.addEventListener('click', () => {
+    passInput.value = '';
+    passInput.type = 'password';
+    passToggle.textContent = 'إظهار';
+    passInput.focus();
+    passWrap.classList.remove('has-value');
+  });
+})();
 </script>
 </body>
 </html>
