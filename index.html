@@ -330,7 +330,7 @@ auth.onAuthStateChanged(async (user)=>{
 
   if(location.hash==="#/login"){ location.hash = "#/new"; }
   route();
-  loadMyOrders();
+  //loadMyOrders();
   if(canSeeAdmin) loadAdminOrders();
 });
 
@@ -391,34 +391,62 @@ orderForm.addEventListener("submit", async (e)=>{
   }
 });
 
-/* ---------- my orders ---------- */
-const myBody=$("#myOrdersBody"), mySearch=$("#mySearch"), mySort=$("#mySort");
-async function loadMyOrders(){
-  if(!currentUser) return;
-  const snap = await db.collection("orders").where("createdBy","==",currentUser.uid).get();
-  let rows = snap.docs.map(d=>({id:d.id, ...d.data()}));
-  renderMy(rows);
+let myUnsub = null;
+
+function subscribeMyOrders(){
+  // الغِ أي اشتراك قديم
+  if (myUnsub) { myUnsub(); myUnsub = null; }
+  if (!currentUser) return;
+
+  const q = db.collection("orders").where("createdBy", "==", currentUser.uid);
+  myUnsub = q.onSnapshot((snap) => {
+    const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderMy(rows);
+  }, (err) => {
+    console.error(err);
+    showMsg(document.getElementById("newMsg"), "تعذّر تحميل طلباتك: " + (err.message || err), "error");
+  });
 }
+
 function renderMy(rows){
-  const term=(mySearch.value||"").toLowerCase();
-  rows = rows.filter(r=> !term || r.tracking.toLowerCase().includes(term) || (r.itemCode||"").toLowerCase().includes(term));
+  const term = (mySearch.value || "").toLowerCase();
+  rows = rows.filter(r =>
+    !term ||
+    r.tracking.toLowerCase().includes(term) ||
+    (r.itemCode || "").toLowerCase().includes(term)
+  );
   rows.sort((a,b)=> mySort.value==="createdAt_desc"
     ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
-    : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0));
+    : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0)
+  );
+
   myBody.innerHTML = rows.map(r=>`
     <tr>
       <td><strong>${r.tracking}</strong></td>
-      <td>${r.itemCode||""}</td>
-      <td>${r.quantity||""}</td>
-      <td>${r.price?.toFixed? r.price.toFixed(2): r.price}</td>
-      <td>${r.projectName||"-"}</td>
+      <td>${r.itemCode || ""}</td>
+      <td>${r.quantity ?? ""}</td>
+      <td>${r.price?.toFixed ? r.price.toFixed(2) : r.price ?? ""}</td>
+      <td>${r.projectName || "-"}</td>
       <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
-      <td>${r.createdAt?.toDate?.().toLocaleString('ar-SA')||""}</td>
+      <td>${r.createdAt?.toDate?.().toLocaleString('ar-SA') || ""}</td>
     </tr>
   `).join("");
 }
-mySearch.addEventListener("input", loadMyOrders);
-mySort.addEventListener("change", loadMyOrders);
+
+// حدث البحث/الفرز يعيد التصفية فقط (البيانات تصل عبر onSnapshot)
+mySearch.addEventListener("input", () => subscribeMyOrders());
+mySort.addEventListener("change", () => subscribeMyOrders());
+
+// عند تغيّر حالة الدخول استبدل loadMyOrders() بهذا:
+auth.onAuthStateChanged(async (user)=>{
+  // ... كودك الموجود
+  if (!user) {
+    if (myUnsub) { myUnsub(); myUnsub = null; }
+    return;
+  }
+  // بعد التحقق من userProfile:
+  subscribeMyOrders();
+});
 
 /* ---------- admin ---------- */
 const adminBody=$("#adminOrdersBody"), adminSearch=$("#adminSearch"), adminFilterBranch=$("#adminFilterBranch");
@@ -475,3 +503,4 @@ route();
 </script>
 </body>
 </html>
+
