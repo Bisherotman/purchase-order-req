@@ -36,74 +36,98 @@
     </form>
   </div>
 
-  <!-- Firebase عبر CDN (Compat) -->
-  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore-compat.js"></script>
+ <!-- Firebase عبر CDN (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore-compat.js"></script>
 
-  <script>
-    // إعدادات مشروعك – لا تحفظها في أي مكان عام آخر إلا إذا أردت النشر
-    const firebaseConfig = {
-      apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
-      authDomain: "purchase-order-req.firebaseapp.com",
-      projectId: "purchase-order-req",
-      storageBucket: "purchase-order-req.firebasestorage.app",
-      messagingSenderId: "72898448492",
-      appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
-    };
+<script>
+  // إعدادات مشروعك
+  const firebaseConfig = {
+    apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
+    authDomain: "purchase-order-req.firebaseapp.com",
+    projectId: "purchase-order-req",
+    storageBucket: "purchase-order-req.firebasestorage.app",
+    messagingSenderId: "72898448492",
+    appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
+  };
 
-    // تهيئة Firebase و Firestore
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+  // تهيئة Firebase و Firestore
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-    const form = document.getElementById("orderForm");
-    const msg  = document.getElementById("msg");
-    const btn  = form.querySelector("button[type=submit]");
+  const form = document.getElementById("orderForm");
+  const msg  = document.getElementById("msg");
+  const btn  = form.querySelector("button[type=submit]");
 
-    function showMsg(text, type="success") {
-      msg.textContent = text;
-      msg.className = "msg " + type;
-      msg.style.display = "block";
+  function showMsg(text, type="success") {
+    msg.textContent = text;
+    msg.className = "msg " + type;
+    msg.style.display = "block";
+  }
+
+  function genTracking() {
+    return "ORD-" + Date.now().toString(36).toUpperCase();
+  }
+
+  // التقط أي خطأ عام واعرضه في الرسائل
+  window.addEventListener("error", (e) => {
+    showMsg("خطأ عام: " + (e.error?.message || e.message), "error");
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const itemCode = document.getElementById("itemCode").value.trim();
+    const quantity = Number(document.getElementById("quantity").value);
+    const price    = Number(document.getElementById("price").value);
+
+    if (!itemCode || !Number.isFinite(quantity) || quantity < 1 || !Number.isFinite(price) || price < 0) {
+      showMsg("تحقق من إدخال القيم بشكل صحيح.", "error");
+      return;
     }
 
-    function genTracking() {
-      return "ORD-" + Date.now().toString(36).toUpperCase();
-    }
+    // قفل الزر أثناء الإرسال
+    btn.disabled = true;
+    const oldText = btn.textContent;
+    btn.textContent = "جارٍ الإرسال...";
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    // حماية من التعليق الطويل
+    let timedOut = false;
+    const t = setTimeout(() => {
+      timedOut = true;
+      showMsg("تعذّر الاتصال بالخادم. تحقق من قواعد Firestore أو الشبكة.", "error");
+      btn.disabled = false;
+      btn.textContent = oldText;
+    }, 10000); // 10 ثواني
 
-      const itemCode = document.getElementById("itemCode").value.trim();
-      const quantity = Number(document.getElementById("quantity").value);
-      const price    = Number(document.getElementById("price").value);
+    try {
+      const tracking = genTracking();
+      const docRef = await db.collection("orders").add({
+        itemCode, quantity, price,
+        status: "created",
+        tracking,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
-      if (!itemCode || !Number.isFinite(quantity) || quantity < 1 || !Number.isFinite(price) || price < 0) {
-        showMsg("تحقق من إدخال القيم بشكل صحيح.", "error");
-        return;
-      }
-
-      btn.disabled = true;
-      const oldText = btn.textContent;
-      btn.textContent = "جارٍ الإرسال...";
-
-      try {
-        const tracking = genTracking();
-        const docRef = await db.collection("orders").add({
-          itemCode, quantity, price,
-          status: "created",
-          tracking,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        showMsg(`تم تسجيل الطلب. رقم التتبع: ${tracking} (ID: ${docRef.id})`);
+      if (!timedOut) {
+        clearTimeout(t);
+        showMsg(`تم تسجيل الطلب. رقم التتبع: ${tracking} (ID: ${docRef.id})`, "success");
         form.reset();
-      } catch (err) {
+      }
+    } catch (err) {
+      if (!timedOut) {
+        clearTimeout(t);
         console.error(err);
-        showMsg("خطأ أثناء الإرسال. تحقق من إعدادات Firebase/قواعد الأمان.", "error");
-      } finally {
+        showMsg("خطأ أثناء الإرسال: " + (err.message || err), "error");
+      }
+    } finally {
+      if (!timedOut) {
         btn.disabled = false;
         btn.textContent = oldText;
       }
-    });
-  </script>
+    }
+  });
+</script>
 </body>
 </html>
+
