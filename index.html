@@ -50,18 +50,12 @@
   <button type="button" id="clearEmail" class="input-clear">✕</button>
 </div>
 
-<div class="input-wrap pwd-wrap">
-  <input id="loginPassword" type="password" ... />
-  <button type="button" id="togglePwd" class="pwd-toggle">👁️</button>
-  <button type="button" id="clearPwd"  class="pwd-clear">✕</button>
+<label for="loginPassword" style="margin-top:14px">كلمة المرور</label>
+<div class="pwd-wrap input-wrap">
+  <input id="loginPassword" type="password" required placeholder="••••••••" />
+  <button type="button" class="pwd-toggle" id="togglePwd" aria-label="إظهار/إخفاء كلمة المرور">👁️</button>
+  <button type="button" class="pwd-clear"  id="clearPwd" aria-label="مسح كلمة المرور">✕</button>
 </div>
-
-        <label for="loginPassword" style="margin-top:14px">كلمة المرور</label>
-        <div class="pwd-wrap input-wrap">
-          <input id="loginPassword" type="password" required placeholder="••••••••" />
-          <button type="button" class="pwd-toggle" id="togglePwd" aria-label="إظهار/إخفاء كلمة المرور">إظهار</button>
-          <button type="button" class="pwd-clear"  id="clearPwd" aria-label="مسح كلمة المرور">✕</button>
-        </div>
 
         <!-- تذكّر الإيميل أسفل كلمة السر -->
         <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:400">
@@ -640,6 +634,40 @@ route();
 
   uEmail(); uPwd(); // تهيئة أولية
 })();
+  const passwordInput = document.querySelector('.pwd-wrap input');
+  const toggleBtn = document.querySelector('.pwd-toggle');
+  const clearBtn = document.querySelector('.pwd-clear');
+
+  // زر 👁️
+  toggleBtn.addEventListener('click', () => {
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      toggleBtn.textContent = '🙈';
+    } else {
+      passwordInput.type = 'password';
+      toggleBtn.textContent = '👁️';
+    }
+  });
+
+  // زر X
+  clearBtn.addEventListener('click', () => {
+    passwordInput.value = '';
+    passwordInput.focus();
+    clearBtn.style.display = 'none';
+    toggleBtn.style.display = 'none';
+  });
+
+  // إظهار الزرين عند الكتابة
+  passwordInput.addEventListener('input', () => {
+    if (passwordInput.value.length > 0) {
+      clearBtn.style.display = 'flex';
+      toggleBtn.style.display = 'flex';
+    } else {
+      clearBtn.style.display = 'none';
+      toggleBtn.style.display = 'none';
+    }
+  });
+
 </script>
 </body>
 </html>
