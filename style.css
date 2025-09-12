@@ -71,27 +71,42 @@ button{background:linear-gradient(180deg,var(--brand-400),var(--brand-500));colo
 .helper{color:var(--muted);font-size:13px;margin-top:6px}
 .section-box{margin:14px 0 8px;text-align:center;font-weight:800;padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,#fff,#f7eef0);color:#3b121b;border:1px solid #f0dbe0}
 
-/* حقول مع أزرار داخلية (إيميل + كلمة مرور) */
+/* الحقل مع أزرار داخلية */
 .input-wrap{position:relative}
-.input-wrap input{padding-inline-start:88px;}   /* مساحة زر ✕ في الإيميل */
-.input-clear, .pwd-toggle, .pwd-clear{
-  position:absolute; inset-block-start:50%; transform:translateY(-50%);
-  height:28px; min-width:28px; padding:0 6px;
-  display:none; align-items:center; justify-content:center;
-  border:1px solid #e5e7eb; background:#fff; color:#9aa3af;
-  border-radius:8px; cursor:pointer; font-size:13px; line-height:1;
+.input-wrap input{
+  /* اترك مساحة على اليسار (RTL) لزر أو زرّين */
+  padding-inline-start: 96px; /* كان 48px */
 }
-.input-clear:hover, .pwd-toggle:hover, .pwd-clear:hover{color:#6b7280}
-/* مواقع الأزرار (RTL) – يسار الحقل */
-.input-clear{inset-inline-start:8px}   /* الإيميل ✕ */
-.pwd-toggle{inset-inline-start:8px}    /* 👁 */
-.pwd-clear {inset-inline-start:44px}   /* ✕ بجوار العين */
-/* كلمة السر تحتاج مساحة لزرين */
-.pwd-wrap input{padding-inline-start:140px}
-/* أظهر الأزرار فقط عند وجود نص */
-.input-wrap.has-value .input-clear{display:flex}
+
+/* كلمة المرور تحتاج مساحة أكبر لزرّين (إظهار + مسح) */
+.pwd-wrap input{
+  padding-inline-start: 140px; /* كان 120px */
+}
+
+/* أزرار صغيرة وخفيفة */
+.input-clear,
+.pwd-toggle,
+.pwd-clear{
+  position:absolute;
+  inset-block:0;                  /* وسط رأسي */
+  margin:auto;
+  height:28px; min-width:28px;   /* أصغر من قبل */
+  display:none;                  /* تظهر فقط عند وجود قيمة */
+  align-items:center; justify-content:center;
+  border:1px solid #e5e7eb; background:#fff; color:#9aa3af;
+  border-radius:8px; cursor:pointer; font-size:12px; padding:0 8px;
+}
+.input-clear:hover, .pwd-toggle:hover, .pwd-clear:hover{ color:#6b7280 }
+
+/* موضع الأزرار يسار الحقل (مع الاتجاه RTL) */
+.input-clear{ inset-inline-start: 8px; }   /* زر مسح الإيميل */
+.pwd-toggle{ inset-inline-start: 8px; }    /* زر إظهار/إخفاء */
+.pwd-clear { inset-inline-start: 48px; }   /* زر مسح كلمة المرور */
+
+/* تظهر الأزرار فقط عندما يحتوي الحقل على قيمة */
+.input-wrap.has-value .input-clear{ display:flex; }
 .pwd-wrap.has-value .pwd-toggle,
-.pwd-wrap.has-value .pwd-clear{display:flex}
+.pwd-wrap.has-value .pwd-clear{ display:flex; }
 
 /* الأصناف والروابط */
 .items-head{display:flex;align-items:center;justify-content:center;margin-top:8px}
