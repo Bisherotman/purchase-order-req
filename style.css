@@ -72,41 +72,44 @@ button{background:linear-gradient(180deg,var(--brand-400),var(--brand-500));colo
 .section-box{margin:14px 0 8px;text-align:center;font-weight:800;padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,#fff,#f7eef0);color:#3b121b;border:1px solid #f0dbe0}
 
 /* الحقل مع أزرار داخلية */
+/* ====== حقول مع أزرار داخلية (إيميل + كلمة مرور) ====== */
 .input-wrap{position:relative}
+
+/* مساحة للحقل حتى لا يغطّي زر X */
 .input-wrap input{
-  /* اترك مساحة على اليسار (RTL) لزر أو زرّين */
-  padding-inline-start: 96px; /* كان 48px */
+  padding-inline-start:48px; /* 48px تكفي لزر واحد */
 }
 
-/* كلمة المرور تحتاج مساحة أكبر لزرّين (إظهار + مسح) */
+/* كلمة المرور تحتاج مساحتين (عين + X) */
 .pwd-wrap input{
-  padding-inline-start: 140px; /* كان 120px */
+  padding-inline-start:120px; /* عين + X */
 }
 
-/* أزرار صغيرة وخفيفة */
+/* أزرار داخلية صغيرة وثابتة */
 .input-clear,
 .pwd-toggle,
 .pwd-clear{
-  position:absolute;
-  inset-block:0;                  /* وسط رأسي */
-  margin:auto;
-  height:28px; min-width:28px;   /* أصغر من قبل */
-  display:none;                  /* تظهر فقط عند وجود قيمة */
-  align-items:center; justify-content:center;
+  position:absolute; inset-block:0; margin:auto;
+  height:32px; width:32px; /* عرض ثابت صغير */
+  display:none; align-items:center; justify-content:center;
   border:1px solid #e5e7eb; background:#fff; color:#9aa3af;
-  border-radius:8px; cursor:pointer; font-size:12px; padding:0 8px;
+  border-radius:8px; cursor:pointer; font-size:14px; line-height:1;
+  box-shadow:none; padding:0; /* بدون padding حتى ما تكبر */
+  z-index:2;
 }
-.input-clear:hover, .pwd-toggle:hover, .pwd-clear:hover{ color:#6b7280 }
 
-/* موضع الأزرار يسار الحقل (مع الاتجاه RTL) */
-.input-clear{ inset-inline-start: 8px; }   /* زر مسح الإيميل */
-.pwd-toggle{ inset-inline-start: 8px; }    /* زر إظهار/إخفاء */
-.pwd-clear { inset-inline-start: 48px; }   /* زر مسح كلمة المرور */
+/* أماكن الأزرار (RTL) */
+.input-clear{ inset-inline-start:8px; }  /* X للإيميل */
+.pwd-toggle{ inset-inline-start:8px; }    /* 👁️ للـPassword */
+.pwd-clear { inset-inline-start:48px; }   /* X للـPassword */
 
-/* تظهر الأزرار فقط عندما يحتوي الحقل على قيمة */
-.input-wrap.has-value .input-clear{ display:flex; }
-.pwd-wrap.has-value .pwd-toggle,
-.pwd-wrap.has-value .pwd-clear{ display:flex; }
+.input-clear:hover,
+.pwd-toggle:hover,
+.pwd-clear:hover{ color:#6b7280; }
+
+/* ملاحظة: لا تستخدم :placeholder-shown لإظهار الأزرار هنا
+   سنشغّلها/نخفيها بالـJS عشان تكون موثوقة لكل المتصفحات */
+
 
 /* الأصناف والروابط */
 .items-head{display:flex;align-items:center;justify-content:center;margin-top:8px}
