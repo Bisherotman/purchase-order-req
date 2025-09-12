@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>بوابة طلبات الشراء | بيت الإباء</title>
 
-<!-- Fonts -->
+<!-- خطوط -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -16,108 +15,86 @@
     --shadow:0 10px 30px rgba(108,29,44,.15); --radius:14px;
   }
   *{box-sizing:border-box}
-  body{
-    margin:0;background:var(--bg);
-    font-family:"Tajawal","Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    color:var(--ink)
-  }
+  body{margin:0;background:var(--bg);font-family:"Tajawal","Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
   a{color:inherit;text-decoration:none}
   input,select,button{font-family:inherit}
-
   .container{max-width:1100px;margin:0 auto;padding:100px 16px 40px}
 
   /* Header */
-  header{
-    position:fixed;top:0;left:0;right:0;z-index:10;
-    background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,.96) 70%,rgba(255,255,255,.88) 100%);
-    border-bottom:1px solid #f1e6e9; backdrop-filter:saturate(180%) blur(8px)
-  }
+  header{position:fixed;top:0;left:0;right:0;z-index:10;background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,.96) 70%,rgba(255,255,255,.88) 100%);border-bottom:1px solid #f1e6e9;backdrop-filter:saturate(180%) blur(8px)}
   .nav{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 16px}
   .brand{display:flex;align-items:center;gap:12px;font-weight:800}
   .brand img{width:57px;height:57px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(108,29,44,.25))}
   .brand span{color:var(--brand-500)}
   .navlinks{display:flex;align-items:center;gap:6px;margin-inline-start:auto}
-  .navlinks a{
-    padding:10px 14px;border-radius:999px;color:#2e1a1f;
-    transition:transform .15s ease, background .2s ease, box-shadow .2s ease
-  }
-  .navlinks a.active,.navlinks a:hover{
-    background:linear-gradient(180deg,#fde7ec,#f9eef1);
-    box-shadow:inset 0 0 0 1px #f2cbd4
-  }
-  .navlinks .btn{
-    background:linear-gradient(180deg,var(--brand-400),var(--brand-500));
-    color:#fff; box-shadow:0 6px 16px rgba(108,29,44,.25); font-weight:700
-  }
-  .navlinks .btn:hover{transform:translateY(-1px); filter:saturate(110%)}
-  .navlinks .btn:active{transform:translateY(0); filter:saturate(120%)}
+  .navlinks a{padding:10px 14px;border-radius:999px;color:#2e1a1f;transition:transform .15s ease,background .2s ease,box-shadow .2s ease}
+  .navlinks a.active,.navlinks a:hover{background:linear-gradient(180deg,#fde7ec,#f9eef1);box-shadow:inset 0 0 0 1px #f2cbd4}
+  .navlinks .btn{background:linear-gradient(180deg,var(--brand-400),var(--brand-500));color:#fff;box-shadow:0 6px 16px rgba(108,29,44,.25);font-weight:700}
+  .navlinks .btn:hover{transform:translateY(-1px);filter:saturate(110%)} .navlinks .btn:active{transform:translateY(0);filter:saturate(120%)}
 
   /* Cards / forms */
-  .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px; margin:18px 0}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin:18px 0}
   h1,h2{margin:0 0 10px} h2{font-size:22px}
-  .section-title{font-weight:800;margin-top:4px;margin-bottom:8px}
-  .section-title.center{text-align:center}
-  label{font-weight:700; display:block; margin-top:10px}
-  input,select,button{
-    width:100%; padding:12px 14px; margin-top:8px; border-radius:12px; border:1px solid #f0dbe0; background:#fff; font-size:16px
-  }
-  input:focus,select:focus{outline:0; border-color:#e3b3bd; box-shadow:0 0 0 3px #f6d7de}
-  button{background:linear-gradient(180deg,var(--brand-400),var(--brand-500)); color:#fff; border:0; cursor:pointer; transition:transform .1s ease, filter .15s ease}
-  button:hover{transform:translateY(-1px); filter:saturate(115%)}
-  .btn-strong{font-weight:800; letter-spacing:.2px; position:relative; overflow:hidden}
-  .btn-strong.loading{opacity:.85; pointer-events:none}
-  .btn-strong.loading::after{
-    content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
-    animation:shimmer 1.2s infinite
-  }
+  label{font-weight:700;display:block;margin-top:10px}
+  input,select,button{width:100%;padding:12px 14px;margin-top:8px;border-radius:12px;border:1px solid #f0dbe0;background:#fff;font-size:16px}
+  input:focus,select:focus{outline:0;border-color:#e3b3bd;box-shadow:0 0 0 3px #f6d7de}
+  button{background:linear-gradient(180deg,var(--brand-400),var(--brand-500));color:#fff;border:0;cursor:pointer;transition:transform .1s ease,filter .15s ease}
+  button:hover{transform:translateY(-1px);filter:saturate(115%)}
+  .btn-strong{font-weight:800;letter-spacing:.2px;position:relative;overflow:hidden}
+  .btn-strong.loading{opacity:.85;pointer-events:none}
+  .btn-strong.loading::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:shimmer 1.2s infinite}
   @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 
-  .row{display:flex; gap:12px; align-items:center}
-  .row > *{flex:1}
+  .row{display:flex;gap:12px;align-items:center}.row>*{flex:1}
+  .msg{margin-top:12px;padding:12px;border-radius:12px;display:none}
+  .msg.success{background:#f2fbf5;color:#14532d;border:1px solid #c7f0d2}
+  .msg.error{background:#fef2f2;color:#7f1d1d;border:1px solid #fecaca}
+  .helper{color:var(--muted);font-size:13px;margin-top:6px}
 
-  .msg{margin-top:12px; padding:12px; border-radius:12px; display:none}
-  .msg.success{background:#f2fbf5; color:#14532d; border:1px solid #c7f0d2}
-  .msg.error{background:#fef2f2; color:#7f1d1d; border:1px solid #fecaca}
-  .helper{color:var(--muted); font-size:13px; margin-top:6px}
+  /* Sections */
+  .section-box{margin:14px 0 8px;text-align:center;font-weight:800;padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,#fff,#f7eef0);color:#3b121b;border:1px solid #f0dbe0}
 
-  /* Tables */
-  table{width:100%; border-collapse:separate; border-spacing:0 10px}
-  thead th{font-size:13px; color:var(--muted); text-align:right}
-  tbody tr{background:#fff; box-shadow:var(--shadow)}
+  /* Table */
+  table{width:100%;border-collapse:separate;border-spacing:0 10px}
+  thead th{font-size:13px;color:var(--muted);text-align:right}
+  tbody tr{background:#fff;box-shadow:var(--shadow)}
   td,th{padding:12px 14px}
   tbody tr td:first-child{border-radius:12px 0 0 12px}
   tbody tr td:last-child{border-radius:0 12px 12px 0}
-  .status{padding:6px 10px; border-radius:999px; font-size:12px}
-  .s-created{background:#f3e8ff; color:#6b21a8}
-  .s-ordered{background:#fff1f2; color:#9f1239}
-  .s-shipped{background:#eff6ff; color:#1d4ed8}
-  .s-delivered{background:#ecfdf5; color:#065f46}
+  .status{padding:6px 10px;border-radius:999px;font-size:12px}
+  .s-created{background:#f3e8ff;color:#6b21a8}
+  .s-ordered{background:#fff1f2;color:#9f1239}
+  .s-shipped{background:#eff6ff;color:#1d4ed8}
+  .s-delivered{background:#ecfdf5;color:#065f46}
 
-  /* Views + transitions */
-  .view{display:none; opacity:0; transform:translateY(6px); transition:.25s ease}
-  .view.active{display:block; opacity:1; transform:translateY(0)}
-
-  /* line-items */
+  /* Items + Links rows */
   .items-head{display:flex;align-items:center;justify-content:center;margin-top:8px}
   .item-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;margin-top:8px}
-  .item-row .remove{background:#fff; border:1px solid #f0dbe0; color:#b91c1c}
+  .item-row .remove{background:#fff;border:1px solid #f0dbe0;color:#b91c1c}
   .add-item{margin-top:10px;background:#fff;color:var(--brand);border:1px dashed #e3b3bd}
   .add-item:hover{background:#fdf2f4}
 
+  .link-row{display:grid;grid-template-columns:1.3fr 2.2fr auto;gap:10px;margin-top:8px}
+  .link-row .remove{background:#fff;border:1px solid #f0dbe0;color:#b91c1c}
+
   /* Modal */
-  .modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:50}
+  .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:50}
   .modal.show{display:flex}
-  .backdrop{position:absolute; inset:0; background:rgba(0,0,0,.35)}
-  .modal-card{position:relative; background:#fff; width:min(720px, 92vw); border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.25); padding:18px}
-  .modal-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px}
+  .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.35)}
+  .modal-card{position:relative;background:#fff;width:min(720px,92vw);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:18px}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
   .close-x{background:#fff;border:1px solid #eee;color:#444;width:36px;height:36px;border-radius:10px}
-  .muted{color:#6b7280;font-size:14px}
   .t-small{font-size:13px;color:#475569}
   .table-like{width:100%;border-collapse:collapse}
   .table-like th,.table-like td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:right}
   .table-like thead th{color:#64748b;font-size:13px}
   .total{font-weight:800}
+
   @media (max-width:720px){.item-row{grid-template-columns:1fr 1fr 1fr auto}}
+  @media print{
+    header,.view:not(.printable),.modal .close-x,.modal .backdrop{display:none !important}
+    .modal-card{box-shadow:none;width:auto;padding:0}
+  }
 </style>
 </head>
 <body>
@@ -125,11 +102,10 @@
 <header>
   <nav class="nav">
     <a class="brand" href="#/login" id="brandLink">
-      <img src="img/pagelogo.png" alt="Bayt Alebaa Logo" />
+      <img src="img/logo.png" alt="Bayt Alebaa Logo" />
       <span>بوابة طلبات الشراء لقسم المشاريع</span>
     </a>
     <div class="navlinks" id="navLinks">
-      <!-- ألغينا رابط "تسجيل الدخول" -->
       <a href="#/new"   data-auth="user"  style="display:none">طلب جديد</a>
       <a href="#/my"    data-auth="user"  style="display:none">طلبــاتي</a>
       <a href="#/admin" data-auth="admin" style="display:none">إدارة الطلبات</a>
@@ -171,25 +147,19 @@
         <div class="helper" id="whoami">—</div>
       </div>
 
-      <!-- معلومات المشروع -->
-      <div class="section-title">معلومات المشروع</div>
+      <div class="section-box">معلومات المشروع</div>
       <div class="row">
-        <div>
-          <label for="projectName">اسم المشروع</label>
-          <input id="projectName" type="text" placeholder="مشروع أبراج..." />
-        </div>
-        <div>
-          <label for="customerName">اسم العميل/الجهة</label>
-          <input id="customerName" type="text" placeholder="شركة/جهة..." />
-        </div>
+        <div><label for="projectName">اسم المشروع</label><input id="projectName" type="text" placeholder="مشروع أبراج..." /></div>
+        <div><label for="customerName">اسم العميل/الجهة</label><input id="customerName" type="text" placeholder="شركة/جهة..." /></div>
       </div>
 
-      <!-- الأصناف -->
-      <div class="section-title center">الأصناف</div>
-      <div class="items-head">
-        <button type="button" id="addItemBtn" class="add-item">+ إضافة صنف</button>
-      </div>
+      <div class="section-box">الأصناف</div>
+      <div class="items-head"><button type="button" id="addItemBtn" class="add-item">+ إضافة صنف</button></div>
       <div id="itemsWrap"></div>
+
+      <div class="section-box">روابط المرفقات (اختياري — حد أقصى 2)</div>
+      <div id="linksWrap"></div>
+      <button type="button" id="addLinkBtn" class="add-item">+ إضافة رابط</button>
 
       <button type="button" id="submitOrder" class="btn-strong">إرسال الطلب</button>
       <div id="newMsg" class="msg"></div>
@@ -234,7 +204,8 @@
         <input id="adminSearch" placeholder="ابحث برقم التتبّع أو كود الصنف" />
         <select id="adminFilterBranch">
           <option value="">كل الفروع</option>
-          <option>Riyadh</option><option>Dammam</option><option>Jeddah</option><option>Makkah</option><option>Madina</option><option>HQ</option>
+          <option>Riyadh</option><option>Dammam</option><option>Jeddah</option>
+          <option>Makkah</option><option>Madina</option><option>HQ</option>
         </select>
       </div>
       <div id="adminTableWrap" class="card" style="padding:0">
@@ -251,13 +222,16 @@
   </section>
 </div>
 
-<!-- DETAILS MODAL -->
+<!-- DETAILS MODAL (عرض/طباعة فقط) -->
 <div id="detailsModal" class="modal" aria-hidden="true">
   <div class="backdrop"></div>
-  <div class="modal-card">
+  <div class="modal-card printable">
     <div class="modal-header">
       <h3 style="margin:0">تفاصيل الطلب</h3>
-      <button class="close-x" id="closeDetails">✕</button>
+      <div style="display:flex; gap:8px">
+        <button class="btn-strong" id="printDetailsBtn" style="padding:8px 12px;border-radius:10px">طباعة</button>
+        <button class="close-x" id="closeDetails">✕</button>
+      </div>
     </div>
     <div id="detailsBody" class="t-small"></div>
   </div>
@@ -271,12 +245,12 @@
 <script>
 /* ---------- Firebase ---------- */
 const firebaseConfig = {
-  apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
-  authDomain: "purchase-order-req.firebaseapp.com",
-  projectId: "purchase-order-req",
-  storageBucket: "purchase-order-req.appspot.com",
-  messagingSenderId: "72898448492",
-  appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
+  apiKey: "YOUR_NEW_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXXXXXXXXXX",
+  appId: "1:XXXXXXXXXXXX:web:XXXXXXXXXXXXXX"
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -326,6 +300,10 @@ loginForm.addEventListener("submit", async (e)=>{
 });
 sessionBtn.addEventListener("click",(e)=>{ if(currentUser){ e.preventDefault(); auth.signOut(); } });
 
+function displayNameOrEmail(u, profile){
+  return (profile && profile.name) ? profile.name : (u.displayName || u.email);
+}
+
 auth.onAuthStateChanged(async (user)=>{
   currentUser=user;
   if(!user){
@@ -340,7 +318,7 @@ auth.onAuthStateChanged(async (user)=>{
   if(!snap.exists){ showMsg(loginMsg,"حسابك غير مهيأ. تواصل مع الإدارة لإسناد فرع لك.","error"); await auth.signOut(); return; }
   userProfile=snap.data(); canSeeAdmin=!!userProfile.isAdmin || userProfile.branch==="HQ";
 
-  const badge=`مرحباً، ${user.email} — الفرع: ${userProfile.branch}${canSeeAdmin?' — إدارة':''}`;
+  const badge=`مرحباً، ${displayNameOrEmail(user,userProfile)} — الفرع: ${userProfile.branch}${canSeeAdmin?' — إدارة':''}`;
   whoami.textContent=badge; whoamiMy.textContent=badge; whoamiAdmin.textContent=badge;
 
   navLinks.querySelectorAll("[data-auth]").forEach(a=>{
@@ -373,15 +351,34 @@ function makeItemRow(values={}){
   row.querySelector(".remove").onclick=()=> row.remove();
   return row;
 }
-function ensureAtLeastOneRow(){
-  if(!itemsWrap.children.length){
-    itemsWrap.appendChild(makeItemRow());
-  }
-}
+function ensureAtLeastOneRow(){ if(!itemsWrap.children.length){ itemsWrap.appendChild(makeItemRow()); } }
 addItemBtn.onclick = ()=> itemsWrap.appendChild(makeItemRow());
 ensureAtLeastOneRow();
 
-/* ---------- new order (save) ---------- */
+/* ---------- links UI (URLs only, max 2) ---------- */
+const linksWrap = $("#linksWrap");
+const addLinkBtn = $("#addLinkBtn");
+function makeLinkRow(values={}){
+  const r=document.createElement("div");
+  r.className="link-row";
+  r.innerHTML=`
+    <input class="ln-name" placeholder="اسم المرفق (مثال: عرض سعر)" value="${values.name||""}">
+    <input class="ln-url"  placeholder="https://example.com/file.pdf" value="${values.url||""}">
+    <button type="button" class="remove">🗑</button>
+  `;
+  r.querySelector(".remove").onclick=()=>{
+    r.remove();
+    if(linksWrap.children.length < 2) addLinkBtn.disabled = false;
+  };
+  return r;
+}
+addLinkBtn.onclick = ()=>{
+  if (linksWrap.children.length >= 2) return;
+  linksWrap.appendChild(makeLinkRow());
+  if (linksWrap.children.length >= 2) addLinkBtn.disabled = true;
+};
+
+/* ---------- new order ---------- */
 const newMsg=$("#newMsg");
 const submitOrderBtn = $("#submitOrder");
 submitOrderBtn.addEventListener("click", async ()=>{
@@ -391,7 +388,6 @@ submitOrderBtn.addEventListener("click", async ()=>{
   const projectName = $("#projectName").value.trim();
   const customerName= $("#customerName").value.trim();
 
-  // اجمع العناصر
   const items = [...itemsWrap.querySelectorAll(".item-row")].map(r=>({
     itemCode: r.querySelector(".it-code").value.trim(),
     quantity: Number(r.querySelector(".it-qty").value),
@@ -399,6 +395,17 @@ submitOrderBtn.addEventListener("click", async ()=>{
   })).filter(x=>x.itemCode && Number.isFinite(x.quantity) && x.quantity>0 && Number.isFinite(x.price) && x.price>=0);
 
   if(items.length===0){ showMsg(newMsg,"أضف صنفًا واحدًا على الأقل بشكل صحيح.","error"); return; }
+
+  if (linksWrap.children.length > 2) {
+    showMsg(newMsg, "مسموح بمرفقين كحد أقصى.", "error");
+    return;
+  }
+
+  const attachments = [...linksWrap.querySelectorAll(".link-row")].map(r=>{
+    const name=(r.querySelector(".ln-name").value||"ملف").trim();
+    const url = r.querySelector(".ln-url").value.trim();
+    return url ? {name, url} : null;
+  }).filter(Boolean);
 
   submitOrderBtn.classList.add("loading"); submitOrderBtn.disabled=true;
 
@@ -410,15 +417,17 @@ submitOrderBtn.addEventListener("click", async ()=>{
 
     await db.collection("orders").doc(tracking).set({
       tracking, branch, projectName, customerName,
-      items,
+      items, attachments,                // روابط فقط
       createdBy: currentUser.uid, status:"created",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     showMsg(newMsg,`تم تسجيل الطلب. رقم التتبّع: ${tracking}`,"success");
-    // إعادة الضبط
+    // reset
     $("#projectName").value=""; $("#customerName").value="";
     itemsWrap.innerHTML=""; ensureAtLeastOneRow();
+    linksWrap.innerHTML=""; addLinkBtn.disabled=false;
+
     subscribeMyOrders(); if(canSeeAdmin) loadAdminOrders();
 
   }catch(err){
@@ -428,7 +437,7 @@ submitOrderBtn.addEventListener("click", async ()=>{
   }
 });
 
-/* ---------- MY ORDERS (Realtime) ---------- */
+/* ---------- MY ORDERS (Realtime) + details/print ---------- */
 let myUnsub=null, myRows=[];
 function subscribeMyOrders(){
   if(myUnsub){ myUnsub(); myUnsub=null; }
@@ -437,10 +446,7 @@ function subscribeMyOrders(){
   myUnsub=q.onSnapshot((snap)=>{
     myRows=snap.docs.map(d=>({id:d.id,...d.data()}));
     renderMy(myRows);
-  },(err)=>{
-    console.error(err);
-    showMsg(document.getElementById("newMsg"),"تعذّر تحميل طلباتك: "+(err.message||err),"error");
-  });
+  },(err)=>{ console.error(err); showMsg(document.getElementById("newMsg"),"تعذّر تحميل طلباتك: "+(err.message||err),"error"); });
 }
 function renderMy(rows){
   const term=(mySearch.value||"").toLowerCase();
@@ -471,37 +477,51 @@ function renderMy(rows){
       </tr>`;
   }).join("");
 
-  // ربط أزرار التفاصيل
-  document.querySelectorAll('[data-open]').forEach(btn=>{
-    btn.onclick = ()=> openDetails(btn.dataset.open);
-  });
+  document.querySelectorAll('[data-open]').forEach(btn=>{ btn.onclick = ()=> openDetails(btn.dataset.open); });
 }
 mySearch.addEventListener("input",()=>renderMy(myRows));
 mySort.addEventListener("change",()=>renderMy(myRows));
 
-/* ---------- DETAILS MODAL ---------- */
-const modal=$("#detailsModal"), closeDetails=$("#closeDetails"), detailsBody=$("#detailsBody");
+/* تفاصيل + طباعة فقط */
+const modal=$("#detailsModal"), closeDetails=$("#closeDetails"), detailsBody=$("#detailsBody"), printBtn=$("#printDetailsBtn");
 function openDetails(tracking){
   const r = myRows.find(x=>x.tracking===tracking);
   if(!r) return;
+
   const items=r.items||[];
   const qtySum=items.reduce((s,x)=>s+(x.quantity||0),0);
   const rows=items.map((it,i)=>`
     <tr><td>${i+1}</td><td>${it.itemCode||""}</td><td>${it.quantity??""}</td><td>${(typeof it.price==="number")?it.price.toFixed(2):it.price??""}</td></tr>
   `).join("");
+
+  const attachHtml = (r.attachments?.length)
+    ? `<ul>${r.attachments.map(a=>`<li><a href="${a.url}" target="_blank">${a.name}</a></li>`).join("")}</ul>`
+    : `<div class="muted">لا توجد مرفقات.</div>`;
+
   detailsBody.innerHTML = `
-    <div class="muted">رقم التتبّع: <b>${r.tracking}</b> — الفرع: <b>${r.branch}</b></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <img src="img/logo.png" alt="logo" style="width:48px;height:48px;object-fit:contain">
+      <div>
+        <div><b>رقم التتبّع:</b> ${r.tracking}</div>
+        <div class="muted">الفرع: <b>${r.branch}</b> — أنشئ بواسطة: <b>${displayNameOrEmail(currentUser,userProfile)}</b></div>
+      </div>
+    </div>
     <div style="margin:8px 0 4px"><b>المشروع:</b> ${r.projectName||"-"} &nbsp; | &nbsp; <b>العميل/الجهة:</b> ${r.customerName||"-"}</div>
     <table class="table-like" style="margin-top:8px">
       <thead><tr><th>#</th><th>كود الصنف</th><th>الكمية</th><th>سعر البيع</th></tr></thead>
       <tbody>${rows}</tbody>
       <tfoot><tr><td colspan="2" class="total">الإجمالي</td><td class="total">${qtySum}</td><td></td></tr></tfoot>
     </table>
+    <div style="margin-top:10px">
+      <b>المرفقات:</b>
+      ${attachHtml}
+    </div>
   `;
   modal.classList.add("show");
 }
 closeDetails.onclick = ()=> modal.classList.remove("show");
 modal.querySelector(".backdrop").onclick = ()=> modal.classList.remove("show");
+printBtn.onclick = ()=> window.print();
 
 /* ---------- ADMIN ---------- */
 const adminBody=$("#adminOrdersBody"), adminSearch=$("#adminSearch"), adminFilterBranch=$("#adminFilterBranch");
@@ -552,17 +572,11 @@ function renderAdmin(rows){
 adminSearch.addEventListener("input",()=>loadAdminOrders());
 adminFilterBranch.addEventListener("change",()=>loadAdminOrders());
 
-function statusLabel(s){
-  // غيّرنا delivered إلى "وصلت"
-  return {created:"جديد", ordered:"تم الطلب من المصنع", shipped:"تم الشحن", delivered:"وصلت"}[s] || s;
-}
-function statusClass(s){
-  return {created:"s-created", ordered:"s-ordered", shipped:"s-shipped", delivered:"s-delivered"}[s] || "s-created";
-}
+function statusLabel(s){ return {created:"جديد",ordered:"تم الطلب من المصنع",shipped:"تم الشحن",delivered:"وصلت"}[s] || s; }
+function statusClass(s){ return {created:"s-created",ordered:"s-ordered",shipped:"s-shipped",delivered:"s-delivered"}[s] || "s-created"; }
 
 /* ---------- init ---------- */
 route();
 </script>
 </body>
 </html>
-
