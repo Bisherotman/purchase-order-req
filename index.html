@@ -45,10 +45,17 @@
       <form id="loginForm">
 
         <label for="loginEmail">الإيميل</label>
-        <div class="input-wrap">
-          <input id="loginEmail" type="email" required placeholder="example@company.com" />
-          <button type="button" class="input-clear" id="clearEmail" aria-label="مسح الإيميل">✕</button>
-        </div>
+<div class="input-wrap">
+  <input id="loginEmail" type="email" required placeholder="example@company.com" />
+  <button type="button" class="input-clear" id="clearEmail" aria-label="مسح">✕</button>
+</div>
+
+<label for="loginPassword" style="margin-top:14px">كلمة المرور</label>
+<div class="input-wrap pwd-wrap">
+  <input id="loginPassword" type="password" required placeholder="••••••••" />
+  <button type="button" class="pwd-toggle" id="togglePwd" aria-label="إظهار/إخفاء">إظهار</button>
+  <button type="button" class="pwd-clear"  id="clearPwd"  aria-label="مسح">✕</button>
+</div>
 
         <label for="loginPassword" style="margin-top:14px">كلمة المرور</label>
         <div class="pwd-wrap input-wrap">
