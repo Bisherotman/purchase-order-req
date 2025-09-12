@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>نموذج طلب شراء</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; direction: rtl; background:#f4f4f4; padding:20px }
+    .form-container { background:#fff; padding:20px; border-radius:8px; width:90%; max-width:500px; margin:auto; box-shadow:0 2px 8px rgba(0,0,0,.1) }
+    label { font-weight:bold }
+    input,button { display:block; width:100%; padding:10px; margin-top:10px; font-size:16px; box-sizing:border-box }
+    button { background:#22c55e; color:#fff; border:0; cursor:pointer }
+    button:hover { opacity:.95 }
+    .msg { margin-top:12px; padding:10px; border-radius:6px; display:none }
+    .msg.success { background:#e8f7ee; color:#14532d; border:1px solid #bbefcf }
+    .msg.error { background:#fde8e8; color:#7f1d1d; border:1px solid #fecaca }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>تسجيل طلب شراء</h2>
+    <form id="orderForm" novalidate>
+      <label for="itemCode">كود الصنف:</label>
+      <input type="text" id="itemCode" required placeholder="مثال: F47.103.125-1C25P" />
+
+      <label for="quantity">الكمية المطلوبة:</label>
+      <input type="number" id="quantity" required min="1" step="1" placeholder="مثال: 10" />
+
+      <label for="price">سعر البيع:</label>
+      <input type="number" id="price" required min="0" step="0.01" placeholder="مثال: 125.50" />
+
+      <button type="submit">إرسال الطلب</button>
+      <div id="msg" class="msg"></div>
+    </form>
+  </div>
+
+  <!-- Firebase via CDN (Compat لأبسط دمج بملف واحد) -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // الصق إعداداتك من شاشة Firebase هنا:
+  const firebaseConfig = {
+    apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
+    authDomain: "purchase-order-req.firebaseapp.com",
+    projectId: "purchase-order-req",
+    storageBucket: "purchase-order-req.firebasestorage.app",
+    messagingSenderId: "72898448492",
+    appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
+  };
+
+    // تهيئة Firebase و Firestore
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const form = document.getElementById("orderForm");
+    const msg  = document.getElementById("msg");
+
+    function showMsg(text, type="success") {
+      msg.textContent = text;
+      msg.className = "msg " + type;
+      msg.style.display = "block";
+    }
+
+    function genTracking() {
+      return "ORD-" + Date.now().toString(36).toUpperCase();
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const itemCode = document.getElementById("itemCode").value.trim();
+      const quantity = Number(document.getElementById("quantity").value);
+      const price    = Number(document.getElementById("price").value);
+
+      if (!itemCode || !Number.isFinite(quantity) || quantity < 1 || !Number.isFinite(price) || price < 0) {
+        showMsg("تحقق من إدخال القيم بشكل صحيح.", "error");
+        return;
+      }
+
+      try {
+        const tracking = genTracking();
+        const docRef = await db.collection("orders").add({
+          itemCode, quantity, price,
+          status: "created",
+          tracking,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showMsg(`تم تسجيل الطلب. رقم التتبع: ${tracking} (ID: ${docRef.id})`);
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        showMsg("خطأ أثناء الإرسال. تحقق من إعدادات Firebase/قواعد الأمان.", "error");
+      }
+    });
+  </script>
+</body>
+</html>
