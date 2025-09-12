@@ -46,15 +46,14 @@
 
         <label for="loginEmail">الإيميل</label>
 <div class="input-wrap">
-  <input id="loginEmail" type="email" required placeholder="example@company.com" />
-  <button type="button" class="input-clear" id="clearEmail" aria-label="مسح">✕</button>
+  <input id="loginEmail" type="email" ... />
+  <button type="button" id="clearEmail" class="input-clear">✕</button>
 </div>
 
-<label for="loginPassword" style="margin-top:14px">كلمة المرور</label>
 <div class="input-wrap pwd-wrap">
-  <input id="loginPassword" type="password" required placeholder="••••••••" />
-  <button type="button" class="pwd-toggle" id="togglePwd" aria-label="إظهار/إخفاء">إظهار</button>
-  <button type="button" class="pwd-clear"  id="clearPwd"  aria-label="مسح">✕</button>
+  <input id="loginPassword" type="password" ... />
+  <button type="button" id="togglePwd" class="pwd-toggle">👁️</button>
+  <button type="button" id="clearPwd"  class="pwd-clear">✕</button>
 </div>
 
         <label for="loginPassword" style="margin-top:14px">كلمة المرور</label>
@@ -615,6 +614,31 @@ route();
     passInput.focus();
     passWrap.classList.remove('has-value');
   });
+})();
+(function(){
+  const email = document.getElementById('loginEmail');
+  const pwd   = document.getElementById('loginPassword');
+  const clearEmail = document.getElementById('clearEmail');
+  const togglePwd  = document.getElementById('togglePwd');
+  const clearPwd   = document.getElementById('clearPwd');
+
+  function uEmail(){ clearEmail.style.display = email && email.value ? 'flex' : 'none'; }
+  function uPwd(){ 
+    const has = pwd && pwd.value; 
+    togglePwd.style.display = has ? 'flex':'none';
+    clearPwd .style.display = has ? 'flex':'none';
+  }
+
+  ['input','focus','blur','change'].forEach(ev=>{
+    if(email) email.addEventListener(ev,uEmail);
+    if(pwd)   pwd.addEventListener(ev,uPwd);
+  });
+
+  if(clearEmail) clearEmail.onclick = ()=>{ email.value=''; email.focus(); uEmail(); };
+  if(togglePwd ) togglePwd .onclick = ()=>{ pwd.type = (pwd.type==='password'?'text':'password'); pwd.focus(); };
+  if(clearPwd  ) clearPwd  .onclick = ()=>{ pwd.value=''; pwd.focus(); uPwd(); };
+
+  uEmail(); uPwd(); // تهيئة أولية
 })();
 </script>
 </body>
