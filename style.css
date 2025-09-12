@@ -4,7 +4,7 @@
   --brand-dark: #5a1524;
   --brand-light: #8a2a3b;
   --bg: #ffffff;
-  --card: #f8f8f8; /* خلفية الكروت فقط */
+  --card: #eeeeee; /* رمادي أغمق */
   --muted: #6b7280;
   --ink: #111827;
   --radius: 16px;
@@ -23,7 +23,7 @@ body {
 .container {
   max-width: 1100px;
   margin: auto;
-  padding: 140px 16px 40px;
+  padding: 160px 16px 40px;
 }
 
 header {
@@ -174,7 +174,7 @@ label {
 
 .input-wrap {
   position: relative;
-  background: #f9f9fa;
+  background: #f1f1f1;
   border-radius: 12px;
   overflow: hidden;
   margin-top: 10px;
@@ -216,9 +216,11 @@ label {
   left: 44px;
 }
 
-/* إخفاء شعار الطباعة الكبير */
-.inv-brand img {
-  display: none;
+/* إخفاء شعار الطباعة الكبير وكل تفاصيل الطباعة */
+.inv-brand,
+#detailsModal,
+#printDetailsBtn {
+  display: none !important;
 }
 
 /* إظهار الحقول المناسبة فقط بعد الدخول */
@@ -261,7 +263,7 @@ body.auth-out .container > :not(#view-login) {
 
 @media (prefers-color-scheme: dark) {
   body { background: #ffffff; color: #111827; }
-  .card { background: #f8f8f8; }
+  .card { background: #eeeeee; }
   input, select, button { background: #fff; color: #111; border-color: #ddd; }
   .navlinks a { background: linear-gradient(180deg, #8a2a3b, #5a1524); }
 }
