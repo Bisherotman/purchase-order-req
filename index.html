@@ -24,51 +24,29 @@
 </head>
 <body>
 
+<!-- بطاقة الدخول فقط -->
 <div class="card" id="authCard">
   <h2>تسجيل الدخول</h2>
-  <div id="authTabs" class="row">
-    <button id="loginTab" class="secondary" style="flex:1">دخول</button>
-    <button id="signupTab" class="secondary" style="flex:1">تسجيل مستخدم جديد</button>
-  </div>
-  <div id="authForms">
-    <!-- Login -->
-    <form id="loginForm" style="margin-top:10px">
-      <label for="loginEmail">الإيميل:</label>
-      <input id="loginEmail" type="email" required placeholder="example@company.com" />
-      <label for="loginPassword">كلمة المرور:</label>
-      <input id="loginPassword" type="password" required placeholder="••••••••" />
-      <button type="submit">دخول</button>
-      <div id="loginMsg" class="msg"></div>
-    </form>
-
-    <!-- Signup -->
-    <form id="signupForm" class="hidden" style="margin-top:10px">
-      <label for="signupEmail">الإيميل:</label>
-      <input id="signupEmail" type="email" required placeholder="coordinator@company.com" />
-      <label for="signupPassword">كلمة المرور:</label>
-      <input id="signupPassword" type="password" required minlength="6" placeholder="على الأقل 6 أحرف" />
-      <label for="signupBranch">الفرع:</label>
-      <select id="signupBranch" required>
-        <option value="" disabled selected>اختر الفرع</option>
-        <option>Riyadh</option>
-        <option>Dammam</option>
-        <option>Jeddah</option>
-        <option>Makkah</option>
-        <option>Madina</option>
-      </select>
-      <button type="submit">تسجيل وإنشاء الحساب</button>
-      <div class="muted">ملاحظة: يمكن تعديل الفرع لاحقًا من لوحة الإدارة.</div>
-      <div id="signupMsg" class="msg"></div>
-    </form>
-  </div>
+  <form id="loginForm" style="margin-top:10px">
+    <label for="loginEmail">الإيميل:</label>
+    <input id="loginEmail" type="email" required placeholder="example@company.com" />
+    <label for="loginPassword">كلمة المرور:</label>
+    <input id="loginPassword" type="password" required placeholder="••••••••" />
+    <button type="submit">دخول</button>
+    <div id="loginMsg" class="msg"></div>
+    <div class="muted" style="margin-top:6px">
+      * إنشاء الحسابات يتم عن طريق الإدارة فقط.
+    </div>
+  </form>
 </div>
 
 <br/>
 
+<!-- التطبيق بعد الدخول -->
 <div class="card hidden" id="appCard">
   <div class="row" style="margin-bottom:10px">
     <div class="muted" id="whoami">—</div>
-    <button id="logoutBtn" class="secondary" style="width:auto">تسجيل الخروج</button>
+    <button id="logoutBtn" class="secondary" style="width:auto">خروج</button>
   </div>
 
   <h2>تسجيل طلب شراء</h2>
@@ -114,41 +92,24 @@
   const appCard    = document.getElementById("appCard");
   const whoami     = document.getElementById("whoami");
   const msg        = document.getElementById("msg");
+  const loginForm  = document.getElementById("loginForm");
+  const loginMsg   = document.getElementById("loginMsg");
   const orderForm  = document.getElementById("orderForm");
   const logoutBtn  = document.getElementById("logoutBtn");
-
-  const loginTab   = document.getElementById("loginTab");
-  const signupTab  = document.getElementById("signupTab");
-  const loginForm  = document.getElementById("loginForm");
-  const signupForm = document.getElementById("signupForm");
-  const loginMsg   = document.getElementById("loginMsg");
-  const signupMsg  = document.getElementById("signupMsg");
 
   function show(el){el.classList.remove("hidden")}
   function hide(el){el.classList.add("hidden")}
   function flash(el, text, type="success"){ el.textContent=text; el.className="msg "+type; el.style.display="block" }
 
-  // تبويبات دخول/تسجيل
-  loginTab.onclick=()=>{ show(loginForm); hide(signupForm); }
-  signupTab.onclick=()=>{ hide(loginForm); show(signupForm); }
-
-  // تسجيل مستخدم جديد + إنشاء وثيقة users/{uid}
-  signupForm.addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    const email  = document.getElementById("signupEmail").value.trim();
-    const pass   = document.getElementById("signupPassword").value;
-    const branch = document.getElementById("signupBranch").value;
-    try{
-      const { user } = await auth.createUserWithEmailAndPassword(email, pass);
-      // وثيقة المستخدم (فرع + isAdmin=false مبدئيًا)
-      await db.collection("users").doc(user.uid).set({
-        email, branch, isAdmin: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge:true });
-      flash(signupMsg,"تم إنشاء الحساب. تم تسجيل الدخول تلقائياً.","success");
-    }catch(err){
-      console.error(err); flash(signupMsg, "خطأ: "+(err.message||err), "error");
-    }
-  });
+  // أكواد الفروع للتتبّع
+  const branchCodes = {
+    Riyadh: "RUH",
+    Dammam: "DMM",
+    Jeddah: "JED",
+    Makkah: "MKK",
+    Madina: "MED"
+  };
+  function pad5(n){ return String(n).padStart(5,"0"); }
 
   // دخول
   loginForm.addEventListener("submit", async (e)=>{
@@ -159,7 +120,7 @@
       await auth.signInWithEmailAndPassword(email, pass);
       flash(loginMsg,"تم تسجيل الدخول.","success");
     }catch(err){
-      console.error(err); flash(loginMsg, "خطأ: "+(err.message||err), "error");
+      console.error(err); flash(loginMsg,"خطأ: "+(err.message||err),"error");
     }
   });
 
@@ -174,21 +135,21 @@
       hide(appCard); show(authCard);
       return;
     }
-    // اجلب وثيقة المستخدم (للحصول على الفرع والصلاحيات)
+    // جلب وثيقة المستخدم (يجب أن تكون مُنشأة مسبقاً من الإدارة)
     const snap = await db.collection("users").doc(user.uid).get();
-    userProfile = snap.exists ? snap.data() : null;
-
-    // لو أول مرة يدخل وما عنده وثيقة، أنشئ واحدة بفرع افتراضي للتذكير
-    if(!userProfile){
-      await db.collection("users").doc(user.uid).set({email:user.email, branch:"UNASSIGNED", isAdmin:false});
-      userProfile={email:user.email, branch:"UNASSIGNED", isAdmin:false};
+    if(!snap.exists){
+      // المستخدم غير مهيأ: اخفِ التطبيق وأظهر تنبيه
+      hide(appCard); show(authCard);
+      flash(loginMsg,"حسابك غير مهيأ. تواصل مع الإدارة لإسناد فرع لك.","error");
+      await auth.signOut();
+      return;
     }
-
+    userProfile = snap.data();
     whoami.innerHTML = `مرحباً، ${user.email} <span class="badge">الفرع: ${userProfile.branch}</span> ${userProfile.isAdmin?'<span class="badge">مدير</span>':''}`;
     hide(authCard); show(appCard);
   });
 
-  // إرسال الطلب (يرتبط بفرع المستخدم)
+  // إرسال الطلب (برقم تتبّع متسلسل لكل فرع)
   orderForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
     const btn = orderForm.querySelector("button[type=submit]");
@@ -202,28 +163,45 @@
     }
 
     btn.disabled=true; const old=btn.textContent; btn.textContent="جارٍ الإرسال...";
-    const tracking = "ORD-" + Date.now().toString(36).toUpperCase();
 
     try{
+      const branch = userProfile.branch;                        // مثال: "Riyadh"
+      const code   = branchCodes[branch] || "UNK";              // مثال: "RUH"
+      const counterRef = db.collection("counters").doc(branch); // counters/Riyadh
+
+      // حجز رقم متسلسل بصفقة واحدة
+      const seq = await db.runTransaction(async (tx)=>{
+        const snap = await tx.get(counterRef);
+        let next = 1;
+        if (snap.exists) next = (snap.data().next || 1);
+        tx.set(counterRef, { next: next + 1 }, { merge: true });
+        return next; // الرقم الحالي
+      });
+
+      const tracking = code + pad5(seq);                        // RUH00001
+
       const docRef = await db.collection("orders").add({
         itemCode, quantity, price,
-        branch: userProfile.branch,
+        branch,
         createdBy: auth.currentUser.uid,
         status: "created",
         tracking,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
+
       flash(msg, `تم تسجيل الطلب. رقم التتبع: ${tracking} (ID: ${docRef.id})`, "success");
       orderForm.reset();
+
     }catch(err){
-      console.error(err); flash(msg,"خطأ أثناء الإرسال: "+(err.message||err),"error");
+      console.error(err);
+      flash(msg,"خطأ أثناء الإرسال: "+(err.message||err),"error");
     }finally{
       btn.disabled=false; btn.textContent=old;
     }
   });
 
-  // التقط أخطاء عامة
-  window.addEventListener("error",(e)=>{ if(msg){ flash(msg,"خطأ عام: "+(e.error?.message||e.message),"error"); }});
+  // أخطاء عامة
+  window.addEventListener("error",(e)=>{ if(loginMsg) flash(loginMsg,"خطأ عام: "+(e.error?.message||e.message),"error"); });
 </script>
 </body>
 </html>
