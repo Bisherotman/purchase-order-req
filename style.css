@@ -1,37 +1,158 @@
-<script>
-  // عناصر الإيميل
-  const emailInput  = document.getElementById('loginEmail');
-  const emailWrap   = document.getElementById('emailWrap');
-  const clearEmail  = document.getElementById('clearEmail');
+:root{
+  /* ألوان وهوية */
+  --brand:#6c1d2c; --brand-600:#5f1926; --brand-500:#6c1d2c; --brand-400:#8a2a3b;
+  --ink:#0f172a; --muted:#64748b; --bg:#fbf7f8; --card:#ffffff;
+  --shadow:0 10px 30px rgba(108,29,44,.15); --radius:14px;
 
-  function refreshEmailUI(){
-    emailWrap.classList.toggle('has-value', !!emailInput.value.trim());
-  }
-  emailInput.addEventListener('input', refreshEmailUI);
-  clearEmail.addEventListener('click', () => { emailInput.value = ''; emailInput.focus(); refreshEmailUI(); });
-  refreshEmailUI();
+  /* تكبير الشعار ~30% */
+  --logo-size:110px;
+}
 
-  // عناصر كلمة السر
-  const pwdInput  = document.getElementById('loginPassword');
-  const pwdWrap   = document.getElementById('pwdWrap');
-  const togglePwd = document.getElementById('togglePwd');
-  const clearPwd  = document.getElementById('clearPwd');
+/* أساسي */
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);
+  font-family:"Tajawal","Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--ink)
+}
+a{color:inherit;text-decoration:none}
+input,select,button{font-family:inherit}
+.container{max-width:1100px;margin:0 auto;padding:110px 16px 40px}
 
-  function refreshPwdUI(){
-    pwdWrap.classList.toggle('has-value', !!pwdInput.value);
-  }
-  pwdInput.addEventListener('input', refreshPwdUI);
-  togglePwd.addEventListener('click', () => {
-    pwdInput.type = (pwdInput.type === 'password') ? 'text' : 'password';
-    pwdInput.focus();
-  });
-  clearPwd.addEventListener('click', () => { pwdInput.value = ''; pwdInput.focus(); refreshPwdUI(); });
-  refreshPwdUI();
+/* الهيدر */
+header{
+  position:fixed;inset-block-start:0;left:0;right:0;z-index:10;
+  background:#fff;border-bottom:1px solid #f1e6e9;
+  backdrop-filter:saturate(180%) blur(8px)
+}
+/* اجعل العنوان في الوسط دومًا */
+.nav{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;gap:14px;padding:10px 16px
+}
+.brand{display:flex;align-items:center;gap:12px;justify-content:flex-start}
+.brand img{
+  width:var(--logo-size);height:auto;max-width:140px;
+  object-fit:contain;filter:drop-shadow(0 4px 10px rgba(108,29,44,.25))
+}
+.title{text-align:center;font-weight:800;line-height:1.2}
+.title .ar{font-size:16px;color:var(--brand-500)}
+.title .en{display:block;font-size:12px;color:#7c2434}
 
-  // اجعل الشعار يرجع للصفحة الرئيسية (طلب جديد بعد تسجيل الدخول)
-  document.getElementById('brandLink').addEventListener('click', (e)=>{
-    e.preventDefault();
-    if (window.currentUser) location.hash = '#/new';
-    else location.hash = '#/login';
-  });
-</script>
+.navlinks{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.navlinks a{
+  padding:10px 14px;border-radius:999px;color:#fff;
+  background:linear-gradient(180deg,var(--brand-500),var(--brand-600));
+  box-shadow:0 6px 16px rgba(108,29,44,.25);
+  font-weight:700;font-size:14px;
+  transition:transform .15s ease, filter .15s ease, background .2s ease
+}
+.navlinks a:hover{transform:translateY(-1px);filter:saturate(110%)}
+.navlinks a:active{transform:translateY(0);filter:saturate(120%)}
+.navlinks a.ghost{background:linear-gradient(180deg,#fde7ec,#f9eef1);color:#2e1a1f;box-shadow:inset 0 0 0 1px #f2cbd4}
+.navlinks a.active{outline:2px solid #f2cbd4}
+
+/* البطاقات والنماذج */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin:18px 0}
+h1,h2{margin:0 0 10px} h2{font-size:22px}
+label{font-weight:700;display:block;margin-top:10px}
+input,select,button{width:100%;padding:12px 14px;margin-top:8px;border-radius:12px;border:1px solid #f0dbe0;background:#fff;font-size:16px}
+input:focus,select:focus{outline:0;border-color:#e3b3bd;box-shadow:0 0 0 3px #f6d7de}
+button{background:linear-gradient(180deg,var(--brand-400),var(--brand-500));color:#fff;border:0;cursor:pointer;transition:transform .1s ease,filter .15s ease}
+.btn-strong{font-weight:800;letter-spacing:.2px;position:relative;overflow:hidden;border-radius:12px}
+.btn-strong.loading{opacity:.85;pointer-events:none}
+.btn-strong.loading::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:shimmer 1.2s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.row{display:flex;gap:12px;align-items:center}.row>*{flex:1}
+.msg{margin-top:12px;padding:12px;border-radius:12px;display:none}
+.msg.success{background:#f2fbf5;color:#14532d;border:1px solid #c7f0d2}
+.msg.error{background:#fef2f2;color:#7f1d1d;border:1px solid #fecaca}
+.helper{color:var(--muted);font-size:13px;margin-top:6px}
+.section-box{margin:14px 0 8px;text-align:center;font-weight:800;padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,#fff,#f7eef0);color:#3b121b;border:1px solid #f0dbe0}
+
+/* حقول مع أزرار داخلية (إيميل + كلمة مرور) */
+.input-wrap{position:relative}
+.input-wrap input{padding-inline-start:88px;}   /* مساحة زر ✕ في الإيميل */
+.input-clear, .pwd-toggle, .pwd-clear{
+  position:absolute; inset-block-start:50%; transform:translateY(-50%);
+  height:28px; min-width:28px; padding:0 6px;
+  display:none; align-items:center; justify-content:center;
+  border:1px solid #e5e7eb; background:#fff; color:#9aa3af;
+  border-radius:8px; cursor:pointer; font-size:13px; line-height:1;
+}
+.input-clear:hover, .pwd-toggle:hover, .pwd-clear:hover{color:#6b7280}
+/* مواقع الأزرار (RTL) – يسار الحقل */
+.input-clear{inset-inline-start:8px}   /* الإيميل ✕ */
+.pwd-toggle{inset-inline-start:8px}    /* 👁 */
+.pwd-clear {inset-inline-start:44px}   /* ✕ بجوار العين */
+/* كلمة السر تحتاج مساحة لزرين */
+.pwd-wrap input{padding-inline-start:140px}
+/* أظهر الأزرار فقط عند وجود نص */
+.input-wrap.has-value .input-clear{display:flex}
+.pwd-wrap.has-value .pwd-toggle,
+.pwd-wrap.has-value .pwd-clear{display:flex}
+
+/* الأصناف والروابط */
+.items-head{display:flex;align-items:center;justify-content:center;margin-top:8px}
+.item-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;margin-top:8px}
+.item-row .remove{background:#fff;border:1px solid #f0dbe0;color:#b91c1c}
+.add-item{margin-top:10px;background:#fff;color:var(--brand);border:1px dashed #e3b3bd}
+.add-item:hover{background:#fdf2f4}
+.link-row{display:grid;grid-template-columns:1.3fr 2.2fr auto;gap:10px;margin-top:8px}
+.link-row .remove{background:#fff;border:1px solid #f0dbe0;color:#b91c1c}
+
+/* الجداول */
+table{width:100%;border-collapse:separate;border-spacing:0 10px}
+thead th{font-size:13px;color:var(--muted);text-align:right}
+tbody tr{background:#fff;box-shadow:var(--shadow)}
+td,th{padding:12px 14px}
+tbody tr td:first-child{border-radius:12px 0 0 12px}
+tbody tr td:last-child{border-radius:0 12px 12px 0}
+.status{padding:6px 10px;border-radius:999px;font-size:12px}
+.s-created{background:#f3e8ff;color:#6b21a8}
+.s-ordered{background:#fff1f2;color:#9f1239}
+.s-shipped{background:#eff6ff;color:#1d4ed8}
+.s-delivered{background:#ecfdf5;color:#065f46}
+
+/* مودال التفاصيل/الطباعة */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:50}
+.modal.show{display:flex}
+.backdrop{position:absolute;inset:0;background:rgba(0,0,0,.35)}
+.modal-card{position:relative;background:#fff;width:min(780px,92vw);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:18px}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.close-x{background:#fff;border:1px solid #eee;color:#444;width:36px;height:36px;border-radius:10px}
+.t-small{font-size:13px;color:#475569}
+.inv-head{display:flex;align-items:center;gap:12px;border-bottom:1px solid #e2e8f0;padding-bottom:10px;margin-bottom:10px}
+.inv-brand{display:flex;align-items:center;gap:10px}
+.inv-brand img{width:46px;height:46px;object-fit:contain}
+.inv-title{font-weight:800}
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.table-like{width:100%;border-collapse:collapse}
+.table-like th,.table-like td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:right}
+.table-like thead th{color:#64748b;font-size:13px}
+.total{font-weight:800}
+
+/* تجاوب */
+@media (max-width:900px){
+  .nav{grid-template-columns:1fr auto;grid-template-areas:
+    "title actions" "brand actions";gap:6px}
+  .brand{grid-area:brand;justify-content:flex-start}
+  .title{grid-area:title;text-align:start}
+  .navlinks{grid-area:actions}
+}
+@media (max-width:720px){.item-row{grid-template-columns:1fr 1fr 1fr auto}}
+@media (max-width:640px){:root{--logo-size:84px}} /* تصغير الشعار على الهواتف */
+@media print{
+  header,.view:not(.printable),.modal .close-x,.modal .backdrop{display:none !important}
+  .modal-card{box-shadow:none;width:auto;padding:0}
+}
+
+/* قفل الواجهات قبل الدخول */
+.view{display:none !important;}
+.view.active{display:block !important;}
+body.auth-out #view-login{display:block !important;}
+body.auth-out #view-new,
+body.auth-out #view-my,
+body.auth-out #view-admin{display:none !important;}
+body.auth-out .container > :not(#view-login){pointer-events:none;user-select:none}
