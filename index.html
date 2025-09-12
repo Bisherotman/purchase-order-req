@@ -1,3 +1,18 @@
+تمام — جهّزت لك نسخة كاملة محدثة فيها كل المطلوب:
+
+* تكبير الشعار \~30% (من 44px إلى 57px).
+* تغيير تسمية “الإدارة” → **إدارة الطلبات**.
+* **حالة “وصلت”** بدل “تم الاستلام/التسليم” (status: `delivered` → وصلت).
+* “الدخول/الخروج” بنفس الثيم تمامًا.
+* خطوط موحّدة (Tajawal + Inter) مطبّقة على كل العناصر (buttons/inputs…).
+* **معلومات المشروع** عنوان مستقل فوق حقول المشروع/العميل.
+* **الأصناف** في المنتصف بخط عريض، وزر **+ إضافة صنف** أسفله، وصفوف أصناف (كود/كمية/سعر) مع زر حذف.
+* حفظ الإيميل (تذكّر الإيميل) كما هو.
+* **تفاصيل الطلب**: زر “تفاصيل” في جدول “طلباتي” يفتح نافذة (Modal) أنيقة تعرض المشروع/العميل وجميع الأصناف بالكمية والسعر ومجموع الكميات.
+
+انسخ واستبدل كامل ملف `index.html` بهذا:
+
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -17,10 +32,12 @@
   *{box-sizing:border-box}
   body{
     margin:0;background:var(--bg);
-    font-family:"Tajawal", "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-family:"Tajawal","Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     color:var(--ink)
   }
   a{color:inherit;text-decoration:none}
+  input,select,button{font-family:inherit}
+
   .container{max-width:1100px;margin:0 auto;padding:100px 16px 40px}
 
   /* Header */
@@ -31,7 +48,7 @@
   }
   .nav{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 16px}
   .brand{display:flex;align-items:center;gap:12px;font-weight:800}
-  .brand img{width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(108,29,44,.25))}
+  .brand img{width:57px;height:57px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(108,29,44,.25))}
   .brand span{color:var(--brand-500)}
   .navlinks{display:flex;align-items:center;gap:6px;margin-inline-start:auto}
   .navlinks a{
@@ -52,6 +69,8 @@
   /* Cards / forms */
   .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px; margin:18px 0}
   h1,h2{margin:0 0 10px} h2{font-size:22px}
+  .section-title{font-weight:800;margin-top:4px;margin-bottom:8px}
+  .section-title.center{text-align:center}
   label{font-weight:700; display:block; margin-top:10px}
   input,select,button{
     width:100%; padding:12px 14px; margin-top:8px; border-radius:12px; border:1px solid #f0dbe0; background:#fff; font-size:16px
@@ -93,15 +112,26 @@
   .view.active{display:block; opacity:1; transform:translateY(0)}
 
   /* line-items */
-  .items-head{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+  .items-head{display:flex;align-items:center;justify-content:center;margin-top:8px}
   .item-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;margin-top:8px}
   .item-row .remove{background:#fff; border:1px solid #f0dbe0; color:#b91c1c}
   .add-item{margin-top:10px;background:#fff;color:var(--brand);border:1px dashed #e3b3bd}
   .add-item:hover{background:#fdf2f4}
 
-  @media (max-width:720px){
-    .item-row{grid-template-columns:1fr 1fr 1fr auto}
-  }
+  /* Modal */
+  .modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:50}
+  .modal.show{display:flex}
+  .backdrop{position:absolute; inset:0; background:rgba(0,0,0,.35)}
+  .modal-card{position:relative; background:#fff; width:min(720px, 92vw); border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.25); padding:18px}
+  .modal-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px}
+  .close-x{background:#fff;border:1px solid #eee;color:#444;width:36px;height:36px;border-radius:10px}
+  .muted{color:#6b7280;font-size:14px}
+  .t-small{font-size:13px;color:#475569}
+  .table-like{width:100%;border-collapse:collapse}
+  .table-like th,.table-like td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:right}
+  .table-like thead th{color:#64748b;font-size:13px}
+  .total{font-weight:800}
+  @media (max-width:720px){.item-row{grid-template-columns:1fr 1fr 1fr auto}}
 </style>
 </head>
 <body>
@@ -109,14 +139,14 @@
 <header>
   <nav class="nav">
     <a class="brand" href="#/login" id="brandLink">
-      <img src="img/pagelogo.png" alt="Bayt Alebaa Logo" />
+      <img src="img/logo.png" alt="Bayt Alebaa Logo" />
       <span>بوابة طلبات الشراء لقسم المشاريع</span>
     </a>
     <div class="navlinks" id="navLinks">
-      <!-- أزلنا رابط "تسجيل الدخول" نهائيًا -->
+      <!-- ألغينا رابط "تسجيل الدخول" -->
       <a href="#/new"   data-auth="user"  style="display:none">طلب جديد</a>
       <a href="#/my"    data-auth="user"  style="display:none">طلبــاتي</a>
-      <a href="#/admin" data-auth="admin" style="display:none">الإدارة</a>
+      <a href="#/admin" data-auth="admin" style="display:none">إدارة الطلبات</a>
       <a href="#/login" id="sessionBtn" class="btn">دخول</a>
     </div>
   </nav>
@@ -155,7 +185,8 @@
         <div class="helper" id="whoami">—</div>
       </div>
 
-      <!-- ثابت: مشروع + عميل -->
+      <!-- معلومات المشروع -->
+      <div class="section-title">معلومات المشروع</div>
       <div class="row">
         <div>
           <label for="projectName">اسم المشروع</label>
@@ -167,9 +198,9 @@
         </div>
       </div>
 
-      <!-- أصناف متعددة -->
+      <!-- الأصناف -->
+      <div class="section-title center">الأصناف</div>
       <div class="items-head">
-        <label>الأصناف</label>
         <button type="button" id="addItemBtn" class="add-item">+ إضافة صنف</button>
       </div>
       <div id="itemsWrap"></div>
@@ -197,7 +228,7 @@
         <table>
           <thead>
             <tr>
-              <th>التتبّع</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>المشروع</th><th>الحالة</th><th>التاريخ</th>
+              <th>التتبّع</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>المشروع</th><th>الحالة</th><th>التاريخ</th><th>تفاصيل</th>
             </tr>
           </thead>
           <tbody id="myOrdersBody"></tbody>
@@ -210,7 +241,7 @@
   <section id="view-admin" class="view">
     <div class="card">
       <div class="row" style="justify-content:space-between">
-        <h2>لوحة الإدارة</h2>
+        <h2>إدارة الطلبات</h2>
         <div class="helper" id="whoamiAdmin">—</div>
       </div>
       <div class="row">
@@ -232,6 +263,18 @@
       </div>
     </div>
   </section>
+</div>
+
+<!-- DETAILS MODAL -->
+<div id="detailsModal" class="modal" aria-hidden="true">
+  <div class="backdrop"></div>
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 style="margin:0">تفاصيل الطلب</h3>
+      <button class="close-x" id="closeDetails">✕</button>
+    </div>
+    <div id="detailsBody" class="t-small"></div>
+  </div>
 </div>
 
 <!-- Firebase -->
@@ -381,7 +424,7 @@ submitOrderBtn.addEventListener("click", async ()=>{
 
     await db.collection("orders").doc(tracking).set({
       tracking, branch, projectName, customerName,
-      items, // <=== هنا الأصناف المتعددة
+      items,
       createdBy: currentUser.uid, status:"created",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -400,14 +443,14 @@ submitOrderBtn.addEventListener("click", async ()=>{
 });
 
 /* ---------- MY ORDERS (Realtime) ---------- */
-let myUnsub=null;
+let myUnsub=null, myRows=[];
 function subscribeMyOrders(){
   if(myUnsub){ myUnsub(); myUnsub=null; }
   if(!currentUser) return;
   const q=db.collection("orders").where("createdBy","==",currentUser.uid);
   myUnsub=q.onSnapshot((snap)=>{
-    const rows=snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderMy(rows);
+    myRows=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderMy(myRows);
   },(err)=>{
     console.error(err);
     showMsg(document.getElementById("newMsg"),"تعذّر تحميل طلباتك: "+(err.message||err),"error");
@@ -416,7 +459,7 @@ function subscribeMyOrders(){
 function renderMy(rows){
   const term=(mySearch.value||"").toLowerCase();
   rows=rows.filter(r=>{
-    const first=(r.items?.[0]?.itemCode||r.itemCode||"").toLowerCase();
+    const first=(r.items?.[0]?.itemCode||"").toLowerCase();
     return !term || r.tracking.toLowerCase().includes(term) || first.includes(term);
   });
   rows.sort((a,b)=> (mySort.value==="createdAt_desc"
@@ -425,10 +468,10 @@ function renderMy(rows){
 
   myBody.innerHTML=rows.map(r=>{
     const items=r.items||[];
-    const firstCode = items[0]?.itemCode || r.itemCode || "";
+    const firstCode = items[0]?.itemCode || "";
     const extra = items.length>1 ? ` (+${items.length-1})` : "";
-    const qtySum = items.length ? items.reduce((s,x)=>s+(x.quantity||0),0) : (r.quantity||"");
-    const priceFirst = items.length ? (items[0].price ?? "") : (r.price ?? "");
+    const qtySum = items.reduce((s,x)=>s+(x.quantity||0),0);
+    const priceFirst = items.length ? (items[0].price ?? "") : "";
     return `
       <tr>
         <td><strong>${r.tracking}</strong></td>
@@ -438,11 +481,41 @@ function renderMy(rows){
         <td>${r.projectName||"-"}</td>
         <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
         <td>${r.createdAt?.toDate?.().toLocaleString('ar-SA')||""}</td>
+        <td><button type="button" class="btn-strong" data-open="${r.tracking}" style="padding:6px 10px;border-radius:10px">تفاصيل</button></td>
       </tr>`;
   }).join("");
+
+  // ربط أزرار التفاصيل
+  document.querySelectorAll('[data-open]').forEach(btn=>{
+    btn.onclick = ()=> openDetails(btn.dataset.open);
+  });
 }
-mySearch.addEventListener("input",()=>subscribeMyOrders());
-mySort.addEventListener("change",()=>subscribeMyOrders());
+mySearch.addEventListener("input",()=>renderMy(myRows));
+mySort.addEventListener("change",()=>renderMy(myRows));
+
+/* ---------- DETAILS MODAL ---------- */
+const modal=$("#detailsModal"), closeDetails=$("#closeDetails"), detailsBody=$("#detailsBody");
+function openDetails(tracking){
+  const r = myRows.find(x=>x.tracking===tracking);
+  if(!r) return;
+  const items=r.items||[];
+  const qtySum=items.reduce((s,x)=>s+(x.quantity||0),0);
+  const rows=items.map((it,i)=>`
+    <tr><td>${i+1}</td><td>${it.itemCode||""}</td><td>${it.quantity??""}</td><td>${(typeof it.price==="number")?it.price.toFixed(2):it.price??""}</td></tr>
+  `).join("");
+  detailsBody.innerHTML = `
+    <div class="muted">رقم التتبّع: <b>${r.tracking}</b> — الفرع: <b>${r.branch}</b></div>
+    <div style="margin:8px 0 4px"><b>المشروع:</b> ${r.projectName||"-"} &nbsp; | &nbsp; <b>العميل/الجهة:</b> ${r.customerName||"-"}</div>
+    <table class="table-like" style="margin-top:8px">
+      <thead><tr><th>#</th><th>كود الصنف</th><th>الكمية</th><th>سعر البيع</th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr><td colspan="2" class="total">الإجمالي</td><td class="total">${qtySum}</td><td></td></tr></tfoot>
+    </table>
+  `;
+  modal.classList.add("show");
+}
+closeDetails.onclick = ()=> modal.classList.remove("show");
+modal.querySelector(".backdrop").onclick = ()=> modal.classList.remove("show");
 
 /* ---------- ADMIN ---------- */
 const adminBody=$("#adminOrdersBody"), adminSearch=$("#adminSearch"), adminFilterBranch=$("#adminFilterBranch");
@@ -455,16 +528,16 @@ async function loadAdminOrders(){
 function renderAdmin(rows){
   const term=(adminSearch.value||"").toLowerCase(), fb=adminFilterBranch.value;
   rows=rows.filter(r=>{
-    const first=(r.items?.[0]?.itemCode||r.itemCode||"").toLowerCase();
+    const first=(r.items?.[0]?.itemCode||"").toLowerCase();
     return (!fb || r.branch===fb) && (!term || r.tracking.toLowerCase().includes(term) || first.includes(term));
   });
   rows.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
   adminBody.innerHTML=rows.map(r=>{
     const items=r.items||[];
-    const firstCode=items[0]?.itemCode || r.itemCode || "";
+    const firstCode=items[0]?.itemCode || "";
     const extra=items.length>1 ? ` (+${items.length-1})` : "";
-    const qtySum=items.length ? items.reduce((s,x)=>s+(x.quantity||0),0) : (r.quantity||"");
-    const priceFirst=items.length ? (items[0].price ?? "") : (r.price ?? "");
+    const qtySum=items.reduce((s,x)=>s+(x.quantity||0),0);
+    const priceFirst=items.length ? (items[0].price ?? "") : "";
     return `
       <tr>
         <td>${r.branch}</td>
@@ -493,12 +566,19 @@ function renderAdmin(rows){
 adminSearch.addEventListener("input",()=>loadAdminOrders());
 adminFilterBranch.addEventListener("change",()=>loadAdminOrders());
 
-function statusLabel(s){ return {created:"جديد",ordered:"تم الطلب من المصنع",shipped:"تم الشحن",delivered:"تم التسليم"}[s]||s; }
-function statusClass(s){ return {created:"s-created",ordered:"s-ordered",shipped:"s-shipped",delivered:"s-delivered"}[s]||"s-created"; }
+function statusLabel(s){
+  // غيّرنا delivered إلى "وصلت"
+  return {created:"جديد", ordered:"تم الطلب من المصنع", shipped:"تم الشحن", delivered:"وصلت"}[s] || s;
+}
+function statusClass(s){
+  return {created:"s-created", ordered:"s-ordered", shipped:"s-shipped", delivered:"s-delivered"}[s] || "s-created";
+}
 
 /* ---------- init ---------- */
 route();
 </script>
 </body>
 </html>
+```
 
+لو تحب نضيف **تصدير PDF/CSV** من نافذة التفاصيل أو زر “طباعة الطلب”، أو نضيف **مرفقات** (فاتورة/عرض سعر) — قلّي وبجهّزها 👌
