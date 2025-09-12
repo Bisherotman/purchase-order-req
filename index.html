@@ -1,208 +1,474 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8" />
-<title>بوابة طلبات الشراء</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>بوابة طلبات الشراء | بيت الإباء</title>
 <style>
-  body{font-family:Arial,sans-serif;direction:rtl;background:#f4f4f4;padding:20px}
-  .card{background:#fff;padding:20px;border-radius:10px;max-width:560px;margin:auto;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-  h2{text-align:center;margin-top:0}
-  label{font-weight:bold}
-  input,select,button{width:100%;padding:10px;margin-top:10px;font-size:16px;box-sizing:border-box}
-  button{background:#22c55e;color:#fff;border:0;cursor:pointer;border-radius:8px}
-  button.secondary{background:#475569}
-  button:hover{opacity:.95}
-  .row{display:flex;gap:10px;align-items:center;justify-content:space-between}
-  .muted{color:#64748b;font-size:14px}
-  .msg{margin-top:12px;padding:10px;border-radius:8px;display:none}
-  .msg.success{background:#e8f7ee;color:#14532d;border:1px solid #bbefcf}
-  .msg.error{background:#fde8e8;color:#7f1d1d;border:1px solid #fecaca}
-  .badge{display:inline-block;background:#e2e8f0;color:#0f172a;border-radius:999px;padding:4px 10px;font-size:12px;margin-inline-start:8px}
-  .hidden{display:none}
+  :root{
+    --brand:#11A3B2;     /* تركواز من الشعار */
+    --brand-dark:#0e8e9b;
+    --ink:#0f172a;
+    --muted:#64748b;
+    --bg:#f6fafb;
+    --card:#ffffff;
+    --ok:#16a34a;
+    --warn:#f59e0b;
+    --err:#dc2626;
+    --shadow:0 10px 30px rgba(17,163,178,.12);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:1100px;margin:0 auto;padding:100px 16px 40px} /* padding-top بسبب الهيدر الثابت */
+
+  /* Header */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:10;
+    background:linear-gradient(180deg,#ffffff 0%,rgba(255,255,255,.96) 70%,rgba(255,255,255,.8) 100%);
+    backdrop-filter:saturate(180%) blur(8px);
+    border-bottom:1px solid #eef3f4;
+  }
+  .nav{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 16px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700}
+  .brand img{width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(17,163,178,.25))}
+  .brand span{color:var(--brand)}
+  .navlinks{display:flex;align-items:center;gap:6px;margin-inline-start:auto}
+  .navlinks a{
+    padding:10px 14px;border-radius:999px;color:#0b2a30;
+    transition:transform .15s ease, background .2s ease, box-shadow .2s ease;
+  }
+  .navlinks a.active, .navlinks a:hover{background:#e7f6f8; box-shadow:inset 0 0 0 1px #ccebee}
+  .navlinks .btn{
+    background:var(--brand); color:#fff; box-shadow:0 6px 16px rgba(17,163,178,.25);
+  }
+  .navlinks .btn:hover{transform:translateY(-1px); background:var(--brand-dark)}
+  .badge{display:inline-block;background:#e7f6f8;color:#075a64;border-radius:999px;padding:4px 10px;font-size:12px}
+
+  /* Cards / forms */
+  .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px; margin:18px 0}
+  h1,h2{margin:0 0 10px}
+  h2{font-size:22px}
+  label{font-weight:700; display:block; margin-top:10px}
+  input,select,button{
+    width:100%; padding:12px 14px; margin-top:8px; border-radius:12px; border:1px solid #e5eff1; background:#fff; font-size:16px;
+  }
+  input:focus,select:focus{outline:0; border-color:#b6e4ea; box-shadow:0 0 0 3px #c9eef2}
+  button{background:var(--brand); color:#fff; border:0; cursor:pointer; transition:transform .1s ease, filter .15s ease}
+  button:hover{transform:translateY(-1px); filter:saturate(115%)}
+  button.secondary{background:#0b2a30}
+  .row{display:flex; gap:12px; align-items:center}
+  .row > *{flex:1}
+
+  .msg{margin-top:12px; padding:12px; border-radius:12px; display:none}
+  .msg.success{background:#ecfdf5; color:#064e3b; border:1px solid #bbf7d0}
+  .msg.error{background:#fef2f2; color:#7f1d1d; border:1px solid #fecaca}
+  .helper{color:var(--muted); font-size:13px; margin-top:6px}
+
+  /* Tables */
+  table{width:100%; border-collapse:separate; border-spacing:0 10px}
+  thead th{font-size:13px; color:var(--muted); text-align:right}
+  tbody tr{background:#fff; box-shadow:var(--shadow)}
+  td,th{padding:12px 14px}
+  tbody tr td:first-child{border-radius:12px 0 0 12px}
+  tbody tr td:last-child{border-radius:0 12px 12px 0}
+  .status{padding:6px 10px; border-radius:999px; font-size:12px}
+  .s-created{background:#eef2ff; color:#3730a3}
+  .s-ordered{background:#fff7ed; color:#9a3412}
+  .s-shipped{background:#ecfeff; color:#155e75}
+  .s-delivered{background:#ecfdf5; color:#065f46}
+
+  /* Views (routing) */
+  .view{display:none}
+  .view.active{display:block}
+
+  @media (max-width:640px){
+    .navlinks{gap:4px}
+    .navlinks a{padding:8px 12px}
+  }
 </style>
 </head>
 <body>
 
-<!-- بطاقة الدخول فقط -->
-<div class="card" id="authCard">
-  <h2>تسجيل الدخول</h2>
-  <form id="loginForm" style="margin-top:10px">
-    <label for="loginEmail">الإيميل:</label>
-    <input id="loginEmail" type="email" required placeholder="example@company.com" />
-    <label for="loginPassword">كلمة المرور:</label>
-    <input id="loginPassword" type="password" required placeholder="••••••••" />
-    <button type="submit">دخول</button>
-    <div id="loginMsg" class="msg"></div>
-    <div class="muted" style="margin-top:6px">
-      * إنشاء الحسابات يتم عن طريق الإدارة فقط.
+<header>
+  <nav class="nav">
+    <a class="brand" href="#/login" id="brandLink">
+      <img src="logo.png" alt="Bayt Alebaa Logo" />
+      <span>Bayt Alebaa</span>
+    </a>
+    <div class="navlinks" id="navLinks">
+      <a href="#/login" data-auth="any" class="active">تسجيل الدخول</a>
+      <a href="#/new" data-auth="user">طلب جديد</a>
+      <a href="#/my" data-auth="user">طلبــاتي</a>
+      <a href="#/admin" data-auth="admin">الإدارة</a>
+      <a href="#" id="logoutBtn" class="btn" style="display:none">خروج</a>
     </div>
-  </form>
+  </nav>
+</header>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <section id="view-login" class="view active">
+    <div class="card">
+      <h2>تسجيل الدخول</h2>
+      <form id="loginForm">
+        <label for="loginEmail">الإيميل</label>
+        <input id="loginEmail" type="email" required placeholder="example@company.com" />
+        <label for="loginPassword">كلمة المرور</label>
+        <input id="loginPassword" type="password" required placeholder="••••••••" />
+        <button type="submit">دخول</button>
+        <div id="loginMsg" class="msg"></div>
+        <div class="helper">* إنشاء الحسابات يتم عبر الإدارة فقط.</div>
+      </form>
+    </div>
+  </section>
+
+  <!-- NEW ORDER -->
+  <section id="view-new" class="view">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h2>تسجيل طلب شراء</h2>
+        <div class="badge" id="whoami">—</div>
+      </div>
+      <form id="orderForm" novalidate>
+        <label for="itemCode">كود الصنف</label>
+        <input id="itemCode" type="text" required placeholder="F47.103.125-1C25P" />
+
+        <div class="row">
+          <div>
+            <label for="quantity">الكمية المطلوبة</label>
+            <input id="quantity" type="number" min="1" step="1" required placeholder="10" />
+          </div>
+          <div>
+            <label for="price">سعر البيع</label>
+            <input id="price" type="number" min="0" step="0.01" required placeholder="125.50" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="projectName">اسم المشروع</label>
+            <input id="projectName" type="text" placeholder="مشروع أبراج..." />
+          </div>
+          <div>
+            <label for="customerName">اسم العميل/الجهة</label>
+            <input id="customerName" type="text" placeholder="شركة/جهة..." />
+          </div>
+        </div>
+
+        <button type="submit">إرسال الطلب</button>
+        <div id="newMsg" class="msg"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- MY ORDERS -->
+  <section id="view-my" class="view">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h2>طلبــاتي</h2>
+        <div class="badge" id="whoamiMy">—</div>
+      </div>
+      <div class="row">
+        <input id="mySearch" placeholder="ابحث برقم التتبّع أو كود الصنف" />
+        <select id="mySort">
+          <option value="createdAt_desc">الأحدث أولاً</option>
+          <option value="createdAt_asc">الأقدم أولاً</option>
+        </select>
+      </div>
+      <div id="myTableWrap" class="card" style="padding:0">
+        <table>
+          <thead>
+            <tr>
+              <th>التتبّع</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>المشروع</th><th>الحالة</th><th>التاريخ</th>
+            </tr>
+          </thead>
+          <tbody id="myOrdersBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="view-admin" class="view">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h2>لوحة الإدارة</h2>
+        <div class="badge" id="whoamiAdmin">—</div>
+      </div>
+      <div class="row">
+        <input id="adminSearch" placeholder="ابحث برقم التتبّع أو كود الصنف" />
+        <select id="adminFilterBranch">
+          <option value="">كل الفروع</option>
+          <option>Riyadh</option><option>Dammam</option><option>Jeddah</option><option>Makkah</option><option>Madina</option>
+        </select>
+      </div>
+      <div id="adminTableWrap" class="card" style="padding:0">
+        <table>
+          <thead>
+            <tr>
+              <th>الفرع</th><th>التتبّع</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>المشروع</th><th>الحالة</th><th>إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="adminOrdersBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 </div>
 
-<br/>
-
-<!-- التطبيق بعد الدخول -->
-<div class="card hidden" id="appCard">
-  <div class="row" style="margin-bottom:10px">
-    <div class="muted" id="whoami">—</div>
-    <button id="logoutBtn" class="secondary" style="width:auto">خروج</button>
-  </div>
-
-  <h2>تسجيل طلب شراء</h2>
-
-  <form id="orderForm" novalidate>
-    <label for="itemCode">كود الصنف:</label>
-    <input type="text" id="itemCode" required placeholder="مثال: F47.103.125-1C25P" />
-
-    <label for="quantity">الكمية المطلوبة:</label>
-    <input type="number" id="quantity" required min="1" step="1" placeholder="مثال: 10" />
-
-    <label for="price">سعر البيع:</label>
-    <input type="number" id="price" required min="0" step="0.01" placeholder="مثال: 125.50" />
-
-    <button type="submit">إرسال الطلب</button>
-    <div id="msg" class="msg"></div>
-  </form>
-</div>
-
-<!-- Firebase CDN (Compat) -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore-compat.js"></script>
 
 <script>
-  // إعدادات مشروعك
-  const firebaseConfig = {
-    apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
-    authDomain: "purchase-order-req.firebaseapp.com",
-    projectId: "purchase-order-req",
-    storageBucket: "purchase-order-req.appspot.com",
-    messagingSenderId: "72898448492",
-    appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
-  };
+/* ---------- Firebase setup ---------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
+  authDomain: "purchase-order-req.firebaseapp.com",
+  projectId: "purchase-order-req",
+  storageBucket: "purchase-order-req.appspot.com",
+  messagingSenderId: "72898448492",
+  appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
 
-  // تهيئة
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db   = firebase.firestore();
+/* ---------- UI helpers ---------- */
+const $ = (s)=>document.querySelector(s);
+const navLinks = $("#navLinks");
+function setActive(hash){
+  navLinks.querySelectorAll("a").forEach(a=>a.classList.toggle("active", a.getAttribute("href")==hash));
+}
+function showMsg(el, text, type="success"){ el.textContent=text; el.className="msg "+type; el.style.display="block"; }
+function hideMsg(el){ el.style.display="none"; }
+function showView(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
 
-  // عناصر الواجهة
-  const authCard   = document.getElementById("authCard");
-  const appCard    = document.getElementById("appCard");
-  const whoami     = document.getElementById("whoami");
-  const msg        = document.getElementById("msg");
-  const loginForm  = document.getElementById("loginForm");
-  const loginMsg   = document.getElementById("loginMsg");
-  const orderForm  = document.getElementById("orderForm");
-  const logoutBtn  = document.getElementById("logoutBtn");
+/* ---------- Routing ---------- */
+const routes = { "#/login":"view-login", "#/new":"view-new", "#/my":"view-my", "#/admin":"view-admin" };
+function route(){
+  const h = location.hash || "#/login";
+  setActive(h);
+  // حماية الصفحات
+  if(!currentUser && h!=="#/login"){ location.hash = "#/login"; return; }
+  if(!isAdmin && h==="#/admin"){ location.hash = "#/new"; return; }
+  showView(routes[h]);
+}
+window.addEventListener("hashchange", route);
 
-  function show(el){el.classList.remove("hidden")}
-  function hide(el){el.classList.add("hidden")}
-  function flash(el, text, type="success"){ el.textContent=text; el.className="msg "+type; el.style.display="block" }
+/* ---------- Auth UI ---------- */
+const loginForm = $("#loginForm"), loginMsg = $("#loginMsg");
+const whoami = $("#whoami"), whoamiMy=$("#whoamiMy"), whoamiAdmin=$("#whoamiAdmin");
+const logoutBtn = $("#logoutBtn");
 
-  // أكواد الفروع للتتبّع
-  const branchCodes = {
-    Riyadh: "RUH",
-    Dammam: "DMM",
-    Jeddah: "JED",
-    Makkah: "MKK",
-    Madina: "MED"
-  };
-  function pad5(n){ return String(n).padStart(5,"0"); }
+let currentUser=null, userProfile=null, isAdmin=false;
 
-  // دخول
-  loginForm.addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    const email = document.getElementById("loginEmail").value.trim();
-    const pass  = document.getElementById("loginPassword").value;
-    try{
-      await auth.signInWithEmailAndPassword(email, pass);
-      flash(loginMsg,"تم تسجيل الدخول.","success");
-    }catch(err){
-      console.error(err); flash(loginMsg,"خطأ: "+(err.message||err),"error");
-    }
+loginForm.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  hideMsg(loginMsg);
+  const email = $("#loginEmail").value.trim();
+  const pass  = $("#loginPassword").value;
+  try{
+    await auth.signInWithEmailAndPassword(email, pass);
+    showMsg(loginMsg,"تم تسجيل الدخول.","success");
+  }catch(err){
+    showMsg(loginMsg,"خطأ: "+(err.message||err),"error");
+  }
+});
+
+logoutBtn.onclick = ()=> auth.signOut();
+
+auth.onAuthStateChanged(async (user)=>{
+  currentUser = user;
+  if(!user){
+    userProfile=null; isAdmin=false;
+    logoutBtn.style.display="none";
+    // إظهار/إخفاء روابط الناف
+    navLinks.querySelectorAll("[data-auth]").forEach(a=>{
+      a.style.display = (a.dataset.auth==="any") ? "" : "none";
+    });
+    location.hash = "#/login"; route();
+    return;
+  }
+  // جلب وثيقة المستخدم
+  const snap = await db.collection("users").doc(user.uid).get();
+  if(!snap.exists){
+    showMsg(loginMsg,"حسابك غير مهيأ. تواصل مع الإدارة لإسناد فرع لك.","error");
+    await auth.signOut(); return;
+  }
+  userProfile = snap.data();
+  isAdmin = !!userProfile.isAdmin;
+  logoutBtn.style.display="";
+
+  // تحديث شارات
+  const badgeHtml = `مرحباً، ${user.email} <span class="badge">الفرع: ${userProfile.branch}</span> ${isAdmin?'<span class="badge">مدير</span>':''}`;
+  whoami.innerHTML = badgeHtml; whoamiMy.innerHTML = badgeHtml; whoamiAdmin.innerHTML = badgeHtml;
+
+  // روابط الناف
+  navLinks.querySelectorAll("[data-auth]").forEach(a=>{
+    const t = a.dataset.auth;
+    a.style.display = (t==="any") ? "" : (t==="user" ? "" : (isAdmin ? "" : "none"));
   });
 
-  // خروج
-  logoutBtn.onclick = ()=> auth.signOut();
+  // اذهب إلى طلب جديد عند أول دخول
+  if(location.hash==="#/login"){ location.hash = "#/new"; }
+  route();
+  loadMyOrders();
+  if(isAdmin) loadAdminOrders();
+});
 
-  // متابعة حالة الدخول
-  let userProfile=null;
-  auth.onAuthStateChanged(async (user)=>{
-    if(!user){
-      userProfile=null;
-      hide(appCard); show(authCard);
-      return;
-    }
-    // جلب وثيقة المستخدم (يجب أن تكون مُنشأة مسبقاً من الإدارة)
-    const snap = await db.collection("users").doc(user.uid).get();
-    if(!snap.exists){
-      // المستخدم غير مهيأ: اخفِ التطبيق وأظهر تنبيه
-      hide(appCard); show(authCard);
-      flash(loginMsg,"حسابك غير مهيأ. تواصل مع الإدارة لإسناد فرع لك.","error");
-      await auth.signOut();
-      return;
-    }
-    userProfile = snap.data();
-    whoami.innerHTML = `مرحباً، ${user.email} <span class="badge">الفرع: ${userProfile.branch}</span> ${userProfile.isAdmin?'<span class="badge">مدير</span>':''}`;
-    hide(authCard); show(appCard);
+/* ---------- Branch tracking counter ---------- */
+const branchCodes = { Riyadh:"RUH", Dammam:"DMM", Jeddah:"JED", Makkah:"MKK", Madina:"MED" };
+const pad5 = (n)=> String(n).padStart(5,"0");
+
+/* ---------- New order ---------- */
+const orderForm = $("#orderForm"), newMsg = $("#newMsg");
+orderForm.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  if(!currentUser || !userProfile){ showMsg(newMsg,"يجب تسجيل الدخول أولاً.","error"); return; }
+
+  const itemCode = $("#itemCode").value.trim();
+  const quantity = Number($("#quantity").value);
+  const price    = Number($("#price").value);
+  const projectName  = $("#projectName").value.trim();
+  const customerName = $("#customerName").value.trim();
+
+  if(!itemCode || !Number.isFinite(quantity) || quantity<1 || !Number.isFinite(price) || price<0){
+    showMsg(newMsg,"تحقق من إدخال القيم بشكل صحيح.","error"); return;
+  }
+
+  const btn = orderForm.querySelector("button[type=submit]");
+  btn.disabled=true; const old=btn.textContent; btn.textContent="جارٍ الإرسال...";
+
+  try{
+    const branch = userProfile.branch;
+    const code   = branchCodes[branch] || "UNK";
+    const counterRef = db.collection("counters").doc(branch);
+
+    // احجز رقم متسلسل
+    const seq = await db.runTransaction(async (tx)=>{
+      const snap = await tx.get(counterRef);
+      let next = 1; if(snap.exists) next = (snap.data().next||1);
+      tx.set(counterRef, { next: next + 1 }, { merge:true });
+      return next;
+    });
+    const tracking = code + pad5(seq);
+
+    // اجعل رقم التتبع هو ID المستند
+    await db.collection("orders").doc(tracking).set({
+      tracking, branch,
+      itemCode, quantity, price,
+      projectName, customerName,
+      createdBy: currentUser.uid,
+      status: "created",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
+    orderForm.reset();
+    loadMyOrders();
+    if(isAdmin) loadAdminOrders();
+
+  }catch(err){
+    console.error(err);
+    showMsg(newMsg,"خطأ أثناء الإرسال: "+(err.message||err),"error");
+  }finally{
+    btn.disabled=false; btn.textContent=old;
+  }
+});
+
+/* ---------- My orders ---------- */
+const myBody = $("#myOrdersBody"), mySearch=$("#mySearch"), mySort=$("#mySort");
+async function loadMyOrders(){
+  if(!currentUser) return;
+  let q = db.collection("orders").where("createdBy","==",currentUser.uid);
+  const snap = await q.get();
+  let rows = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  renderMy(rows);
+}
+function renderMy(rows){
+  const term=(mySearch.value||"").toLowerCase();
+  rows = rows.filter(r=> !term || r.tracking.toLowerCase().includes(term) || (r.itemCode||"").toLowerCase().includes(term));
+  rows.sort((a,b)=> mySort.value==="createdAt_desc"
+    ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
+    : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0));
+  myBody.innerHTML = rows.map(r=>`
+    <tr>
+      <td><strong>${r.tracking}</strong></td>
+      <td>${r.itemCode||""}</td>
+      <td>${r.quantity||""}</td>
+      <td>${r.price?.toFixed? r.price.toFixed(2): r.price}</td>
+      <td>${r.projectName||"-"}</td>
+      <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
+      <td>${r.createdAt?.toDate?.().toLocaleString('ar-SA')||""}</td>
+    </tr>
+  `).join("");
+}
+mySearch.addEventListener("input", loadMyOrders);
+mySort.addEventListener("change", loadMyOrders);
+
+/* ---------- Admin orders ---------- */
+const adminBody=$("#adminOrdersBody"), adminSearch=$("#adminSearch"), adminFilterBranch=$("#adminFilterBranch");
+async function loadAdminOrders(){
+  if(!isAdmin) return;
+  const snap = await db.collection("orders").get();
+  let rows = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  renderAdmin(rows);
+}
+function renderAdmin(rows){
+  const term=(adminSearch.value||"").toLowerCase();
+  const fb=adminFilterBranch.value;
+  rows = rows.filter(r=>
+    (!fb || r.branch===fb) &&
+    (!term || r.tracking.toLowerCase().includes(term) || (r.itemCode||"").toLowerCase().includes(term))
+  );
+  rows.sort((a,b)=> (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0));
+  adminBody.innerHTML = rows.map(r=>`
+    <tr>
+      <td>${r.branch}</td>
+      <td><strong>${r.tracking}</strong></td>
+      <td>${r.itemCode||""}</td>
+      <td>${r.quantity||""}</td>
+      <td>${r.price?.toFixed? r.price.toFixed(2): r.price}</td>
+      <td>${r.projectName||"-"}</td>
+      <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
+      <td>
+        <select data-id="${r.tracking}" class="updStatus">
+          ${["created","ordered","shipped","delivered"].map(s=>`<option value="${s}" ${r.status===s?"selected":""}>${statusLabel(s)}</option>`).join("")}
+        </select>
+      </td>
+    </tr>
+  `).join("");
+  // ربط حفظ الحالة
+  document.querySelectorAll(".updStatus").forEach(sel=>{
+    sel.onchange = async (e)=>{
+      const id = e.target.dataset.id, val = e.target.value;
+      await db.collection("orders").doc(id).update({status:val});
+      loadAdminOrders(); // تحديث العرض
+      loadMyOrders();
+    };
   });
+}
+adminSearch.addEventListener("input", ()=>loadAdminOrders());
+adminFilterBranch.addEventListener("change", ()=>loadAdminOrders());
 
-  // إرسال الطلب (برقم تتبّع متسلسل لكل فرع)
-  orderForm.addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    const btn = orderForm.querySelector("button[type=submit]");
-    const itemCode = document.getElementById("itemCode").value.trim();
-    const quantity = Number(document.getElementById("quantity").value);
-    const price    = Number(document.getElementById("price").value);
+function statusLabel(s){
+  return {created:"جديد", ordered:"تم الطلب من المصنع", shipped:"تم الشحن", delivered:"تم التسليم"}[s] || s;
+}
+function statusClass(s){
+  return {created:"s-created", ordered:"s-ordered", shipped:"s-shipped", delivered:"s-delivered"}[s] || "s-created";
+}
 
-    if(!auth.currentUser || !userProfile){ flash(msg,"يجب تسجيل الدخول أولاً.","error"); return; }
-    if(!itemCode || !Number.isFinite(quantity) || quantity<1 || !Number.isFinite(price) || price<0){
-      flash(msg,"تحقق من إدخال القيم بشكل صحيح.","error"); return;
-    }
-
-    btn.disabled=true; const old=btn.textContent; btn.textContent="جارٍ الإرسال...";
-
-    try{
-      const branch = userProfile.branch;                        // مثال: "Riyadh"
-      const code   = branchCodes[branch] || "UNK";              // مثال: "RUH"
-      const counterRef = db.collection("counters").doc(branch); // counters/Riyadh
-
-      // حجز رقم متسلسل بصفقة واحدة
-      const seq = await db.runTransaction(async (tx)=>{
-        const snap = await tx.get(counterRef);
-        let next = 1;
-        if (snap.exists) next = (snap.data().next || 1);
-        tx.set(counterRef, { next: next + 1 }, { merge: true });
-        return next; // الرقم الحالي
-      });
-
-      const tracking = code + pad5(seq);                        // RUH00001
-
-      const docRef = await db.collection("orders").add({
-        itemCode, quantity, price,
-        branch,
-        createdBy: auth.currentUser.uid,
-        status: "created",
-        tracking,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      flash(msg, `تم تسجيل الطلب. رقم التتبع: ${tracking}`, "success");
-      orderForm.reset();
-
-    }catch(err){
-      console.error(err);
-      flash(msg,"خطأ أثناء الإرسال: "+(err.message||err),"error");
-    }finally{
-      btn.disabled=false; btn.textContent=old;
-    }
-  });
-
-  // أخطاء عامة
-  window.addEventListener("error",(e)=>{ if(loginMsg) flash(loginMsg,"خطأ عام: "+(e.error?.message||e.message),"error"); });
+/* ---------- init ---------- */
+route(); // أول تحميل
 </script>
 </body>
 </html>
-
