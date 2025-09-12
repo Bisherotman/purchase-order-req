@@ -189,7 +189,7 @@
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      flash(msg, `تم تسجيل الطلب. رقم التتبع: ${tracking} (ID: ${docRef.id})`, "success");
+      flash(msg, `تم تسجيل الطلب. رقم التتبع: ${tracking}`, "success");
       orderForm.reset();
 
     }catch(err){
@@ -205,3 +205,4 @@
 </script>
 </body>
 </html>
+
