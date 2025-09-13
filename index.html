@@ -98,125 +98,105 @@
     </div>
   </section>
 
-  <!-- MY ORDERS -->
-  <section id="view-my" class="view">
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <h2>طلبــاتي</h2>
-        <div class="helper" id="whoamiMy">—</div>
-      </div>
-      <div class="row">
-        <input id="mySearch" placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
-          <!-- فلتر الحالة -->
-  <select id="myFilterStatus" title="الحالة">
-    <option value="">كل الحالات</option>
-    <option value="created">جديد</option>
-    <option value="ordered">تم الطلب من المصنع</option>
-    <option value="shipped">تم الشحن</option>
-    <option value="delivered">وصلت</option>
-  </select>
+ <!-- MY ORDERS -->
+<section id="view-my" class="view">
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <h2>طلبــاتي</h2>
+      <div class="helper" id="whoamiMy">—</div>
+    </div>
 
-  <!-- الترتيب -->
-  <select id="mySort" title="الترتيب">
-    <option value="createdAt_desc">الأحدث أولاً</option>
-    <option value="createdAt_asc">الأقدم أولاً</option>
-  </select>
-      </div>
-      <div id="myTableWrap" class="card" style="padding:0">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>التتبّع</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>المشروع</th><th>الحالة</th><th>التاريخ</th><th>تفاصيل</th>
-              </tr>
-            </thead>
-            <tbody id="myOrdersBody"></tbody>
-          </table>
-        </div>
+    <div class="filters">
+      <input id="mySearch" class="chip-input"
+             placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
+
+      <select id="myFilterStatus" class="chip-select" title="الحالة">
+        <option value="">كل الحالات</option>
+        <option value="created">جديد</option>
+        <option value="ordered">تم الطلب من المصنع</option>
+        <option value="shipped">تم الشحن</option>
+        <option value="delivered">وصلت</option>
+      </select>
+
+      <select id="mySort" class="chip-select" title="الترتيب">
+        <option value="createdAt_desc">الأحدث أولاً</option>
+        <option value="createdAt_asc">الأقدم أولاً</option>
+      </select>
+    </div>
+
+    <div id="myTableWrap" class="card" style="padding:0">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>التتبّع</th><th>الصنف</th><th>الكمية</th><th>السعر</th>
+              <th>المشروع</th><th>الحالة</th><th>التاريخ</th><th>تفاصيل</th>
+            </tr>
+          </thead>
+          <tbody id="myOrdersBody"></tbody>
+        </table>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ADMIN -->
-  <section id="view-admin" class="view">
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <h2>إدارة الطلبات</h2>
-        <div class="helper" id="whoamiAdmin">—</div>
-      </div>
+ <!-- ADMIN -->
+<section id="view-admin" class="view">
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <h2>إدارة الطلبات</h2>
+      <div class="helper" id="whoamiAdmin">—</div>
+    </div>
 
-      <div class="row">
-        <input id="adminSearch" placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
-        <!-- الفرع -->
-  <select id="adminFilterBranch" title="الفرع">
-    <option value="">كل الفروع</option>
-    <option>Riyadh</option><option>Dammam</option><option>Jeddah</option>
-    <option>Makkah</option><option>Madina</option><option>HQ</option>
-  </select>
+    <div class="filters">
+      <input id="adminSearch" class="chip-input"
+             placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
 
-  <!-- الحالة -->
-  <select id="adminFilterStatus" title="الحالة">
-    <option value="">كل الحالات</option>
-    <option value="created">جديد</option>
-    <option value="ordered">تم الطلب من المصنع</option>
-    <option value="shipped">تم الشحن</option>
-    <option value="delivered">وصلت</option>
-  </select>
+      <select id="adminFilterBranch" class="chip-select" title="الفرع">
+        <option value="">كل الفروع</option>
+        <option>Riyadh</option><option>Dammam</option><option>Jeddah</option>
+        <option>Makkah</option><option>Madina</option><option>HQ</option>
+      </select>
 
-  <!-- المستخدم (تتعبى ديناميكيًا) -->
-  <select id="adminFilterUser" title="المستخدم">
-    <option value="">كل المستخدمين</option>
-  </select>
+      <select id="adminFilterStatus" class="chip-select" title="الحالة">
+        <option value="">كل الحالات</option>
+        <option value="created">جديد</option>
+        <option value="ordered">تم الطلب من المصنع</option>
+        <option value="shipped">تم الشحن</option>
+        <option value="delivered">وصلت</option>
+      </select>
 
-  <!-- الترتيب -->
-  <select id="adminSort" title="الترتيب">
-    <option value="createdAt_desc">الأحدث أولاً</option>
-    <option value="createdAt_asc">الأقدم أولاً</option>
-  </select>
-      </div>
+      <select id="adminFilterUser" class="chip-select" title="المستخدم">
+        <option value="">كل المستخدمين</option>
+      </select>
 
-      <div id="adminTableWrap" class="card" style="padding:0">
-        <div class="table-wrap"><!-- مهم لعمل سكرول أنيق -->
-          <table id="ordersTable">
-            <thead>
-              <tr>
-                <th>رقم</th>
-                <th>التاريخ</th>
-                <th>المشروع</th>
-                <th>المستخدم</th>
-                <th>الحالة</th>
-                <th>المبلغ</th>
-                <th>تفاصيل</th>
-              </tr>
-            </thead>
-            <tbody id="adminOrdersBody">
-              <!-- أمثلة مؤقتة: استبدلها بتعبئة ديناميكية إن عندك -->
-              <tr data-id="PO-1001">
-                <td>PO-1001</td>
-                <td>2025-09-10</td>
-                <td>مشروع المستودع</td>
-                <td>ahmad@company.com</td>
-                <td><span class="badge badge-new">جديد</span></td>
-                <td>7,850</td>
-                <td><button type="button" class="btn-details" data-id="PO-1001">تفاصيل</button></td>
-              </tr>
-              <tr data-id="PO-1002">
-                <td>PO-1002</td>
-                <td>2025-09-11</td>
-                <td>تجديد الصالة</td>
-                <td>sara@company.com</td>
-                <td><span class="badge badge-ok">موافق عليه</span></td>
-                <td>2,430</td>
-                <td><button type="button" class="btn-details" data-id="PO-1002">تفاصيل</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <select id="adminSort" class="chip-select" title="الترتيب">
+        <option value="createdAt_desc">الأحدث أولاً</option>
+        <option value="createdAt_asc">الأقدم أولاً</option>
+      </select>
+    </div>
+
+    <div id="adminTableWrap" class="card" style="padding:0">
+      <div class="table-wrap">
+        <table id="ordersTable">
+          <thead>
+            <tr>
+              <th>رقم</th>
+              <th>التاريخ</th>
+              <th>المشروع</th>
+              <th>المستخدم</th>
+              <th>الحالة</th>
+              <th>المبلغ</th>
+              <th>تفاصيل</th>
+            </tr>
+          </thead>
+          <tbody id="adminOrdersBody"></tbody>
+        </table>
       </div>
     </div>
-  </section>
-
-</div><!-- /container -->
+  </div>
+</section>
+  </div> <!-- /container -->
 
 <!-- مودال تفاصيل الطلب (للأدمِن) -->
 <div id="orderModal" class="modal" hidden>
