@@ -16,29 +16,30 @@ const db = firebase.firestore();
 auth.onAuthStateChanged(user => {
   if (user) {
     document.body.classList.remove("auth-out");
-    setUserRole(user);
-    route(); // تحديث العرض عند الدخول
+
+    db.collection("users").doc(user.uid).get().then(doc => {
+      const role = doc.exists ? doc.data().role : "user";
+      showLinksForRole(role);
+      updateNavLinks(user);
+      if (location.hash === "#/login") {
+        location.hash = "#/new";
+      }
+      route();
+    });
+
   } else {
     document.body.classList.add("auth-out");
     switchView("login");
+    updateNavLinks(null);
   }
 });
-// 🔄 Switch view logic
+
 function switchView(viewId) {
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
   const view = document.getElementById("view-" + viewId);
   if (view) view.classList.add("active");
 }
 
-// 🧠 Get user role and update UI accordingly
-function setUserRole(user) {
-  db.collection("users").doc(user.uid).get().then(doc => {
-    const role = doc.exists ? doc.data().role : "user";
-    showLinksForRole(role);
-  }).catch(console.error);
-}
-
-// 📌 Show nav links based on role
 function showLinksForRole(role) {
   document.querySelectorAll("[data-auth]").forEach(link => {
     link.style.display = (
@@ -46,19 +47,23 @@ function showLinksForRole(role) {
       (link.dataset.auth === "user" && role !== "admin")
     ) ? "inline-block" : "none";
   });
+}
 
+function updateNavLinks(user) {
   const sessionBtn = document.getElementById("sessionBtn");
-  if (auth.currentUser) {
+  if (user) {
     sessionBtn.textContent = "خروج";
-   sessionBtn.onclick = () => {
-  auth.signOut().then(() => {
-    location.hash = "#/login";   // ✅ يرجع للصفحة الرئيسية
-    switchView("login");         // ✅ يعرض صفحة تسجيل الدخول
-    updateNavLinks(null);        // ✅ يخفي الأزرار
-  });
-};
+    sessionBtn.onclick = () => {
+      firebase.auth().signOut();
+    };
+  } else {
+    sessionBtn.textContent = "دخول";
+    sessionBtn.onclick = () => {
+      location.hash = "#/login";
+    };
+  }
+}
 
-// 📲 Login functionality
 document.getElementById("loginForm").addEventListener("submit", e => {
   e.preventDefault();
   const email = document.getElementById("loginEmail").value.trim();
@@ -73,19 +78,16 @@ document.getElementById("loginForm").addEventListener("submit", e => {
   }
 
   auth.setPersistence(
-  remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION
-).then(() => {
-  return auth.signInWithEmailAndPassword(email, password).then(() => {
-    location.hash = "#/new"; // ✅ التوجيه للصفحة الجديدة بعد تسجيل الدخول
+    remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION
+  ).then(() => {
+    return auth.signInWithEmailAndPassword(email, password);
+  }).catch(err => {
+    loginMsg.textContent = err.message;
+    loginMsg.className = "msg error";
+    loginMsg.style.display = "block";
   });
-}).catch(err => {
-  loginMsg.textContent = err.message;
-  loginMsg.className = "msg error";
-  loginMsg.style.display = "block";
 });
 
-});
-// 📄 Render orders for user
 function renderOrders(containerId, orders) {
   const tbody = document.getElementById(containerId);
   tbody.innerHTML = "";
@@ -106,7 +108,6 @@ function renderOrders(containerId, orders) {
   });
 }
 
-// 👑 Render admin table
 function renderAdminTable(orders) {
   const tbody = document.getElementById("adminOrdersBody");
   tbody.innerHTML = "";
@@ -126,7 +127,6 @@ function renderAdminTable(orders) {
     tbody.appendChild(row);
   });
 
-  // ✅ الموافقة على الطلب
   document.querySelectorAll(".approveBtn").forEach(btn => {
     btn.addEventListener("click", async () => {
       const id = btn.getAttribute("data-id");
@@ -135,19 +135,17 @@ function renderAdminTable(orders) {
   });
 }
 
-// ✅ تحديث حالة الطلب
 async function updateOrderStatus(id, newStatus) {
   try {
     const orderRef = db.collection("orders").doc(id);
     await orderRef.update({ status: newStatus });
     showMessage("تم تحديث حالة الطلب بنجاح", true, "adminMsg");
-    loadOrders(); // تأكد أن عندك دالة loadOrders لوحدها أو عدل حسب مشروعك
+    loadOrders();
   } catch (err) {
     showMessage("فشل في تحديث الحالة: " + err.message, false, "adminMsg");
   }
 }
 
-// 🔍 عرض تفاصيل الطلب
 function showDetails(order) {
   const modal = document.getElementById("detailsModal");
   const body = document.getElementById("detailsBody");
@@ -168,47 +166,19 @@ function showDetails(order) {
   modal.setAttribute("aria-hidden", "false");
 }
 
-// إغلاق نافذة التفاصيل
 document.getElementById("closeDetails").addEventListener("click", () => {
   document.getElementById("detailsModal").setAttribute("aria-hidden", "true");
 });
 
-// طباعة تفاصيل الطلب
 document.getElementById("printDetailsBtn").addEventListener("click", () => {
   window.print();
 });
-// 🔐 عرض روابط القائمة حسب حالة الدخول
-function updateNavLinks(user) {
-  const links = document.querySelectorAll("[data-auth]");
-  links.forEach((link) => {
-    const required = link.getAttribute("data-auth");
-    link.style.display =
-      (required === "user" && user) || (required === "admin" && isAdmin(user))
-        ? "inline-block"
-        : "none";
-  });
 
-  const sessionBtn = document.getElementById("sessionBtn");
-  if (user) {
-    sessionBtn.textContent = "خروج";
-    sessionBtn.onclick = () => {
-      firebase.auth().signOut();
-    };
-  } else {
-    sessionBtn.textContent = "دخول";
-    sessionBtn.onclick = () => {
-      location.hash = "#/login";
-    };
-  }
-}
-
-// ⚖️ هل المستخدم أدمن؟
 function isAdmin(user) {
   const email = user?.email || "";
   return email.endsWith("@admin.com") || email === "admin@baytalebaa.com";
 }
 
-// 🧭 التوجيه حسب الرابط (hash routing)
 window.addEventListener("hashchange", route);
 function route() {
   const hash = location.hash || "#/login";
@@ -221,7 +191,6 @@ function route() {
 }
 route();
 
-// 💌 استرجاع الإيميل المحفوظ عند تحميل الصفحة
 window.addEventListener("load", () => {
   const savedEmail = localStorage.getItem("savedEmail");
   if (savedEmail) {
@@ -230,7 +199,6 @@ window.addEventListener("load", () => {
   }
 });
 
-// 🔔 عرض رسالة
 function showMessage(text, success = true, containerId = "loginMsg") {
   const msg = document.getElementById(containerId);
   msg.textContent = text;
