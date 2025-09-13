@@ -177,3 +177,69 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
   #printDetailsBtn{ display:none !important; }
   body{ background:#fff; }
 }
+
+/* === تكملة ستايلات لازمة === */
+
+/* صف عام */
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
+/* جداول (طلباتي + الإدارة) */
+.table-wrap{overflow:auto;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
+#view-admin table,#view-my table{width:100%;border-collapse:separate;border-spacing:0;min-width:880px}
+#view-admin thead th,#view-my thead th{
+  position:sticky;top:0;background:#f8fafc;z-index:1;text-align:right;
+  border-bottom:1px solid #e5e7eb;padding:12px;font-weight:700;
+}
+#view-admin tbody td,#view-my tbody td{padding:10px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+#view-admin tbody tr:nth-child(even),#view-my tbody tr:nth-child(even){background:#fcfcfd}
+#view-admin tbody tr:hover,#view-my tbody tr:hover{background:#f8fafc}
+
+/* الأزرار داخل الجداول وغيرها ما تكون بعرض 100% */
+.btn,.btn-details,.btn-primary,.btn-strong{width:auto}
+
+/* واجهة الأصناف والروابط */
+.items-head{display:flex;justify-content:flex-end;margin:8px 0}
+.add-item{border:1px dashed #d1d5db;background:#fff;color:#111}
+.item-row,.link-row{
+  display:grid;gap:8px;align-items:center;margin-bottom:8px
+}
+.item-row{grid-template-columns:1fr 120px 140px auto}
+.link-row{grid-template-columns:1fr 1.5fr auto}
+.item-row .remove,.link-row .remove{height:40px}
+
+/* عنوان قسم */
+.section-box{font-weight:800;color:#6b7280;margin:10px 0}
+
+/* جدول الطباعة داخل المودال */
+.table-like{
+  width:100%;border-collapse:separate;border-spacing:0;
+  border:1px solid #e5e7eb;border-radius:12px;overflow:hidden
+}
+.table-like thead th{background:#f8fafc;padding:10px;text-align:right;border-bottom:1px solid #e5e7eb}
+.table-like td{padding:8px 10px;border-bottom:1px solid #f1f5f9}
+.table-like tfoot .total{font-weight:800}
+
+/* مودال التفاصيل (detailsModal) */
+#detailsModal .modal-card{
+  background:#fff;border-radius:16px;box-shadow:var(--shadow);
+  max-width:900px;width:96vw;max-height:90vh;overflow:auto
+}
+#detailsModal .modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:14px 16px;border-bottom:1px solid #f1f5f9
+}
+#detailsModal .backdrop{position:absolute;inset:0} /* عشان كليك برة يقفل */
+#detailsModal .close-x{border:0;background:#f1f5f9;width:36px;height:36px;border-radius:8px;cursor:pointer}
+.inv-brand{display:flex;align-items:center;gap:10px}
+.inv-title{font-weight:800;color:var(--brand)}
+.t-small{font-size:14px}
+
+/* شارة الحالة في (طلباتي) */
+.status{
+  display:inline-block;padding:4px 10px;border-radius:999px;font-size:.85rem;
+  border:1px solid transparent;background:#fff7ed;border-color:#fed7aa /* created */
+}
+.s-created{background:#fff7ed;border-color:#fed7aa}
+.s-ordered{background:#fff7ed;border-color:#fed7aa}
+.s-shipped{background:#fef3c7;border-color:#fde68a}
+.s-delivered{background:#ecfdf5;border-color:#a7f3d0}
