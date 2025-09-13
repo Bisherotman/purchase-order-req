@@ -1,17 +1,57 @@
 <!DOCTYPE html>
-<link rel="stylesheet" href="style.css">
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>بوابة طلبات الشراء | بيت الإباء</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>بوابة طلبات الشراء | بيت الإباء</title>
 
-<!-- فافيكون -->
-<link rel="icon" href="img/pagelogo.png" type="image/png" />
+  <!-- أيقونة الموقع -->
+  <link rel="icon" href="img/pagelogo.png" type="image/png" />
 
-<!-- خطوط -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- ملف التنسيقات الأساسي -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- خطوط -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- ملاحظة: إن لم تكن قد أضفت تنسيقات إدارة الطلبات والمودال سابقاً في style.css،
+       انسخ المقتطف المقترح لديك في نهاية هذا الملف أو مؤقتاً أضفه هنا داخل <style> ثم انقله لاحقاً لـ style.css. -->
+  <style>
+  /* ===== تنسيقات سريعة (يمكن نقلها إلى style.css) ===== */
+  .table-wrap{overflow:auto;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
+  #view-admin table,#view-my table{width:100%;border-collapse:separate;border-spacing:0;min-width:880px}
+  #view-admin thead th,#view-my thead th{position:sticky;top:0;background:#f8fafc;z-index:1;text-align:right;border-bottom:1px solid #e5e7eb;padding:12px;font-weight:700}
+  #view-admin tbody td,#view-my tbody td{padding:10px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+  #view-admin tbody tr:nth-child(even),#view-my tbody tr:nth-child(even){background:#fcfcfd}
+  #view-admin tbody tr:hover,#view-my tbody tr:hover{background:#f8fafc}
+  .badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.85rem;border:1px solid transparent}
+  .badge-new{background:#fff7ed;border-color:#fed7aa}
+  .badge-ok{background:#ecfdf5;border-color:#a7f3d0}
+  .btn,.btn-details,.btn-primary,.btn-strong{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 10px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer}
+  .btn-strong,.btn-primary{background:#6c1d2c;color:#fff;border-color:#5a1724}
+  .btn:hover{background:#f8fafc}.btn-primary:hover,.btn-strong:hover{filter:brightness(.95)}
+  .modal{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.35);padding:16px;z-index:1000}
+  .modal[hidden]{display:none}
+  .modal__dialog{width:min(900px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+  .modal__header,.modal__footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid #f1f5f9}
+  .modal__footer{border-top:1px solid #f1f5f9;border-bottom:0}
+  .modal__body{padding:16px}
+  .modal__close{border:0;background:#f1f5f9;width:36px;height:36px;border-radius:8px;cursor:pointer}
+  .items{display:grid;gap:8px}
+  .items .item{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:8px 10px;border:1px solid #f1f5f9;border-radius:10px;background:#fcfcfd}
+  @media print{.modal{display:none !important}body{background:#fff}}
+
+  /* لمدخلات تسجيل الدخول (زر العين/الإكس) */
+  .input-wrap{position:relative}
+  .input-clear,.pwd-toggle,.pwd-clear{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;background:#f1f5f9;border-radius:8px;display:none;place-items:center;cursor:pointer}
+  .input-clear{left:8px}
+  .pwd-toggle{left:8px}
+  .pwd-clear{left:44px}
+  .input-wrap.has-value .input-clear{display:flex}
+  .pwd-wrap.has-value .pwd-toggle,.pwd-wrap.has-value .pwd-clear{display:flex}
+  </style>
 </head>
+
 <body class="auth-out">
 
 <header>
@@ -43,21 +83,19 @@
     <div class="card">
       <h2>تسجيل الدخول</h2>
       <form id="loginForm">
-
         <label for="loginEmail">الإيميل</label>
-<div class="input-wrap">
-  <input id="loginEmail" type="email" ... />
-  <button type="button" id="clearEmail" class="input-clear">✕</button>
-</div>
+        <div class="input-wrap">
+          <input id="loginEmail" type="email" />
+          <button type="button" id="clearEmail" class="input-clear">✕</button>
+        </div>
 
-<label for="loginPassword" style="margin-top:14px">كلمة المرور</label>
-<div class="pwd-wrap input-wrap">
-  <input id="loginPassword" type="password" required placeholder="••••••••" />
-  <button type="button" class="pwd-toggle" id="togglePwd" aria-label="إظهار/إخفاء كلمة المرور">👁️</button>
-  <button type="button" class="pwd-clear"  id="clearPwd" aria-label="مسح كلمة المرور">✕</button>
-</div>
+        <label for="loginPassword" style="margin-top:14px">كلمة المرور</label>
+        <div class="pwd-wrap input-wrap">
+          <input id="loginPassword" type="password" required placeholder="••••••••" />
+          <button type="button" class="pwd-toggle" id="togglePwd" aria-label="إظهار/إخفاء كلمة المرور">👁️</button>
+          <button type="button" class="pwd-clear"  id="clearPwd" aria-label="مسح كلمة المرور">✕</button>
+        </div>
 
-        <!-- تذكّر الإيميل أسفل كلمة السر -->
         <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:400">
           <input id="rememberEmail" type="checkbox" style="width:18px;height:18px" />
           <span class="helper">تذكّر الإيميل</span>
@@ -88,9 +126,7 @@
       <div class="items-head"><button type="button" id="addItemBtn" class="add-item">+ إضافة صنف</button></div>
       <div id="itemsWrap"></div>
 
-      <label style="font-weight:700; display:block; margin-top:14px">
-        روابط المرفقات (اختياري — حد أقصى 2)
-      </label>
+      <label style="font-weight:700; display:block; margin-top:14px">روابط المرفقات (اختياري — حد أقصى 2)</label>
       <div id="linksWrap"></div>
       <button type="button" id="addLinkBtn" class="add-item">+ إضافة رابط</button>
 
@@ -114,14 +150,16 @@
         </select>
       </div>
       <div id="myTableWrap" class="card" style="padding:0">
-        <table>
-          <thead>
-            <tr>
-              <th>التتبّع</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>المشروع</th><th>الحالة</th><th>التاريخ</th><th>تفاصيل</th>
-            </tr>
-          </thead>
-          <tbody id="myOrdersBody"></tbody>
-        </table>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>التتبّع</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>المشروع</th><th>الحالة</th><th>التاريخ</th><th>تفاصيل</th>
+              </tr>
+            </thead>
+            <tbody id="myOrdersBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
@@ -133,6 +171,7 @@
         <h2>إدارة الطلبات</h2>
         <div class="helper" id="whoamiAdmin">—</div>
       </div>
+
       <div class="row">
         <input id="adminSearch" placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
         <select id="adminFilterBranch">
@@ -141,21 +180,77 @@
           <option>Makkah</option><option>Madina</option><option>HQ</option>
         </select>
       </div>
+
       <div id="adminTableWrap" class="card" style="padding:0">
-        <table>
-          <thead>
-            <tr>
-              <th>الفرع</th><th>التتبّع</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>المشروع</th><th>الحالة</th><th>إجراء</th>
-            </tr>
-          </thead>
-          <tbody id="adminOrdersBody"></tbody>
-        </table>
+        <div class="table-wrap"><!-- مهم لعمل سكرول أنيق -->
+          <table id="ordersTable">
+            <thead>
+              <tr>
+                <th>رقم</th>
+                <th>التاريخ</th>
+                <th>المشروع</th>
+                <th>المستخدم</th>
+                <th>الحالة</th>
+                <th>المبلغ</th>
+                <th>تفاصيل</th>
+              </tr>
+            </thead>
+            <tbody id="adminOrdersBody">
+              <!-- أمثلة مؤقتة: استبدلها بتعبئة ديناميكية إن عندك -->
+              <tr data-id="PO-1001">
+                <td>PO-1001</td>
+                <td>2025-09-10</td>
+                <td>مشروع المستودع</td>
+                <td>ahmad@company.com</td>
+                <td><span class="badge badge-new">جديد</span></td>
+                <td>7,850</td>
+                <td><button type="button" class="btn-details" data-id="PO-1001">تفاصيل</button></td>
+              </tr>
+              <tr data-id="PO-1002">
+                <td>PO-1002</td>
+                <td>2025-09-11</td>
+                <td>تجديد الصالة</td>
+                <td>sara@company.com</td>
+                <td><span class="badge badge-ok">موافق عليه</span></td>
+                <td>2,430</td>
+                <td><button type="button" class="btn-details" data-id="PO-1002">تفاصيل</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
+
+</div><!-- /container -->
+
+<!-- مودال تفاصيل الطلب (للأدمِن) -->
+<div id="orderModal" class="modal" hidden>
+  <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+    <header class="modal__header">
+      <h3 id="orderModalTitle">تفاصيل الطلب</h3>
+      <button class="modal__close" aria-label="إغلاق">×</button>
+    </header>
+    <div class="modal__body">
+      <div class="meta">
+        <div><strong>رقم الطلب:</strong> <span id="m_id"></span></div>
+        <div><strong>التاريخ:</strong> <span id="m_date"></span></div>
+        <div><strong>المشروع:</strong> <span id="m_project"></span></div>
+        <div><strong>المستخدم:</strong> <span id="m_user"></span></div>
+        <div><strong>الحالة:</strong> <span id="m_status"></span></div>
+        <div><strong>المبلغ:</strong> <span id="m_total"></span></div>
+      </div>
+      <h4>الأصناف</h4>
+      <div id="m_items" class="items"></div>
+    </div>
+    <footer class="modal__footer">
+      <button class="btn" data-action="print">طباعة</button>
+      <button class="btn btn-primary modal__close">إغلاق</button>
+    </footer>
+  </div>
 </div>
 
-<!-- تفاصيل/طباعة -->
+<!-- تفاصيل/طباعة لطلباتي (المودال القديم لديك، أبقيناه كما هو) -->
 <div id="detailsModal" class="modal" aria-hidden="true">
   <div class="backdrop"></div>
   <div class="modal-card printable">
@@ -194,9 +289,9 @@ const db   = firebase.firestore();
 
 /* ---------- helpers / routing ---------- */
 const $ = (s)=>document.querySelector(s);
+const routes = { "#/login":"view-login", "#/new":"view-new", "#/my":"view-my", "#/admin":"view-admin" };
 const navLinks = $("#navLinks");
 const sessionBtn = $("#sessionBtn");
-const routes = { "#/login":"view-login", "#/new":"view-new", "#/my":"view-my", "#/admin":"view-admin" };
 
 function setActive(hash){ navLinks.querySelectorAll("a").forEach(a=>a.classList.toggle("active", a.getAttribute("href")==hash)); }
 function showMsg(el, text, type="success"){ el.textContent=text; el.className="msg "+type; el.style.display="block"; }
@@ -297,7 +392,7 @@ auth.onAuthStateChanged(async (user)=>{
   userProfile=snap.data(); canSeeAdmin=!!userProfile.isAdmin || userProfile.branch==="HQ";
 
   const badge=`مرحباً، ${displayNameOrEmail(user,userProfile)} — الفرع: ${userProfile.branch}${canSeeAdmin?' — إدارة':''}`;
-  whoami.textContent=badge; whoamiMy.textContent=badge; whoamiAdmin.textContent=badge;
+  $("#whoami").textContent=badge; $("#whoamiMy").textContent=badge; $("#whoamiAdmin").textContent=badge;
 
   navLinks.querySelectorAll("[data-auth]").forEach(a=>{
     const t=a.dataset.auth; a.style.display=(t==="user")? "" : (canSeeAdmin? "" : "none");
@@ -450,7 +545,7 @@ mySearch.addEventListener("input",()=>renderMy(myRows));
 mySort.addEventListener("change",()=>renderMy(myRows));
 
 /* تفاصيل + طباعة محسّنة */
-const modal=$("#detailsModal"), closeDetails=$("#closeDetails"), detailsBody=$("#detailsBody"), printBtn=$("#printDetailsBtn");
+const modalOld=$("#detailsModal"), closeDetails=$("#closeDetails"), detailsBody=$("#detailsBody"), printBtn=$("#printDetailsBtn");
 function openDetails(tracking){
   const r = (myRows.length? myRows : adminRows).find(x=>x.tracking===tracking);
   if(!r) return;
@@ -496,10 +591,10 @@ function openDetails(tracking){
       ${attachHtml}
     </div>
   `;
-  modal.classList.add("show");
+  modalOld.classList.add("show");
 }
-closeDetails.onclick = ()=> modal.classList.remove("show");
-modal.querySelector(".backdrop").onclick = ()=> modal.classList.remove("show");
+closeDetails.onclick = ()=> modalOld.classList.remove("show");
+modalOld.querySelector(".backdrop").onclick = ()=> modalOld.classList.remove("show");
 printBtn.onclick = ()=> window.print();
 
 /* ---------- ADMIN (بحث مُحسّن + زر التفاصيل) ---------- */
@@ -533,34 +628,43 @@ function renderAdmin(){
     const qtySum=items.reduce((s,x)=>s+(x.quantity||0),0);
     const priceFirst=items.length ? (items[0].price ?? "") : "";
     return `
-      <tr>
-        <td>${r.branch}</td>
-        <td><strong>${r.tracking}</strong></td>
-        <td>${firstCode}${extra}</td>
-        <td>${qtySum}</td>
-        <td>${(typeof priceFirst==="number") ? priceFirst.toFixed(2) : priceFirst}</td>
+      <tr data-id="${r.tracking}">
+        <td>${r.tracking}</td>
+        <td>${r.createdAt?.toDate?.().toLocaleDateString('ar-SA')||""}</td>
         <td>${r.projectName||"-"}</td>
-        <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
-        <td style="display:flex;gap:6px;align-items:center">
-          <select data-id="${r.tracking}" class="updStatus">
-            ${["created","ordered","shipped","delivered"].map(s=>`<option value="${s}" ${r.status===s?"selected":""}>${statusLabel(s)}</option>`).join("")}
-          </select>
-          <button type="button" class="btn-strong open-details" data-open="${r.tracking}" style="padding:6px 10px;border-radius:10px">تفاصيل</button>
-        </td>
+        <td>${r.createdBy||""}</td>
+        <td><span class="badge ${r.status==='created'?'badge-new':'badge-ok'}">${statusLabel(r.status)}</span></td>
+        <td>${(typeof priceFirst==="number") ? priceFirst.toFixed(2) : priceFirst}</td>
+        <td><button type="button" class="btn-details" data-id="${r.tracking}">تفاصيل</button></td>
       </tr>`;
   }).join("");
 
-  // تغيـير الحالة
-  document.querySelectorAll(".updStatus").forEach(sel=>{
-    sel.onchange=async(e)=>{
-      const id=e.target.dataset.id, val=e.target.value;
-      await db.collection("orders").doc(id).update({status:val});
-      loadAdminOrders(); subscribeMyOrders();
-    };
-  });
-  // فتح التفاصيل
-  adminBody.querySelectorAll(".open-details").forEach(btn=>{
-    btn.onclick = ()=> openDetails(btn.dataset.open);
+  // فتح التفاصيل → المودال الجديد للأدمِن
+  document.querySelectorAll('.btn-details').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const tr = btn.closest('tr');
+      const id = btn.dataset.id || tr?.dataset.id || '';
+      const r = adminRows.find(x=>x.tracking===id);
+      if(!r) return;
+
+      const itemsBox = $("#m_items"); itemsBox.innerHTML='';
+      (r.items||[]).forEach(it=>{
+        const d=document.createElement('div'); d.className='item';
+        d.innerHTML = `<div>${it.itemCode||''}</div><div>الكمية: ${it.quantity??''}</div><div>السعر: ${it.price??''}</div>`;
+        itemsBox.appendChild(d);
+      });
+
+      $("#m_id").textContent = r.tracking || '';
+      $("#m_date").textContent = r.createdAt?.toDate?.().toLocaleString('ar-SA') || '';
+      $("#m_project").textContent = r.projectName || '';
+      $("#m_user").textContent = r.createdBy || '';
+      $("#m_status").textContent = statusLabel(r.status);
+      $("#m_total").textContent = (r.items && typeof r.items[0]?.price==="number")? r.items[0].price.toFixed(2): (r.items?.[0]?.price || '');
+
+      $("#orderModal").hidden = false;
+      document.documentElement.style.overflow = 'hidden';
+    });
   });
 }
 adminSearch.addEventListener("input",renderAdmin);
@@ -609,65 +713,18 @@ route();
     passWrap.classList.remove('has-value');
   });
 })();
+
+// إغلاق مودال الأدمِن
 (function(){
-  const email = document.getElementById('loginEmail');
-  const pwd   = document.getElementById('loginPassword');
-  const clearEmail = document.getElementById('clearEmail');
-  const togglePwd  = document.getElementById('togglePwd');
-  const clearPwd   = document.getElementById('clearPwd');
-
-  function uEmail(){ clearEmail.style.display = email && email.value ? 'flex' : 'none'; }
-  function uPwd(){ 
-    const has = pwd && pwd.value; 
-    togglePwd.style.display = has ? 'flex':'none';
-    clearPwd .style.display = has ? 'flex':'none';
-  }
-
-  ['input','focus','blur','change'].forEach(ev=>{
-    if(email) email.addEventListener(ev,uEmail);
-    if(pwd)   pwd.addEventListener(ev,uPwd);
+  const modal = document.getElementById('orderModal');
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal || e.target.classList.contains('modal__close')) {
+      modal.hidden = true;
+      document.documentElement.style.overflow = '';
+    }
   });
-
-  if(clearEmail) clearEmail.onclick = ()=>{ email.value=''; email.focus(); uEmail(); };
-  if(togglePwd ) togglePwd .onclick = ()=>{ pwd.type = (pwd.type==='password'?'text':'password'); pwd.focus(); };
-  if(clearPwd  ) clearPwd  .onclick = ()=>{ pwd.value=''; pwd.focus(); uPwd(); };
-
-  uEmail(); uPwd(); // تهيئة أولية
+  modal?.querySelector('[data-action="print"])?.addEventListener('click', ()=>window.print());
 })();
-  const passwordInput = document.querySelector('.pwd-wrap input');
-  const toggleBtn = document.querySelector('.pwd-toggle');
-  const clearBtn = document.querySelector('.pwd-clear');
-
-  // زر 👁️
-  toggleBtn.addEventListener('click', () => {
-    if (passwordInput.type === 'password') {
-      passwordInput.type = 'text';
-      toggleBtn.textContent = '🙈';
-    } else {
-      passwordInput.type = 'password';
-      toggleBtn.textContent = '👁️';
-    }
-  });
-
-  // زر X
-  clearBtn.addEventListener('click', () => {
-    passwordInput.value = '';
-    passwordInput.focus();
-    clearBtn.style.display = 'none';
-    toggleBtn.style.display = 'none';
-  });
-
-  // إظهار الزرين عند الكتابة
-  passwordInput.addEventListener('input', () => {
-    if (passwordInput.value.length > 0) {
-      clearBtn.style.display = 'flex';
-      toggleBtn.style.display = 'flex';
-    } else {
-      clearBtn.style.display = 'none';
-      toggleBtn.style.display = 'none';
-    }
-  });
-
 </script>
 </body>
 </html>
