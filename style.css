@@ -130,56 +130,6 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 .tag-chip span{ display:inline-block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px; }
 .tag-chip button{ border:0; background:transparent; cursor:pointer; }
 
-/* ===== إدارة الطلبات (view-admin) ===== */
-#view-admin .table-wrap{ overflow:auto; border:1px solid #e5e7eb; border-radius:12px; background:#fff; }
-#view-admin table{ width:100%; border-collapse:separate; border-spacing:0; min-width:880px; }
-#view-admin thead th{
-  position:sticky; top:0; background:#f8fafc; z-index:1; text-align:right;
-  border-bottom:1px solid #e5e7eb; padding:12px; font-weight:700;
-}
-#view-admin tbody td{ padding:10px 12px; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
-#view-admin tbody tr:nth-child(even){ background:#fcfcfd; }
-#view-admin tbody tr:hover{ background:#f8fafc; }
-
-.badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:.85rem; border:1px solid transparent; }
-.badge-new{ background:#fff7ed; border-color:#fed7aa; }
-.badge-ok{  background:#ecfdf5; border-color:#a7f3d0; }
-
-.btn,.btn-details,.btn-primary{
-  display:inline-flex; align-items:center; justify-content:center;
-  height:32px; padding:0 10px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; cursor:pointer;
-}
-.btn-primary{ background:#6c1d2c; color:#fff; border-color:#5a1724; }
-.btn:hover{ background:#f8fafc; }
-.btn-primary:hover{ filter:brightness(.95); }
-
-/* ===== المودال (موحّد) ===== */
-/* مخفي افتراضيًا */
-.modal{
-  position:fixed; inset:0; display:none; place-items:center;
-  background:rgba(0,0,0,.35); padding:16px; z-index:1000;
-}
-/* يظهر عند إضافة .show */
-.modal.show{ display:grid; }
-/* دعم orderModal اللي فيه [hidden] */
-.modal[hidden]{ display:none; }
-
-.modal__dialog{ width:min(900px,96vw); max-height:90vh; overflow:auto; background:#fff; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.2); }
-.modal__header,.modal__footer{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 16px; border-bottom:1px solid #f1f5f9; }
-.modal__footer{ border-top:1px solid #f1f5f9; border-bottom:0; }
-.modal__body{ padding:16px; }
-.modal__close{ border:0; background:#f1f5f9; width:36px; height:36px; border-radius:8px; cursor:pointer; }
-.items{ display:grid; gap:8px; }
-.items .item{ display:grid; grid-template-columns:1fr auto auto; gap:8px; padding:8px 10px; border:1px solid #f1f5f9; border-radius:10px; background:#fcfcfd; }
-
-/* طباعة: اخفِ زر الطباعة فقط */
-@media print{
-  #printDetailsBtn{ display:none !important; }
-  body{ background:#fff; }
-}
-
-/* === تكملة ستايلات لازمة === */
-
 /* صف عام */
 .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 
@@ -194,15 +144,25 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 #view-admin tbody tr:nth-child(even),#view-my tbody tr:nth-child(even){background:#fcfcfd}
 #view-admin tbody tr:hover,#view-my tbody tr:hover{background:#f8fafc}
 
+/* شارات وأزرار عامة */
+.badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:.85rem; border:1px solid transparent; }
+.badge-new{ background:#fff7ed; border-color:#fed7aa; }
+.badge-ok{  background:#ecfdf5; border-color:#a7f3d0; }
+
+.btn,.btn-details,.btn-primary{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:32px; padding:0 10px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; cursor:pointer;
+}
+.btn-primary{ background:#6c1d2c; color:#fff; border-color:#5a1724; }
+.btn:hover{ background:#f8fafc; }
+.btn-primary:hover{ filter:brightness(.95); }
 /* الأزرار داخل الجداول وغيرها ما تكون بعرض 100% */
 .btn,.btn-details,.btn-primary,.btn-strong{width:auto}
 
 /* واجهة الأصناف والروابط */
 .items-head{display:flex;justify-content:flex-end;margin:8px 0}
 .add-item{border:1px dashed #d1d5db;background:#fff;color:#111}
-.item-row,.link-row{
-  display:grid;gap:8px;align-items:center;margin-bottom:8px
-}
+.item-row,.link-row{ display:grid;gap:8px;align-items:center;margin-bottom:8px }
 .item-row{grid-template-columns:1fr 120px 140px auto}
 .link-row{grid-template-columns:1fr 1.5fr auto}
 .item-row .remove,.link-row .remove{height:40px}
@@ -210,7 +170,7 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 /* عنوان قسم */
 .section-box{font-weight:800;color:#6b7280;margin:10px 0}
 
-/* جدول الطباعة داخل المودال */
+/* جدول الطباعة العام */
 .table-like{
   width:100%;border-collapse:separate;border-spacing:0;
   border:1px solid #e5e7eb;border-radius:12px;overflow:hidden
@@ -219,20 +179,52 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 .table-like td{padding:8px 10px;border-bottom:1px solid #f1f5f9}
 .table-like tfoot .total{font-weight:800}
 
-/* مودال التفاصيل (detailsModal) */
+/* ===== المودال (عام) ===== */
+.modal{
+  position:fixed; inset:0; display:none; place-items:center;
+  background:rgba(0,0,0,.35); padding:16px; z-index:1000;
+}
+.modal.show{ display:grid; }
+.modal[hidden]{ display:none; }
+
+.modal__dialog{
+  width:min(900px,96vw); max-height:90vh; overflow:auto;
+  background:#fff; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+.modal__header,.modal__footer{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; padding:14px 16px; border-bottom:1px solid #f1f5f9;
+}
+.modal__footer{ border-top:1px solid #f1f5f9; border-bottom:0; }
+.modal__body{ padding:16px; }
+
+.items{ display:grid; gap:8px; }
+.items .item{ display:grid; grid-template-columns:1fr auto auto; gap:8px; padding:8px 10px; border:1px solid #f1f5f9; border-radius:10px; background:#fcfcfd; }
+
+/* ===== تفاصيل طلباتي (detailsModal) ===== */
 #detailsModal .modal-card{
-  background:#fff;border-radius:16px;box-shadow:var(--shadow);
-  max-width:900px;width:96vw;max-height:90vh;overflow:auto
+  width:min(900px,96vw);
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
 }
 #detailsModal .modal-header{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:10px;padding:14px 16px;border-bottom:1px solid #f1f5f9
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:14px 16px; border-bottom:1px solid #f1f5f9;
 }
-#detailsModal .backdrop{position:absolute;inset:0} /* عشان كليك برة يقفل */
-#detailsModal .close-x{border:0;background:#f1f5f9;width:36px;height:36px;border-radius:8px;cursor:pointer}
-.inv-brand{display:flex;align-items:center;gap:10px}
-.inv-title{font-weight:800;color:var(--brand)}
-.t-small{font-size:14px}
+#detailsModal .inv-brand{ display:flex; align-items:center; gap:12px; }
+#detailsModal .inv-brand img{ width:70px; height:auto; object-fit:contain; } /* تصغير الشعار */
+#detailsModal .inv-title{ font-weight:800; font-size:18px; color:#5a1524; }
+#detailsModal .t-small{ padding:16px; font-size:14px; }
+#detailsModal .muted{ color:#6b7280; }
+#detailsModal .table-like th,
+#detailsModal .table-like td{ padding:8px 10px; border-bottom:1px solid #f1f5f9; text-align:right; }
+#detailsModal .table-like thead th{ background:#f8fafc; position:sticky; top:0; }
+#detailsModal .table-like .total{ font-weight:700; }
+#detailsModal .backdrop{position:absolute;inset:0} /* كليك برة يقفل */
+#detailsModal img{ max-width:100%; height:auto; }
 
 /* شارة الحالة في (طلباتي) */
 .status{
@@ -244,48 +236,11 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 .s-shipped{background:#fef3c7;border-color:#fde68a}
 .s-delivered{background:#ecfdf5;border-color:#a7f3d0}
 
-/* ===== تفاصيل طلباتي (detailsModal) ===== */
-#detailsModal .modal-card{
-  width:min(900px,96vw);
-  max-height:90vh;
-  overflow:auto;
-  background:#fff;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.2);
-}
-
-#detailsModal .modal-header{
-  display:flex; align-items:center; justify-content:space-between;
-  gap:12px; padding:14px 16px; border-bottom:1px solid #f1f5f9;
-}
-
-#detailsModal .inv-brand{ display:flex; align-items:center; gap:12px; }
-#detailsModal .inv-brand img{ width:70px; height:auto; object-fit:contain; } /* ← هنا تصغير الشعار */
-#detailsModal .inv-title{ font-weight:800; font-size:18px; color:#5a1524; }
-
-#detailsModal .t-small{ padding:16px; font-size:14px; }
-#detailsModal .muted{ color:#6b7280; }
-
-#detailsModal .table-like{ width:100%; border-collapse:separate; border-spacing:0; }
-#detailsModal .table-like th,
-#detailsModal .table-like td{ padding:8px 10px; border-bottom:1px solid #f1f5f9; text-align:right; }
-#detailsModal .table-like thead th{ background:#f8fafc; position:sticky; top:0; }
-#detailsModal .table-like .total{ font-weight:700; }
-
-#detailsModal .close-x{
-  border:0; background:#f1f5f9; width:36px; height:36px; border-radius:8px; cursor:pointer;
-}
-
-/* احتياط: لا تسمح لأي صورة تتمدّد خارج المودال */
-#detailsModal img{ max-width:100%; height:auto; }
-
-/* المودال نفسه يظهر عند إضافة .show (انت لديك هذا مسبقًا) */
 /* == شريط فلاتر صغير على شكل Chips == */
 .filters{
   display:flex; align-items:center; gap:8px; flex-wrap:wrap;
   margin:8px 0 6px;
 }
-
 /* مدخل البحث بحجم ثابت صغير */
 .chip-input{
   height:32px; font-size:14px;
@@ -296,25 +251,30 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
   box-shadow:none; outline:0;
 }
 .chip-input:hover{ background:#f8fafc; }
-
-/* select صغير بحجم المحتوى */
+/* select صغير */
 .chip-select{
   height:32px; font-size:14px;
-  padding:4px 28px 4px 10px;          /* مساحة لسهم الاختيار */
+  padding:4px 28px 4px 10px;
   border:1px solid #e5e7eb; border-radius:999px;
   background:#fff;
-  width:auto !important; min-width:0; /* مهم لتجاوز width:100% */
+  width:auto !important; min-width:0;
   appearance:none; -webkit-appearance:none; -moz-appearance:none;
   background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%236b7280" d="M6 8 0 0h12z"/></svg>');
   background-repeat:no-repeat; background-position:right 8px center; background-size:12px 8px;
 }
 .chip-select:hover{ background-color:#f8fafc; }
-
+/* تحسين تركيز للكيبورد */
+.chip-input:focus,
+.chip-select:focus{
+  outline:0;
+  border-color:var(--brand-light);
+  box-shadow:0 0 0 2px rgba(108,29,44,.25);
+}
 @media (max-width:720px){
   .chip-input{ width:160px !important; }
 }
 
-/* زر إغلاق موحّد (لـ detailsModal: .close-x ولـ orderModal: .modal__close) */
+/* زر إغلاق موحّد (detailsModal: .close-x و orderModal: .modal__close) */
 .close-x,
 .modal__close{
   width:36px; height:36px;
@@ -325,7 +285,6 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
   cursor:pointer;
   transition: background .2s ease, color .2s ease, box-shadow .2s ease, transform .08s ease;
 }
-
 .close-x:hover,
 .modal__close:hover{
   background: linear-gradient(180deg, var(--brand-light), var(--brand));
@@ -333,19 +292,16 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
   border-color:#5a1724;
   box-shadow: 0 6px 16px rgba(108,29,44,.25);
 }
-
 .close-x:active,
-.modal__close:active{
-  transform: scale(.96);
-}
-
+.modal__close:active{ transform: scale(.96); }
 .close-x:focus-visible,
 .modal__close:focus-visible{
   outline:3px solid rgba(108,29,44,.35);
   outline-offset:2px;
 }
 
-/* وقت الطباعة اخفِ أزرار الإغلاق أيضًا */
+/* طباعة: اخفِ أزرار الطباعة والإغلاق */
 @media print{
   #printDetailsBtn, .close-x, .modal__close{ display:none !important; }
+  body{ background:#fff; }
 }
