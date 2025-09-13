@@ -322,3 +322,53 @@ body.auth-out .container > :not(#view-login) {
   max-width: 220px;
 }
 .tag-chip button { border:0; background:transparent; cursor:pointer; }
+
+/* ===== إدارة الطلبات (view-admin) ===== */
+#view-admin .table-wrap{ overflow:auto; border:1px solid #e5e7eb; border-radius:12px; background:#fff; }
+#view-admin table{ width:100%; border-collapse:separate; border-spacing:0; min-width:880px; }
+#view-admin thead th{
+  position:sticky; top:0; background:#f8fafc; z-index:1; text-align:right;
+  border-bottom:1px solid #e5e7eb; padding:12px; font-weight:700;
+}
+#view-admin tbody td{ padding:10px 12px; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
+#view-admin tbody tr:nth-child(even){ background:#fcfcfd; }
+#view-admin tbody tr:hover{ background:#f8fafc; }
+
+.badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:.85rem; border:1px solid transparent; }
+.badge-new{ background:#fff7ed; border-color:#fed7aa; }
+.badge-ok{  background:#ecfdf5; border-color:#a7f3d0; }
+
+.btn, .btn-details, .btn-primary{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:32px; padding:0 10px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; cursor:pointer;
+}
+.btn-primary{ background:#6c1d2c; color:#fff; border-color:#5a1724; }
+.btn:hover{ background:#f8fafc; }
+.btn-primary:hover{ filter:brightness(.95); }
+
+/* مودال */
+.modal{ position:fixed; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.35); padding:16px; z-index:1000; }
+.modal[hidden]{ display:none; }
+.modal__dialog{ width:min(900px,96vw); max-height:90vh; overflow:auto; background:#fff; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.2); }
+.modal__header, .modal__footer{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 16px; border-bottom:1px solid #f1f5f9; }
+.modal__footer{ border-top:1px solid #f1f5f9; border-bottom:0; }
+.modal__body{ padding:16px; }
+.modal__close{ border:0; background:#f1f5f9; width:36px; height:36px; border-radius:8px; cursor:pointer; }
+.items{ display:grid; gap:8px; }
+.items .item{ display:grid; grid-template-columns: 1fr auto auto; gap:8px; padding:8px 10px; border:1px solid #f1f5f9; border-radius:10px; background:#fcfcfd; }
+
+@media print{
+  .modal{ display:none !important; }
+  body{ background:#fff; }
+}
+/* إزالة الخط السفلي من روابط الشريط العلوي */
+.navlinks a,
+.nav a {
+  text-decoration: none !important;
+}
+
+/* مظهر هوفر لطيف (اختياري) */
+.navlinks a:hover,
+.nav a:hover {
+  opacity: .85;
+}
