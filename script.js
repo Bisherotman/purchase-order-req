@@ -50,12 +50,13 @@ function showLinksForRole(role) {
   const sessionBtn = document.getElementById("sessionBtn");
   if (auth.currentUser) {
     sessionBtn.textContent = "خروج";
-    sessionBtn.onclick = () => auth.signOut();
-  } else {
-    sessionBtn.textContent = "دخول";
-    sessionBtn.onclick = () => switchView("login");
-  }
-}
+   sessionBtn.onclick = () => {
+  auth.signOut().then(() => {
+    location.hash = "#/login";   // ✅ يرجع للصفحة الرئيسية
+    switchView("login");         // ✅ يعرض صفحة تسجيل الدخول
+    updateNavLinks(null);        // ✅ يخفي الأزرار
+  });
+};
 
 // 📲 Login functionality
 document.getElementById("loginForm").addEventListener("submit", e => {
@@ -72,14 +73,17 @@ document.getElementById("loginForm").addEventListener("submit", e => {
   }
 
   auth.setPersistence(
-    remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION
-  ).then(() => {
-    return auth.signInWithEmailAndPassword(email, password);
-  }).catch(err => {
-    loginMsg.textContent = err.message;
-    loginMsg.className = "msg error";
-    loginMsg.style.display = "block";
+  remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION
+).then(() => {
+  return auth.signInWithEmailAndPassword(email, password).then(() => {
+    location.hash = "#/new"; // ✅ التوجيه للصفحة الجديدة بعد تسجيل الدخول
   });
+}).catch(err => {
+  loginMsg.textContent = err.message;
+  loginMsg.className = "msg error";
+  loginMsg.style.display = "block";
+});
+
 });
 // 📄 Render orders for user
 function renderOrders(containerId, orders) {
