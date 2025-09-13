@@ -305,3 +305,32 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
   #printDetailsBtn, .close-x, .modal__close{ display:none !important; }
   body{ background:#fff; }
 }
+/* === إظهار/إخفاء أزرار كلمة المرور/المسح بالاعتماد على .has-value === */
+.input-wrap .input-clear,
+.input-wrap .pwd-toggle,
+.input-wrap .pwd-clear{
+  /* مخفية افتراضياً */
+  display:none;
+
+  /* تموضع ثابت فوق الحقل */
+  position:absolute; top:50%; transform:translateY(-50%);
+  left:10px;                 /* RTL: الأزرار على اليسار */
+  width:32px !important; height:32px !important;
+  border-radius:8px; border:1px solid #d1d5db;
+  background:#f3f4f6; z-index:3; align-items:center; justify-content:center;
+}
+
+/* وقت يكون الحقل فيه قيمة تظهر الأزرار تلقائياً */
+.input-wrap.has-value .input-clear{ display:flex; }
+.pwd-wrap.has-value .pwd-toggle,
+.pwd-wrap.has-value .pwd-clear{ display:flex; }
+
+/* ترتيب العين قبل الـ X */
+.pwd-toggle{ left:46px; }
+
+/* أعطِ مساحة داخل الحقل للأزرار (RTL: inline-end = يسار) */
+.input-wrap input{ padding-inline-end:90px; }
+
+/* لو كان عندك overflow يقطع الظلال، خليه مرئي */
+.input-wrap{ position:relative; overflow:visible; }
+
