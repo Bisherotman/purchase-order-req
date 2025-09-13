@@ -543,78 +543,91 @@ const adminBody = $("#adminOrdersBody"),
       adminFilterStatus = $("#adminFilterStatus"),
       adminFilterUser   = $("#adminFilterUser"),
       adminSort         = $("#adminSort");
+  let usersById = {}; // uid -> {name, email, ...}
+
 let adminRows=[];
-async function loadAdminOrders(){
+async function loadAdminOrders(){ // NEW
   if(!canSeeAdmin) return;
-  const snap = await db.collection("orders").get();
-  adminRows = snap.docs.map(d=>({ id:d.id, ...d.data() }));
 
-  // عبّي قائمة المستخدمين من النتائج
+  const [ordersSnap, usersSnap] = await Promise.all([
+    db.collection("orders").get(),
+    db.collection("users").get()
+  ]);
+
+  usersById = {};
+  usersSnap.forEach(d => usersById[d.id] = d.data() || {});
+
+  adminRows = ordersSnap.docs.map(d => ({ id:d.id, ...d.data() }));
   populateAdminUsers(adminRows);
-
-  // ارسم الجدول لأول مرة
   renderAdmin();
 }
 
-function populateAdminUsers(rows){
-  const uniq = new Map();
+function populateAdminUsers(rows){ // NEW
+  const map = new Map(); // uid -> label
   rows.forEach(r=>{
-    const key = (r.createdByEmail || r.createdBy || "").trim(); // إيميل إن وجد وإلا UID
-    if (key) uniq.set(key, true);
+    const uid = (r.createdBy || "").trim();
+    if (!uid) return;
+    const label = (usersById[uid]?.name || usersById[uid]?.email || uid);
+    map.set(uid, label);
   });
 
   adminFilterUser.innerHTML =
     `<option value="">كل المستخدمين</option>` +
-    [...uniq.keys()].sort().map(u => `<option value="${u}">${u}</option>`).join("");
+    [...map.entries()]
+      .sort((a,b)=> a[1].localeCompare(b[1], 'ar'))
+      .map(([uid,label]) => `<option value="${uid}">${label}</option>`)
+      .join("");
 }
 
-function renderAdmin(){
+function renderAdmin(){ // NEW
   const term = (adminSearch.value || "").trim().toLowerCase();
   const fb   = (adminFilterBranch.value || "");
   const fs   = (adminFilterStatus.value || "");
-  const fu   = (adminFilterUser.value || "");
-  const sort = (adminSort.value || "createdAt_desc"); // الأحدث أولًا افتراضيًا
+  const fu   = (adminFilterUser.value || ""); // ← UID
+  const sort = (adminSort.value || "createdAt_desc");
 
   let rows = adminRows.filter(r=>{
-    if (fb && r.branch !== fb) return false;                      // فلتر الفرع
-    if (fs && (r.status||"") !== fs) return false;                // فلتر الحالة
-    const userStr = (r.createdByEmail || r.createdBy || "");
-    if (fu && userStr !== fu) return false;                       // فلتر المستخدم
+    if (fb && r.branch !== fb) return false;
+    if (fs && (r.status||"") !== fs) return false;
+    if (fu && (r.createdBy || "") !== fu) return false;
 
-    if (!term) return true;                                       // بحث نصّي
+    if (!term) return true;
     const inTracking = (r.tracking||"").toLowerCase().includes(term);
     const inProj     = (r.projectName||"").toLowerCase().includes(term);
     const inCust     = (r.customerName||"").toLowerCase().includes(term);
     const inItems    = (r.items||[]).some(it => (it.itemCode||"").toLowerCase().includes(term));
-    return inTracking || inProj || inCust || inItems;
+    const inUserName = (usersById[r.createdBy]?.name || "").toLowerCase().includes(term);
+    const inUserMail = (usersById[r.createdBy]?.email||"").toLowerCase().includes(term);
+    return inTracking || inProj || inCust || inItems || inUserName || inUserMail;
   });
 
-  // الترتيب
   rows.sort((a,b)=> sort==="createdAt_desc"
     ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
     : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0));
 
-  // الرسم
   adminBody.innerHTML = rows.map(r=>{
-    const items       = r.items || [];
-    const priceFirst  = items.length ? (items[0].price ?? "") : "";
+    const items        = r.items || [];
+    const priceFirst   = items.length ? (items[0].price ?? "") : "";
     const createdAtStr = r.createdAt?.toDate?.()
       ? r.createdAt.toDate().toLocaleDateString('ar-SA')
       : "";
-    const userDisplay = r.createdByEmail || r.createdBy || "";
+    const userLabel = usersById[r.createdBy]?.name
+                   || usersById[r.createdBy]?.email
+                   || r.createdBy;
 
     return `
       <tr data-id="${r.tracking}">
         <td>${r.tracking}</td>
         <td>${createdAtStr}</td>
         <td>${r.projectName||"-"}</td>
-        <td>${userDisplay}</td>
+        <td>${userLabel}</td>
         <td><span class="badge ${r.status==='created'?'badge-new':'badge-ok'}">${statusLabel(r.status)}</span></td>
         <td>${(typeof priceFirst==="number") ? priceFirst.toFixed(2) : priceFirst}</td>
         <td><button type="button" class="btn-details" data-id="${r.tracking}">تفاصيل</button></td>
       </tr>`;
   }).join("");
 }
+
 adminSearch.addEventListener("input",renderAdmin);
 adminFilterBranch.addEventListener("change",renderAdmin);
 adminFilterStatus.addEventListener("change", renderAdmin);
