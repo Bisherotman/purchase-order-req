@@ -73,7 +73,7 @@ label{ font-weight:700; margin-top:14px; display:block; }
 .msg.error{ background:#fef2f2; color:#7f1d1d; border:1px solid #fecaca; }
 
 /* غلاف الإدخال + أزرار مسح/إظهار كلمة المرور */
-.input-wrap{ position:relative; background:#f1f1f1; border-radius:12px; overflow:hidden; margin-top:10px; }
+.input-wrap{ position:relative; background:#f1f1f1; border-radius:12px; overflow:visible; margin-top:10px; }
 .input-wrap input{ padding-inline-end:48px; padding-inline-start:14px; border:0; background:transparent; color:#111; }
 .input-clear,.pwd-toggle,.pwd-clear{
   position:absolute; top:50%; transform:translateY(-50%);
@@ -110,7 +110,7 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 }
 
 /* نماذج عامة */
-.form-section,.card,.panel{ max-width:100%; overflow:hidden; }
+.form-section,.card,.panel{ max-width:100%; overflow:visible; }
 .field input[type="text"],
 .field input[type="search"],
 .field input[type="email"],
