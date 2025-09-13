@@ -243,3 +243,40 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 .s-ordered{background:#fff7ed;border-color:#fed7aa}
 .s-shipped{background:#fef3c7;border-color:#fde68a}
 .s-delivered{background:#ecfdf5;border-color:#a7f3d0}
+
+/* ===== تفاصيل طلباتي (detailsModal) ===== */
+#detailsModal .modal-card{
+  width:min(900px,96vw);
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+#detailsModal .modal-header{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:14px 16px; border-bottom:1px solid #f1f5f9;
+}
+
+#detailsModal .inv-brand{ display:flex; align-items:center; gap:12px; }
+#detailsModal .inv-brand img{ width:70px; height:auto; object-fit:contain; } /* ← هنا تصغير الشعار */
+#detailsModal .inv-title{ font-weight:800; font-size:18px; color:#5a1524; }
+
+#detailsModal .t-small{ padding:16px; font-size:14px; }
+#detailsModal .muted{ color:#6b7280; }
+
+#detailsModal .table-like{ width:100%; border-collapse:separate; border-spacing:0; }
+#detailsModal .table-like th,
+#detailsModal .table-like td{ padding:8px 10px; border-bottom:1px solid #f1f5f9; text-align:right; }
+#detailsModal .table-like thead th{ background:#f8fafc; position:sticky; top:0; }
+#detailsModal .table-like .total{ font-weight:700; }
+
+#detailsModal .close-x{
+  border:0; background:#f1f5f9; width:36px; height:36px; border-radius:8px; cursor:pointer;
+}
+
+/* احتياط: لا تسمح لأي صورة تتمدّد خارج المودال */
+#detailsModal img{ max-width:100%; height:auto; }
+
+/* المودال نفسه يظهر عند إضافة .show (انت لديك هذا مسبقًا) */
