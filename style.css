@@ -280,3 +280,36 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 #detailsModal img{ max-width:100%; height:auto; }
 
 /* المودال نفسه يظهر عند إضافة .show (انت لديك هذا مسبقًا) */
+/* == شريط فلاتر صغير على شكل Chips == */
+.filters{
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  margin:8px 0 6px;
+}
+
+/* مدخل البحث بحجم ثابت صغير */
+.chip-input{
+  height:32px; font-size:14px;
+  padding:4px 12px;
+  border:1px solid #e5e7eb; border-radius:999px;
+  background:#fff;
+  width:220px !important;   /* يتجاوز القاعدة العامة */
+  box-shadow:none; outline:0;
+}
+.chip-input:hover{ background:#f8fafc; }
+
+/* select صغير بحجم المحتوى */
+.chip-select{
+  height:32px; font-size:14px;
+  padding:4px 28px 4px 10px;          /* مساحة لسهم الاختيار */
+  border:1px solid #e5e7eb; border-radius:999px;
+  background:#fff;
+  width:auto !important; min-width:0; /* مهم لتجاوز width:100% */
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%236b7280" d="M6 8 0 0h12z"/></svg>');
+  background-repeat:no-repeat; background-position:right 8px center; background-size:12px 8px;
+}
+.chip-select:hover{ background-color:#f8fafc; }
+
+@media (max-width:720px){
+  .chip-input{ width:160px !important; }
+}
