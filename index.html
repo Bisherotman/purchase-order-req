@@ -266,6 +266,23 @@ const $ = (s)=>document.querySelector(s);
 const routes = { "#/login":"view-login", "#/new":"view-new", "#/my":"view-my", "#/admin":"view-admin" };
 const navLinks = $("#navLinks");
 const sessionBtn = $("#sessionBtn");
+  // === Gregorian date formatter (Arabic UI) ===
+const AR_GREG = 'ar-SA-u-ca-gregory'; // لو بدك أرقام لاتينية: 'ar-SA-u-ca-gregory-nu-latn'
+function fmtDate(ts, { withTime = false } = {}) {
+  if (!ts?.toDate) return '';
+  const d = ts.toDate();
+  try {
+    return withTime
+      ? d.toLocaleString(AR_GREG, { dateStyle: 'medium', timeStyle: 'short' })
+      : d.toLocaleDateString(AR_GREG, { dateStyle: 'medium' });
+  } catch {
+    // احتياط لو متصفح قديم ما يدعم الامتداد
+    return withTime
+      ? d.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+      : d.toLocaleDateString('en-GB', { dateStyle: 'medium' });
+  }
+}
+
 
 function setActive(hash){ navLinks.querySelectorAll("a").forEach(a=>a.classList.toggle("active", a.getAttribute("href")==hash)); }
 function showMsg(el, text, type="success"){ el.textContent=text; el.className="msg "+type; el.style.display="block"; }
@@ -281,6 +298,7 @@ function route(){
   showView(target);
 }
 window.addEventListener("hashchange", route);
+  
 
 /* ---------- state ---------- */
 const loginForm=$("#loginForm"), loginMsg=$("#loginMsg"), loginBtn=$("#loginBtn");
@@ -514,9 +532,7 @@ function renderMy(rows){
     const extra      = items.length>1 ? ` (+${items.length-1})` : "";
     const qtySum     = items.reduce((s,x)=>s+(x.quantity||0),0);
     const priceFirst = items.length ? (items[0].price ?? "") : "";
-    const createdAtStr = r.createdAt?.toDate?.()
-      ? r.createdAt.toDate().toLocaleString('ar-SA')
-      : "";
+    const createdAtStr = fmtDate(r.createdAt, { withTime: true });
 
     return `
       <tr>
@@ -608,9 +624,7 @@ function renderAdmin(){ // NEW
   adminBody.innerHTML = rows.map(r=>{
     const items        = r.items || [];
     const priceFirst   = items.length ? (items[0].price ?? "") : "";
-    const createdAtStr = r.createdAt?.toDate?.()
-      ? r.createdAt.toDate().toLocaleDateString('ar-SA')
-      : "";
+    const createdAtStr = fmtDate(r.createdAt);
     const userLabel = usersById[r.createdBy]?.name
                    || usersById[r.createdBy]?.email
                    || r.createdBy;
@@ -742,7 +756,7 @@ async function openDetails(tracking) {
       ? `<ul>${r.attachments.map(a => `<li><a href="${a.url}" target="_blank">${a.name}</a></li>`).join('')}</ul>`
       : `<div class="muted">لا توجد مرفقات.</div>`;
 
-    const createdAtStr = r.createdAt?.toDate?.()
+    const createdAtStr = fmtDate(r.createdAt, { withTime: true });
       ? r.createdAt.toDate().toLocaleString('ar-SA')
       : '';
 
