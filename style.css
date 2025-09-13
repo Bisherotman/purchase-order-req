@@ -267,3 +267,58 @@ body.auth-out .container > :not(#view-login) {
   input, select, button { background: #fff; color: #111; border-color: #ddd; }
   .navlinks a { background: linear-gradient(180deg, #8a2a3b, #5a1524); }
 }
+/* ضمان عدم خروج أي عنصر عن الحاوية */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* حاويات النماذج */
+.form-section, .card, .panel { 
+  max-width: 100%; 
+  overflow: hidden; 
+}
+
+/* الحقول النصية */
+.field input[type="text"],
+.field input[type="search"],
+.field input[type="email"],
+.field input[type="number"],
+.field textarea {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;           /* مهم مع flex */
+  display: block;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  line-height: 1.4;
+  /* منع تمدّد النص */
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* صف الإدخال إذا كان Flex */
+.form-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.form-row > * { min-width: 220px; flex: 1 1 280px; }
+
+/* مربّع إدخال الأصناف (tags/chips) */
+.tags-input {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px;
+  background: #fff; max-width: 100%;
+}
+.tags-input input {
+  flex: 1 1 160px; min-width: 120px; border: 0; outline: 0;
+  padding: 6px; background: transparent;
+}
+.tag-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 10px; border-radius: 999px;
+  background: #f1f5f9; border: 1px solid #e2e8f0;
+  max-width: 100%; overflow: hidden;
+}
+.tag-chip span { 
+  display:inline-block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  max-width: 220px;
+}
+.tag-chip button { border:0; background:transparent; cursor:pointer; }
