@@ -313,3 +313,39 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 @media (max-width:720px){
   .chip-input{ width:160px !important; }
 }
+
+/* زر إغلاق موحّد (لـ detailsModal: .close-x ولـ orderModal: .modal__close) */
+.close-x,
+.modal__close{
+  width:36px; height:36px;
+  display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  background:#f1f5f9; color:#111;
+  cursor:pointer;
+  transition: background .2s ease, color .2s ease, box-shadow .2s ease, transform .08s ease;
+}
+
+.close-x:hover,
+.modal__close:hover{
+  background: linear-gradient(180deg, var(--brand-light), var(--brand));
+  color:#fff;
+  border-color:#5a1724;
+  box-shadow: 0 6px 16px rgba(108,29,44,.25);
+}
+
+.close-x:active,
+.modal__close:active{
+  transform: scale(.96);
+}
+
+.close-x:focus-visible,
+.modal__close:focus-visible{
+  outline:3px solid rgba(108,29,44,.35);
+  outline-offset:2px;
+}
+
+/* وقت الطباعة اخفِ أزرار الإغلاق أيضًا */
+@media print{
+  #printDetailsBtn, .close-x, .modal__close{ display:none !important; }
+}
