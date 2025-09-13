@@ -107,10 +107,20 @@
       </div>
       <div class="row">
         <input id="mySearch" placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
-        <select id="mySort">
-          <option value="createdAt_desc">الأحدث أولاً</option>
-          <option value="createdAt_asc">الأقدم أولاً</option>
-        </select>
+          <!-- فلتر الحالة -->
+  <select id="myFilterStatus" title="الحالة">
+    <option value="">كل الحالات</option>
+    <option value="created">جديد</option>
+    <option value="ordered">تم الطلب من المصنع</option>
+    <option value="shipped">تم الشحن</option>
+    <option value="delivered">وصلت</option>
+  </select>
+
+  <!-- الترتيب -->
+  <select id="mySort" title="الترتيب">
+    <option value="createdAt_desc">الأحدث أولاً</option>
+    <option value="createdAt_asc">الأقدم أولاً</option>
+  </select>
       </div>
       <div id="myTableWrap" class="card" style="padding:0">
         <div class="table-wrap">
@@ -137,11 +147,32 @@
 
       <div class="row">
         <input id="adminSearch" placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
-        <select id="adminFilterBranch">
-          <option value="">كل الفروع</option>
-          <option>Riyadh</option><option>Dammam</option><option>Jeddah</option>
-          <option>Makkah</option><option>Madina</option><option>HQ</option>
-        </select>
+        <!-- الفرع -->
+  <select id="adminFilterBranch" title="الفرع">
+    <option value="">كل الفروع</option>
+    <option>Riyadh</option><option>Dammam</option><option>Jeddah</option>
+    <option>Makkah</option><option>Madina</option><option>HQ</option>
+  </select>
+
+  <!-- الحالة -->
+  <select id="adminFilterStatus" title="الحالة">
+    <option value="">كل الحالات</option>
+    <option value="created">جديد</option>
+    <option value="ordered">تم الطلب من المصنع</option>
+    <option value="shipped">تم الشحن</option>
+    <option value="delivered">وصلت</option>
+  </select>
+
+  <!-- المستخدم (تتعبى ديناميكيًا) -->
+  <select id="adminFilterUser" title="المستخدم">
+    <option value="">كل المستخدمين</option>
+  </select>
+
+  <!-- الترتيب -->
+  <select id="adminSort" title="الترتيب">
+    <option value="createdAt_desc">الأحدث أولاً</option>
+    <option value="createdAt_asc">الأقدم أولاً</option>
+  </select>
       </div>
 
       <div id="adminTableWrap" class="card" style="padding:0">
@@ -303,7 +334,10 @@ $("#loginPassword").addEventListener("input", showPwdButtonsIfNeeded);
 $("#clearPwd").onclick = ()=>{ $("#loginPassword").value=""; $("#loginPassword").focus(); showPwdButtonsIfNeeded(); };
 
 /* ---------- MY ORDERS elements ---------- */
-const myBody = $("#myOrdersBody"), mySearch = $("#mySearch"), mySort = $("#mySort");
+const myBody = $("#myOrdersBody"),
+      mySearch = $("#mySearch"),
+      myFilterStatus = $("#myFilterStatus"),
+      mySort = $("#mySort");
 
 /* ---------- auth ---------- */
 loginForm.addEventListener("submit", async (e)=>{
@@ -439,11 +473,12 @@ submitOrderBtn.addEventListener("click", async ()=>{
     const tracking=code+pad5(seq);
 
     await db.collection("orders").doc(tracking).set({
-      tracking, branch, projectName, customerName,
-      items, attachments, createdBy: currentUser.uid,
-      status:"created",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+  tracking, branch, projectName, customerName,
+  items, attachments, createdBy: currentUser.uid,
+  createdByEmail: currentUser.email || "",    // ← جديد
+  status:"created",
+  createdAt: firebase.firestore.FieldValue.serverTimestamp()
+});
 
     showMsg(newMsg,`تم تسجيل الطلب. رقم التتبّع: ${tracking}`,"success");
     $("#projectName").value=""; $("#customerName").value="";
@@ -470,100 +505,141 @@ function subscribeMyOrders(){
 }
 const myTableBody = $("#myOrdersBody");
 function renderMy(rows){
-  const term=(mySearch.value||"").toLowerCase();
-  rows=rows.filter(r=>{
-    const hasItem = (r.items||[]).some(it => (it.itemCode||"").toLowerCase().includes(term));
-    return !term ||
-      r.tracking.toLowerCase().includes(term) ||
-      (r.projectName||"").toLowerCase().includes(term) ||
-      (r.customerName||"").toLowerCase().includes(term) ||
-      hasItem;
+  // فلتر الحالة
+  const selectedStatus = (myFilterStatus?.value || "").trim();
+  if (selectedStatus) {
+    rows = rows.filter(r => (r.status || "") === selectedStatus);
+  }
+
+  // البحث
+  const term = (mySearch.value || "").trim().toLowerCase();
+  rows = rows.filter(r=>{
+    if (!term) return true;
+    const inTracking = (r.tracking||"").toLowerCase().includes(term);
+    const inProj     = (r.projectName||"").toLowerCase().includes(term);
+    const inCust     = (r.customerName||"").toLowerCase().includes(term);
+    const inItems    = (r.items||[]).some(it => (it.itemCode||"").toLowerCase().includes(term));
+    return inTracking || inProj || inCust || inItems;
   });
+
+  // الترتيب
   rows.sort((a,b)=> (mySort.value==="createdAt_desc"
-    ? (b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)
-    : (a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0)));
+    ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
+    : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0)));
 
+  // العرض
   myTableBody.innerHTML = rows.map(r=>{
-  const items = r.items||[];
-  const firstCode = items[0]?.itemCode || "";
-  const extra = items.length>1 ? ` (+${items.length-1})` : "";
-  const qtySum = items.reduce((s,x)=>s+(x.quantity||0),0);
-  const priceFirst = items.length ? (items[0].price ?? "") : "";
+    const items      = r.items || [];
+    const firstCode  = items[0]?.itemCode || "";
+    const extra      = items.length>1 ? ` (+${items.length-1})` : "";
+    const qtySum     = items.reduce((s,x)=>s+(x.quantity||0),0);
+    const priceFirst = items.length ? (items[0].price ?? "") : "";
+    const createdAtStr = r.createdAt?.toDate?.()
+      ? r.createdAt.toDate().toLocaleString('ar-SA')
+      : "";
 
-  // ⬅️ أضف هذا السطر
-  const createdAtStr = r.createdAt?.toDate?.()
-    ? r.createdAt.toDate().toLocaleString('ar-SA')
-    : "";
-
-  return `
-    <tr>
-      <td><strong>${r.tracking}</strong></td>
-      <td>${firstCode}${extra}</td>
-      <td>${qtySum}</td>
-      <td>${(typeof priceFirst==="number") ? priceFirst.toFixed(2) : priceFirst}</td>
-      <td>${r.projectName||"-"}</td>
-      <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
-      <td>${createdAtStr}</td> <!-- ⬅️ بدّلناها -->
-      <td><button type="button" class="btn-strong" data-open="${r.tracking}" style="padding:6px 10px;border-radius:10px">تفاصيل</button></td>
-    </tr>`;
-}).join("");
-
-  //document.querySelectorAll('[data-open]').forEach(btn=>{ btn.onclick = ()=> openDetails(btn.dataset.open); });
+    return `
+      <tr>
+        <td><strong>${r.tracking}</strong></td>
+        <td>${firstCode}${extra}</td>
+        <td>${qtySum}</td>
+        <td>${(typeof priceFirst==="number") ? priceFirst.toFixed(2) : priceFirst}</td>
+        <td>${r.projectName||"-"}</td>
+        <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
+        <td>${createdAtStr}</td>
+        <td><button type="button" class="btn-strong" data-open="${r.tracking}" style="padding:6px 10px;border-radius:10px">تفاصيل</button></td>
+      </tr>`;
+  }).join("");
 }
+  //document.querySelectorAll('[data-open]').forEach(btn=>{ btn.onclick = ()=> openDetails(btn.dataset.open); });
 mySearch.addEventListener("input",()=>renderMy(myRows));
 mySort.addEventListener("change",()=>renderMy(myRows));
+myFilterStatus.addEventListener("change", ()=>renderMy(myRows));
 
 /* ---------- ADMIN (بحث مُحسّن + زر التفاصيل) ---------- */
-const adminBody=$("#adminOrdersBody"), adminSearch=$("#adminSearch"), adminFilterBranch=$("#adminFilterBranch");
+const adminBody = $("#adminOrdersBody"),
+      adminSearch = $("#adminSearch"),
+      adminFilterBranch = $("#adminFilterBranch"),
+      adminFilterStatus = $("#adminFilterStatus"),
+      adminFilterUser   = $("#adminFilterUser"),
+      adminSort         = $("#adminSort");
 let adminRows=[];
 async function loadAdminOrders(){
   if(!canSeeAdmin) return;
-  const snap=await db.collection("orders").get();
-  adminRows=snap.docs.map(d=>({id:d.id,...d.data()}));
+  const snap = await db.collection("orders").get();
+  adminRows = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+
+  // عبّي قائمة المستخدمين من النتائج
+  populateAdminUsers(adminRows);
+
+  // ارسم الجدول لأول مرة
   renderAdmin();
 }
+
+function populateAdminUsers(rows){
+  const uniq = new Map();
+  rows.forEach(r=>{
+    const key = (r.createdByEmail || r.createdBy || "").trim(); // إيميل إن وجد وإلا UID
+    if (key) uniq.set(key, true);
+  });
+
+  adminFilterUser.innerHTML =
+    `<option value="">كل المستخدمين</option>` +
+    [...uniq.keys()].sort().map(u => `<option value="${u}">${u}</option>`).join("");
+}
+
 function renderAdmin(){
-  const term=(adminSearch.value||"").toLowerCase();
-  const fb=adminFilterBranch.value;
+  const term = (adminSearch.value || "").trim().toLowerCase();
+  const fb   = (adminFilterBranch.value || "");
+  const fs   = (adminFilterStatus.value || "");
+  const fu   = (adminFilterUser.value || "");
+  const sort = (adminSort.value || "createdAt_desc"); // الأحدث أولًا افتراضيًا
 
   let rows = adminRows.filter(r=>{
-    if (fb && r.branch!==fb) return false;
-    if (!term) return true;
-    const inItems = (r.items||[]).some(it => (it.itemCode||"").toLowerCase().includes(term));
-    return r.tracking.toLowerCase().includes(term) ||
-           (r.projectName||"").toLowerCase().includes(term) ||
-           (r.customerName||"").toLowerCase().includes(term) ||
-           inItems;
+    if (fb && r.branch !== fb) return false;                      // فلتر الفرع
+    if (fs && (r.status||"") !== fs) return false;                // فلتر الحالة
+    const userStr = (r.createdByEmail || r.createdBy || "");
+    if (fu && userStr !== fu) return false;                       // فلتر المستخدم
+
+    if (!term) return true;                                       // بحث نصّي
+    const inTracking = (r.tracking||"").toLowerCase().includes(term);
+    const inProj     = (r.projectName||"").toLowerCase().includes(term);
+    const inCust     = (r.customerName||"").toLowerCase().includes(term);
+    const inItems    = (r.items||[]).some(it => (it.itemCode||"").toLowerCase().includes(term));
+    return inTracking || inProj || inCust || inItems;
   });
-  rows.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
 
+  // الترتيب
+  rows.sort((a,b)=> sort==="createdAt_desc"
+    ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
+    : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0));
+
+  // الرسم
   adminBody.innerHTML = rows.map(r=>{
-  const items=r.items||[];
-  const firstCode=items[0]?.itemCode || "";
-  const extra=items.length>1 ? ` (+${items.length-1})` : "";
-  const qtySum=items.reduce((s,x)=>s+(x.quantity||0),0);
-  const priceFirst=items.length ? (items[0].price ?? "") : "";
+    const items       = r.items || [];
+    const priceFirst  = items.length ? (items[0].price ?? "") : "";
+    const createdAtStr = r.createdAt?.toDate?.()
+      ? r.createdAt.toDate().toLocaleDateString('ar-SA')
+      : "";
+    const userDisplay = r.createdByEmail || r.createdBy || "";
 
-  // ⬅️ أضف هذا السطر
-  const createdAtStr = r.createdAt?.toDate?.()
-    ? r.createdAt.toDate().toLocaleDateString('ar-SA')
-    : "";
-
-  return `
-    <tr data-id="${r.tracking}">
-      <td>${r.tracking}</td>
-      <td>${createdAtStr}</td> <!-- ⬅️ بدّلناها -->
-      <td>${r.projectName||"-"}</td>
-      <td>${r.createdBy||""}</td>
-      <td><span class="badge ${r.status==='created'?'badge-new':'badge-ok'}">${statusLabel(r.status)}</span></td>
-      <td>${(typeof priceFirst==="number") ? priceFirst.toFixed(2) : priceFirst}</td>
-      <td><button type="button" class="btn-details" data-id="${r.tracking}">تفاصيل</button></td>
-    </tr>`;
-}).join("");
-
+    return `
+      <tr data-id="${r.tracking}">
+        <td>${r.tracking}</td>
+        <td>${createdAtStr}</td>
+        <td>${r.projectName||"-"}</td>
+        <td>${userDisplay}</td>
+        <td><span class="badge ${r.status==='created'?'badge-new':'badge-ok'}">${statusLabel(r.status)}</span></td>
+        <td>${(typeof priceFirst==="number") ? priceFirst.toFixed(2) : priceFirst}</td>
+        <td><button type="button" class="btn-details" data-id="${r.tracking}">تفاصيل</button></td>
+      </tr>`;
+  }).join("");
 }
 adminSearch.addEventListener("input",renderAdmin);
 adminFilterBranch.addEventListener("change",renderAdmin);
+adminFilterStatus.addEventListener("change", renderAdmin);
+adminFilterUser.addEventListener("change", renderAdmin);
+adminSort.addEventListener("change", renderAdmin);
 
 function statusLabel(s){ return {created:"جديد",ordered:"تم الطلب من المصنع",shipped:"تم الشحن",delivered:"وصلت"}[s] || s; }
 function statusClass(s){ return {created:"s-created",ordered:"s-ordered",shipped:"s-shipped",delivered:"s-delivered"}[s] || "s-created"; }
