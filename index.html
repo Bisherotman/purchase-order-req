@@ -686,21 +686,23 @@ document.addEventListener('click', async (e) => {
 });
 
 // مودال واحد (detailsModal) يُستخدم للصفحتين
+// مودال واحد (detailsModal) يُستخدم للصفحتين
 async function openDetails(tracking) {
   try {
-    // من الذاكرة أولًا
+    // ابحث محليًا بدل window.*
     let r =
-      (Array.isArray(window.myRows)    && window.myRows.find(x => x.tracking === tracking)) ||
-      (Array.isArray(window.adminRows) && window.adminRows.find(x => x.tracking === tracking));
+      (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
+      (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
 
-    // من Firestore عند الحاجة
-    if (!r && window.db) {
+    // لو ما لقيناها محليًا، جيبها من Firestore باستخدام db المحلي
+    if (!r) {
       const doc = await db.collection('orders').doc(tracking).get();
       if (doc.exists) r = { id: doc.id, ...doc.data() };
     }
+
     if (!r) { alert('تعذّر إيجاد تفاصيل هذا الطلب الآن.'); return; }
 
-    // بناء HTML التفاصيل
+    // بناء HTML
     const items  = r.items || [];
     const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
     const rowsHtml = items.length
@@ -718,6 +720,10 @@ async function openDetails(tracking) {
       ? `<ul>${r.attachments.map(a => `<li><a href="${a.url}" target="_blank">${a.name}</a></li>`).join('')}</ul>`
       : `<div class="muted">لا توجد مرفقات.</div>`;
 
+    const createdAtStr = r.createdAt?.toDate?.()
+      ? r.createdAt.toDate().toLocaleString('ar-SA')
+      : '';
+
     const modal = document.getElementById('detailsModal');
     const body  = document.getElementById('detailsBody');
 
@@ -732,7 +738,7 @@ async function openDetails(tracking) {
         </div>
         <div style="margin-inline-start:auto;text-align:left">
           <div>الفرع: <b>${r.branch || '-'}</b></div>
-          <div>التاريخ: ${r.createdAt?.toDate?.()?.toLocaleString('ar-SA') || ''}</div>
+          <div>التاريخ: ${createdAtStr}</div>
         </div>
       </div>
 
@@ -760,6 +766,7 @@ async function openDetails(tracking) {
     alert('حدث خطأ أثناء فتح التفاصيل.');
   }
 }
+
 
 // إغلاق/طباعة مودال التفاصيل
 (function(){
