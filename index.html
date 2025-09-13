@@ -267,7 +267,7 @@ const routes = { "#/login":"view-login", "#/new":"view-new", "#/my":"view-my", "
 const navLinks = $("#navLinks");
 const sessionBtn = $("#sessionBtn");
   // === Gregorian date formatter (Arabic UI) ===
-const AR_GREG = 'ar-SA-u-ca-gregory'; // لو بدك أرقام لاتينية: 'ar-SA-u-ca-gregory-nu-latn'
+const AR_GREG = 'ar-SA-u-ca-gregory-nu-latn';
 function fmtDate(ts, { withTime = false } = {}) {
   if (!ts?.toDate) return '';
   const d = ts.toDate();
@@ -757,8 +757,6 @@ async function openDetails(tracking) {
       : `<div class="muted">لا توجد مرفقات.</div>`;
 
     const createdAtStr = fmtDate(r.createdAt, { withTime: true });
-      ? r.createdAt.toDate().toLocaleString('ar-SA')
-      : '';
 
     const modal = document.getElementById('detailsModal');
     const body  = document.getElementById('detailsBody');
