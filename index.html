@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>بوابة طلبات الشراء | بيت الإباء</title>
+  <title>بوابة طلبات الشراء | المشاريع</title>
 
   <!-- أيقونة الموقع -->
   <link rel="icon" href="img/pagelogo.png" type="image/png" />
@@ -48,7 +48,9 @@
       <form id="loginForm">
         <label for="loginEmail">الإيميل</label>
         <div class="input-wrap">
-          <input id="loginEmail" type="email" />
+          <input id="loginEmail" type="email"
+       placeholder="example@baytalebaa.com"
+       inputmode="email" autocomplete="username" />
           <button type="button" id="clearEmail" class="input-clear">✕</button>
         </div>
 
@@ -666,7 +668,7 @@ route();
   function bindInputState(input, wrap){
     const update = () => wrap.classList.toggle('has-value', !!input.value.trim());
     input.addEventListener('input', update);
-    update();
+    update(); // يدعم الـ autofill
   }
 
   bindInputState(emailInput, emailWrap);
@@ -690,6 +692,9 @@ route();
     passInput.focus();
     passWrap.classList.remove('has-value');
   });
+
+  // 🔧 مهم: فعّل ظهور الأزرار فور التحميل (يعالج حالة الـAutofill)
+  showPwdButtonsIfNeeded();
 })();
 
 // إغلاق مودال الأدمِن
