@@ -351,3 +351,15 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 /* لو كان عندك overflow يقطع الظلال، خليه مرئي */
 .input-wrap{ position:relative; overflow:visible; }
 
+/* اجبار ظهور أزرار كلمة المرور وقت الكتابة أو التركيز */
+.pwd-wrap.has-value .pwd-toggle,
+.pwd-wrap.has-value .pwd-clear,
+.pwd-wrap:focus-within .pwd-toggle,
+.pwd-wrap:focus-within .pwd-clear{
+  display:flex !important;
+}
+
+/* مساحة كافية للأزرار داخل الحقل + السماح بالخروج عن حدود الغلاف */
+.pwd-wrap.input-wrap input{ padding-inline-end:90px; }
+.pwd-wrap.input-wrap{ position:relative; overflow:visible; }
+
