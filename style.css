@@ -176,6 +176,25 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 /* الأزرار داخل الجداول وغيرها ما تكون بعرض 100% */
 .btn,.btn-details,.btn-primary,.btn-strong{width:auto}
 
+/* === زر التوسيع وزر الطباعة في جدول الطلبات الإدارية === */
+.toggle-items,
+.btn-details {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 4px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-items:hover,
+.btn-details:hover {
+  background-color: #e5e7eb;
+}
+
 /* واجهة الأصناف والروابط */
 .items-head{display:flex;justify-content:flex-end;margin:8px 0}
 .add-item{border:1px dashed #d1d5db;background:#fff;color:#111}
