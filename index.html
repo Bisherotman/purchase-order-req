@@ -836,6 +836,17 @@
           return;
         }
 
+        function statusLabel(status) {
+  switch (status) {
+    case "created": return "جديد";
+    case "ordered": return "تم الطلب من المصنع";
+    case "shipped": return "تم الشحن";
+    case "partial": return "وصلت جزئياً";
+    case "delivered": return "وصلت بالكامل";
+    default: return "غير معروف";
+  }
+}
+
         openDetails(tracking); // استدعاء دالة التفاصيل
       });
 
