@@ -666,7 +666,9 @@ document.addEventListener('click', async (e) => {
       if (doc.exists) r = { id: doc.id, ...doc.data() };
     }
 
+function handleMissingDetails(r) {
     if (!r) { alert('تعذّر إيجاد تفاصيل هذا الطلب الآن.'); return; }
+}
 
     // بناء HTML
     const items  = r.items || [];
