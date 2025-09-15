@@ -383,12 +383,20 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 .pwd-wrap.input-wrap{ position:relative; overflow:visible; }
 
 /* جعل عناصر صف الصنف على سطر واحد مع المحاذاة الصحيحة */
+/* إعادة ضبط أحجام الحقول داخل صف الصنف */
 .item-row {
   display: flex;
   gap: 8px;
-  align-items: center;   /* يضمن بقاء زر الحذف في نفس المستوى */
+  align-items: center;
   margin-bottom: 8px;
 }
+
+/* حدد أساس عرض لكل عنصر حتى لا يختفي */
+.item-row .it-code      { flex: 1 1 180px; } /* كود الصنف */
+.item-row .it-qty       { flex: 0 1 100px; } /* الكمية */
+.item-row .it-price     { flex: 0 1 120px; } /* السعر */
+.item-row .it-ship      { flex: 0 1 150px; } /* نوع الشحن */
+.item-row .remove       { flex: 0 0 auto;  } /* زر الحذف يبقى صغير وثابت */
 
 .item-row input,
 .item-row select {
@@ -434,3 +442,14 @@ button.btn-details {
   padding: 4px 8px;
   cursor: pointer;
 }
+
+/* عمود الأزرار (أقصى يسار الجدول في RTL) */
+#adminOrdersBody td:first-child {
+  display: flex;
+  justify-content: flex-start;   /* ← يحطهم يسار الجدول حتى مع RTL */
+  align-items: center;
+  gap: 8px;
+  text-align: left;              /* يثبت النص والأزرار يسار */
+  direction: ltr;                /* مهم حتى يحافظ على ترتيب الأزرار */
+}
+
