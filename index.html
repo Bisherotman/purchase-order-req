@@ -454,8 +454,6 @@ return row;
 }
 function ensureAtLeastOneRow(){ if(!itemsWrap.children.length){ itemsWrap.appendChild(makeItemRow()); } }
 addItemBtn.onclick = ()=> itemsWrap.appendChild(makeItemRow());
-ensureAtLeastOneRow();
-
 
 /* ---------- links UI ---------- */
 const linksWrap = $("#linksWrap");
@@ -531,6 +529,25 @@ submitOrderBtn.addEventListener("click", async ()=>{
 });
 
 /* ---------- admin expandable orders ---------- */
+  // تحديث حالة الطلب عند تغييره (للأدمن فقط)
+document.addEventListener("change", (e) => {
+  const select = e.target.closest(".order-status-select");
+  if (!select) return;
+
+  const tr = select.closest("tr");
+  const tracking = tr?.dataset?.id;
+  const newStatus = select.value;
+
+  if (!tracking || !newStatus) return;
+
+  // تحديث محلي في adminRows (اختياري)
+  const order = adminRows.find(o => o.tracking === tracking);
+  if (order) order.status = newStatus;
+
+  // عرض رسالة أو تنفيذ حفظ في قاعدة البيانات (لاحقاً)
+  console.log(`تم تحديث الطلب ${tracking} إلى: ${newStatus}`);
+});
+
 document.addEventListener("click", (e) => {
 const toggleBtn = e.target.closest(".toggle-items");
 if (!toggleBtn) return;
@@ -561,7 +578,6 @@ newRow.innerHTML = `<td colspan="100%"><div class="msg error">تعذّر تحم�
 }
 }
 });
-
 
 /* ---------- table row renderer modification ---------- */
 function renderTableRow(r){
@@ -720,7 +736,7 @@ function renderAdmin(){ // NEW
     ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
     : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0));
 
- adminBody.innerHTML = rows.map(r => {
+adminBody.innerHTML = rows.map(r => {
   const items        = r.items || [];
   const priceFirst   = items.length ? (items[0].price ?? "") : "";
   const createdAtStr = fmtDate(r.createdAt);
@@ -729,19 +745,33 @@ function renderAdmin(){ // NEW
                  || r.createdBy;
 
   return `
-  <tr data-id="${r.tracking}">
-    <td>${r.tracking}</td>
-    <td>${createdAtStr}</td>
-    <td>${r.projectName || "-"}</td>
-    <td>${userLabel}</td>
-    <td><span class="badge ${r.status === 'created' ? 'badge-new' : 'badge-ok'}">${statusLabel(r.status)}</span></td>
-    <td>${(typeof priceFirst === "number") ? priceFirst.toFixed(2) : priceFirst}</td>
-    <td style="white-space: nowrap; text-align: left;">
-      <button type="button" class="toggle-items" title="عرض التفاصيل" style="margin-inline-end: 6px;">🔽</button>
-      <button type="button" class="btn-details" title="طباعة الطلب" data-id="${r.tracking}">🖨️</button>
-    </td>
-  </tr>`;
-}).join("");
+    <tr data-id="${r.tracking}">
+      <td>${r.tracking}</td>
+      <td>${createdAtStr}</td>
+      <td>${r.projectName || "-"}</td>
+      <td>${userLabel}</td>
+      <td>
+        ${isAdmin ? `
+          <select class="status-dropdown order-status-select" data-tracking="${r.tracking}">
+            <option value="created" ${r.status === "created" ? "selected" : ""}>جديد</option>
+            <option value="ordered" ${r.status === "ordered" ? "selected" : ""}>تم الطلب من المصنع</option>
+            <option value="shipped" ${r.status === "shipped" ? "selected" : ""}>تم الشحن</option>
+            <option value="partial" ${r.status === "partial" ? "selected" : ""}>وصلت جزئياً</option>
+            <option value="delivered" ${r.status === "delivered" ? "selected" : ""}>وصلت بالكامل</option>
+          </select>
+        ` : `
+          <span class="badge ${r.status === 'created' ? 'badge-new' : 'badge-ok'}">${statusLabel(r.status)}</span>
+        `}
+      </td>
+      <td>${(typeof priceFirst === "number") ? priceFirst.toFixed(2) : priceFirst}</td>
+      <td>
+        <button type="button" class="toggle-items">🔽</button>
+        <button type="button" class="btn-details" data-id="${r.tracking}">🖨️ طباعة</button>
+      </td>
+    </tr>
+  `;
+}).join(""); // ← مهم جداً
+
 }
 
 adminSearch.addEventListener("input",renderAdmin);
@@ -756,7 +786,7 @@ document.addEventListener("change", async (e) => {
   if (!select) return;
 
   const newStatus = select.value;
-  const tracking = select.dataset.id;
+  const tracking = select.dataset.tracking;
 
   if (!tracking || !newStatus) return;
 
