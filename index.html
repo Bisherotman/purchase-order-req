@@ -1,3 +1,16 @@
+    // --- Helper to render order items for admin details ---
+    function renderOrderItemsEdit(container, items, tracking) {
+      if (!Array.isArray(items) || items.length === 0) {
+        container.innerHTML = '<div class="muted">لا توجد أصناف.</div>';
+        return;
+      }
+      let html = `<table class="table-like"><thead><tr><th>#</th><th>كود الصنف</th><th>الكمية</th><th>سعر البيع</th><th>نوع الشحن</th></tr></thead><tbody>`;
+      items.forEach((it, i) => {
+        html += `<tr><td>${i+1}</td><td>${it.itemCode||''}</td><td>${it.quantity||''}</td><td>${typeof it.price==='number'?it.price.toFixed(2):it.price||''}</td><td>${it.shippingType||''}</td></tr>`;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
@@ -641,7 +654,11 @@
       if (myUnsub) { myUnsub(); myUnsub = null; }
       if (!currentUser) return;
       const q = db.collection("orders").where("createdBy", "==", currentUser.uid);
-      myUnsub = q.onSnapshot((snap) => { myRows = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderMy(myRows); },
+      myUnsub = q.onSnapshot((snap) => {
+        myRows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        console.log('My Orders fetched:', myRows); // Debug log
+        renderMy(myRows);
+      },
         (err) => { console.error(err); showMsg(document.getElementById("newMsg"), "تعذّر تحميل طلباتك: " + (err.message || err), "error"); });
     }
     const myTableBody = $("#myOrdersBody");
