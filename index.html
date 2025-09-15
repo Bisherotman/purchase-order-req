@@ -850,6 +850,89 @@
         printBtn && (printBtn.onclick = () => window.print());
       })();
       // Ensure all opened blocks are closed
+    async function openDetails(tracking) {
+  try {
+    // جلب الطلب من myRows أو adminRows أو من Firestore عند الحاجة
+    let r =
+      (Array.isArray(myRows) && myRows.find(x => x.tracking === tracking)) ||
+      (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
+
+    if (!r) {
+      const doc = await db.collection('orders').doc(tracking).get();
+      if (doc.exists) r = { id: doc.id, ...doc.data() };
+    }
+
+    if (!r) {
+      alert('تعذّر إيجاد تفاصيل هذا الطلب.');
+      return;
+    }
+
+    // تنسيق الأصناف داخل الطلب
+    const items = r.items || [];
+    const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
+    const createdAtStr = fmtDate(r.createdAt, { withTime: true });
+
+    const rowsHtml = items.length
+      ? items.map((it, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${it.itemCode || '-'}</td>
+          <td>${it.quantity ?? '-'}</td>
+          <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+          <td>${it.shippingType || '-'}</td>
+        </tr>`).join('')
+      : `<tr><td colspan="5" class="muted">لا توجد أصناف</td></tr>`;
+
+    // تنسيق المرفقات
+    const attachHtml = (r.attachments?.length)
+      ? `<ul>${r.attachments.map(a => `<li><a href="${a.url}" target="_blank">${a.name}</a></li>`).join('')}</ul>`
+      : `<div class="muted">لا توجد مرفقات</div>`;
+
+    // بناء المحتوى داخل المودال
+    const modal = document.getElementById('detailsModal');
+    const body  = document.getElementById('detailsBody');
+
+    body.innerHTML = `
+      <div class="inv-head">
+        <div class="inv-brand">
+          <img src="img/pagelogo.png" alt="logo">
+          <div>
+            <div class="inv-title">طلب شراء</div>
+            <div class="muted">رقم التتبّع: <b>${r.tracking}</b></div>
+          </div>
+        </div>
+        <div style="margin-inline-start:auto;text-align:left">
+          <div>الفرع: <b>${r.branch || '-'}</b></div>
+          <div>التاريخ: ${createdAtStr}</div>
+        </div>
+      </div>
+
+      <div class="inv-grid" style="margin:10px 0 14px">
+        <div><b>اسم المشروع:</b> ${r.projectName || '-'}</div>
+        <div><b>اسم العميل:</b> ${r.customerName || '-'}</div>
+        <div><b>الحالة:</b> ${statusLabel(r.status || 'created')}</div>
+      </div>
+
+      <table class="table-like">
+        <thead><tr><th>#</th><th>كود الصنف</th><th>الكمية</th><th>السعر</th><th>الشحن</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+        <tfoot><tr><td colspan="2" class="total">الإجمالي</td><td class="total">${qtySum}</td><td colspan="2"></td></tr></tfoot>
+      </table>
+
+      <div style="margin-top:10px">
+        <b>المرفقات:</b>
+        ${attachHtml}
+      </div>
+    `;
+
+    // إظهار المودال
+    modal.classList.add('show');
+  } catch (err) {
+    console.error("openDetails error:", err);
+    alert("فشل تحميل تفاصيل الطلب.");
+  }
+}
+
     </script>
 
 </body>
