@@ -606,6 +606,25 @@ return `
 }
 
 /* ---------- MY ORDERS (Realtime) + details/print ---------- */
+
+function renderMyRow(r) {
+  const createdAtStr = r.createdAt || "-";
+  const priceFirst = r.total ?? "";
+
+  return `
+    <tr data-id="${r.tracking}">
+      <td>${r.tracking}</td>
+      <td>${createdAtStr}</td>
+      <td>${r.projectName || "-"}</td>
+      <td>${typeof priceFirst === "number" ? priceFirst.toFixed(2) : priceFirst}</td>
+      <td>
+        <button type="button" class="toggle-items btn-sm" title="عرض التفاصيل" style="margin-inline-end:6px;">▾</button>
+        <button type="button" class="btn-details btn-sm" title="بطاقة الطلب" data-id="${r.tracking}">🗂️</button>
+      </td>
+    </tr>
+  `;
+}
+
 let myUnsub=null, myRows=[];
 function subscribeMyOrders(){
   if(myUnsub){ myUnsub(); myUnsub=null; }
@@ -734,43 +753,13 @@ function renderAdmin(){ // NEW
     ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
     : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0));
 
-adminBody.innerHTML = rows.map(r => {
-  const items        = r.items || [];
-  const priceFirst   = items.length ? (items[0].price ?? "") : "";
-  const createdAtStr = fmtDate(r.createdAt);
-  const userLabel = usersById[r.createdBy]?.name
-                 || usersById[r.createdBy]?.email
-                 || r.createdBy;
+adminBody.innerHTML = rows.map(r => renderTableRow({
+  ...r,
+  user: usersById[r.createdBy]?.name || usersById[r.createdBy]?.email || r.createdBy,
+  createdAt: fmtDate(r.createdAt),
+  total: r.items?.[0]?.price ?? ""
+})).join("");
 
-  return `
-    <tr data-id="${r.tracking}">
-      <td>${r.tracking}</td>
-      <td>${createdAtStr}</td>
-      <td>${r.projectName || "-"}</td>
-      <td>${userLabel}</td>
-      <td>
-        ${isAdmin ? `
-          <select class="status-dropdown order-status-select" data-tracking="${r.tracking}">
-            <option value="created" ${r.status === "created" ? "selected" : ""}>جديد</option>
-            <option value="ordered" ${r.status === "ordered" ? "selected" : ""}>تم الطلب من المصنع</option>
-            <option value="shipped" ${r.status === "shipped" ? "selected" : ""}>تم الشحن</option>
-            <option value="partial" ${r.status === "partial" ? "selected" : ""}>وصلت جزئياً</option>
-            <option value="delivered" ${r.status === "delivered" ? "selected" : ""}>وصلت بالكامل</option>
-          </select>
-        ` : `
-          <span class="badge ${r.status === 'created' ? 'badge-new' : 'badge-ok'}">${statusLabel(r.status)}</span>
-        `}
-      </td>
-      <td>${(typeof priceFirst === "number") ? priceFirst.toFixed(2) : priceFirst}</td>
-      <td>
-        <button type="button" class="toggle-items">🔽</button>
-        <button type="button" class="btn-details" data-id="${r.tracking}">🖨️ طباعة</button>
-      </td>
-    </tr>
-  `;
-}).join(""); // ← مهم جداً
-
-}
 
 adminSearch.addEventListener("input",renderAdmin);
 adminFilterBranch.addEventListener("change",renderAdmin);
@@ -868,18 +857,6 @@ route();
   modal?.querySelector('[data-action="print"]')?.addEventListener('click', ()=>window.print());
 })();
 
-  // رقم التتبّع من: data-open أو data-id أو من الصف/أول خلية
-  const tr = btn.closest('tr');
-  const tracking =
-    btn.dataset.open ||
-    btn.dataset.id ||
-    tr?.dataset.id ||
-    tr?.cells?.[0]?.textContent?.trim();
-
-  if (!tracking) { console.warn('Details: لا يوجد رقم تتبّع'); return; }
-  openDetails(tracking);
-});
-
 // مودال واحد (detailsModal) يُستخدم للصفحتين
 // مودال واحد (detailsModal) يُستخدم للصفحتين
 async function openDetails(tracking) {
@@ -888,12 +865,6 @@ async function openDetails(tracking) {
     let r =
       (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
       (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
-
-    // يلتقط زر التفاصيل سواء كان في "طلباتي" (data-open) أو "الإدارة" (.btn-details)
-document.addEventListener('click', async (e) => {
-  const btn = e.target.closest('[data-open], .btn-details');
-  if (!btn) return;
-  e.preventDefault();
   
     // لو ما لقيناها محليًا، جيبها من Firestore باستخدام db المحلي
     if (!r) {
@@ -966,6 +937,26 @@ document.addEventListener('click', async (e) => {
   }
 }
 
+// ✅ تسجيل حدث الضغط على الأزرار مرة واحدة فقط
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-open], .btn-details');
+  if (!btn) return;
+  e.preventDefault();
+
+  const tr = btn.closest('tr');
+  const tracking =
+    btn.dataset.open ||
+    btn.dataset.id ||
+    tr?.dataset.id ||
+    tr?.cells?.[0]?.textContent?.trim();
+
+  if (!tracking) {
+    console.warn('Details: لا يوجد رقم تتبّع');
+    return;
+  }
+
+  openDetails(tracking); // استدعاء دالة التفاصيل
+});
 
 // إغلاق/طباعة مودال التفاصيل
 (function(){
