@@ -427,30 +427,33 @@ const pad5=(n)=>String(n).padStart(5,"0");
 /* ---------- multi items UI ---------- */
 const itemsWrap = $("#itemsWrap");
 const addItemBtn = $("#addItemBtn");
-function makeItemRow(values={}){
-const row=document.createElement("div");
-row.className="item-row";
-row.innerHTML = `
-<input type="text" class="it-code" placeholder="كود الصنف" value="${values.itemCode||""}">
-<input type="number" class="it-qty" min="1" step="1" placeholder="الكمية" value="${values.quantity||""}">
-<input type="number" class="it-price" min="0" step="0.01" placeholder="سعر البيع" value="${values.price||""}">
-<select class="it-ship" required>
-<option value="">اختر نوع الشحن</option>
-<option value="Sea freight">Sea freight</option>
-<option value="DHL freight">DHL freight</option>
-<option value="Air freight">Air freight</option>
-</select>
-<select class="it-status">
-<option value="created">جديد</option>
-<option value="ordered">تم الطلب من المصنع</option>
-<option value="shipped">تم الشحن</option>
-<option value="partial">وصلت جزئياً</option>
-<option value="delivered">وصلت بالكامل</option>
-</select>
-<input type="number" class="it-delivered" placeholder="الكمية المستلمة" min="0">
-<button type="button" class="remove">🗑</button>`;
-row.querySelector(".remove").onclick=()=> row.remove();
-return row;
+function makeItemRow(values = {}, isAdmin = false) {
+  const row = document.createElement("div");
+  row.className = "item-row";
+  row.innerHTML = `
+    <input type="text" class="it-code" placeholder="كود الصنف" value="${values.itemCode || ""}">
+    <input type="number" class="it-qty"  min="1" step="1" placeholder="الكمية" value="${values.quantity || ""}">
+    <input type="number" class="it-price" min="0" step="0.01" placeholder="سعر البيع" value="${values.price || ""}">
+    <select class="it-ship" required>
+      <option value="">اختر نوع الشحن</option>
+      <option value="Sea freight">Sea freight</option>
+      <option value="DHL freight">DHL freight</option>
+      <option value="Air freight">Air freight</option>
+    </select>
+    ${isAdmin ? `
+      <select class="it-status">
+        <option value="created">جديد</option>
+        <option value="ordered">تم الطلب من المصنع</option>
+        <option value="shipped">تم الشحن</option>
+        <option value="partial">وصلت جزئياً</option>
+        <option value="delivered">وصلت بالكامل</option>
+      </select>
+      <input type="number" class="it-delivered" placeholder="الكمية المستلمة" min="0" value="${values.deliveredQty || 0}">
+    ` : ""}
+    <button type="button" class="remove">🗑</button>
+  `;
+  row.querySelector(".remove").onclick = () => row.remove();
+  return row;
 }
 function ensureAtLeastOneRow(){ if(!itemsWrap.children.length){ itemsWrap.appendChild(makeItemRow()); } }
 addItemBtn.onclick = ()=> itemsWrap.appendChild(makeItemRow());
@@ -557,15 +560,14 @@ toggleBtn.textContent = "🔼";
 
 const r = (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
 if (r) {
-const inner = document.createElement("div");
-renderOrderItemsEdit(inner, r.items || [], tracking);
-newRow.innerHTML = `<td colspan="100%"></td>`;
-newRow.firstElementChild.appendChild(inner);
+  const inner = document.createElement("div");
+  // تمرير true ليظهر حقول حالة الصنف والكمية المستلمة فقط في واجهة الإدارة
+  renderOrderItemsEdit(inner, r.items || [], tracking, true);
+  newRow.innerHTML = `<td colspan="100%"></td>`;
+  newRow.firstElementChild.appendChild(inner);
 } else {
-newRow.innerHTML = `<td colspan="100%"><div class="msg error">تعذّر تحميل الأصناف.</div></td>`;
+  newRow.innerHTML = `<td colspan="100%"><div class="msg error">تعذّر تحميل الأصناف.</div></td>`;
 }
-}
-});
 
 /* ---------- MY ORDERS (Realtime) + details/print ---------- */
 let myUnsub=null, myRows=[];
