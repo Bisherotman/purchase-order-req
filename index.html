@@ -440,14 +440,6 @@ row.innerHTML = `
 <option value="DHL freight">DHL freight</option>
 <option value="Air freight">Air freight</option>
 </select>
-<select class="it-status">
-<option value="created">جديد</option>
-<option value="ordered">تم الطلب من المصنع</option>
-<option value="shipped">تم الشحن</option>
-<option value="partial">وصلت جزئياً</option>
-<option value="delivered">وصلت بالكامل</option>
-</select>
-<input type="number" class="it-delivered" placeholder="الكمية المستلمة" min="0">
 <button type="button" class="remove">🗑</button>`;
 row.querySelector(".remove").onclick=()=> row.remove();
 return row;
@@ -869,11 +861,6 @@ route();
   });
   modal?.querySelector('[data-action="print"]')?.addEventListener('click', ()=>window.print());
 })();
-// يلتقط زر التفاصيل سواء كان في "طلباتي" (data-open) أو "الإدارة" (.btn-details)
-document.addEventListener('click', async (e) => {
-  const btn = e.target.closest('[data-open], .btn-details');
-  if (!btn) return;
-  e.preventDefault();
 
   // رقم التتبّع من: data-open أو data-id أو من الصف/أول خلية
   const tr = btn.closest('tr');
@@ -896,6 +883,12 @@ async function openDetails(tracking) {
       (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
       (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
 
+    // يلتقط زر التفاصيل سواء كان في "طلباتي" (data-open) أو "الإدارة" (.btn-details)
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-open], .btn-details');
+  if (!btn) return;
+  e.preventDefault();
+  
     // لو ما لقيناها محليًا، جيبها من Firestore باستخدام db المحلي
     if (!r) {
       const doc = await db.collection('orders').doc(tracking).get();
