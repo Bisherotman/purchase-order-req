@@ -706,18 +706,18 @@ function renderAdmin(){ // NEW
                  || r.createdBy;
 
   return `
-    <tr data-id="${r.tracking}">
-      <td>
-        <button type="button" class="toggle-items">🔽</button>
-        <button type="button" class="btn-details" data-id="${r.tracking}">🖨️ طباعة</button>
-      </td>
-      <td>${r.tracking}</td>
-      <td>${createdAtStr}</td>
-      <td>${r.projectName || "-"}</td>
-      <td>${userLabel}</td>
-      <td><span class="badge ${r.status === 'created' ? 'badge-new' : 'badge-ok'}">${statusLabel(r.status)}</span></td>
-      <td>${(typeof priceFirst === "number") ? priceFirst.toFixed(2) : priceFirst}</td>
-    </tr>`;
+  <tr data-id="${r.tracking}">
+    <td>${r.tracking}</td>
+    <td>${createdAtStr}</td>
+    <td>${r.projectName || "-"}</td>
+    <td>${userLabel}</td>
+    <td><span class="badge ${r.status === 'created' ? 'badge-new' : 'badge-ok'}">${statusLabel(r.status)}</span></td>
+    <td>${(typeof priceFirst === "number") ? priceFirst.toFixed(2) : priceFirst}</td>
+    <td style="white-space: nowrap; text-align: left;">
+      <button type="button" class="toggle-items" title="عرض التفاصيل" style="margin-inline-end: 6px;">🔽</button>
+      <button type="button" class="btn-details" title="طباعة الطلب" data-id="${r.tracking}">🖨️</button>
+    </td>
+  </tr>`;
 }).join("");
 }
 
