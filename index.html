@@ -74,32 +74,62 @@
   </section>
 
   <!-- NEW ORDER -->
-  <section id="view-new" class="view">
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <h2>تسجيل طلب شراء</h2>
-        <div class="helper" id="whoami">—</div>
-      </div>
-
-      <div class="section-box">معلومات المشروع</div>
-      <div class="row">
-        <div><label for="projectName">اسم المشروع</label><input id="projectName" type="text" placeholder="مشروع أبراج..." /></div>
-        <div><label for="customerName">اسم العميل</label><input id="customerName" type="text" placeholder="اسم العميل..." /></div>
-      </div>
-
-      <div class="section-box">الأصناف</div>
-      <div class="items-head"><button type="button" id="addItemBtn" class="add-item">+ إضافة صنف</button></div>
-      <div id="itemsWrap"></div>
-
-      <label style="font-weight:700; display:block; margin-top:14px">روابط المرفقات (اختياري — حد أقصى 2)</label>
-      <div id="linksWrap"></div>
-      <button type="button" id="addLinkBtn" class="add-item">+ إضافة رابط</button>
-
-      <button type="button" id="submitOrder" class="btn-strong" style="margin-top:10px">إرسال الطلب</button>
-      <div id="newMsg" class="msg"></div>
+<section id="view-new" class="view">
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <h2>تسجيل طلب شراء</h2>
+      <div class="helper" id="whoami"></div>
     </div>
-  </section>
 
+    <!-- معلومات المشروع -->
+    <div class="section-box">معلومات المشروع</div>
+    <div class="row">
+      <div>
+        <label for="projectName">اسم المشروع</label>
+        <input id="projectName" type="text" placeholder="...مشروع أبراج" required />
+      </div>
+      <div>
+        <label for="customerName">اسم العميل</label>
+        <input id="customerName" type="text" placeholder="...اسم العميل" required />
+      </div>
+    </div>
+
+    <!-- الأصناف -->
+    <div class="section-box">الأصناف</div>
+    <div class="items-head">
+      <button type="button" id="addItemBtn" class="add-item">+ إضافة صنف</button>
+    </div>
+    <div id="itemsWrap">
+      <!-- يتم توليد الأصناف هنا عبر JavaScript -->
+      <!-- مثال لصنف واحد -->
+      <div class="row item">
+        <input type="text" placeholder="كود الصنف" required />
+        <input type="number" placeholder="الكمية" required />
+        <input type="number" placeholder="سعر البيع" required />
+        <select required>
+          <option value="">اختر نوع الشحن</option>
+          <option value="Sea freight">Sea freight</option>
+          <option value="DHL freight">DHL freight</option>
+          <option value="Air freight">Air freight</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- المرفقات -->
+    <label style="font-weight:700; display:block; margin-top:14px;">
+      روابط المرفقات (اختياري – حد أقصى 3)
+    </label>
+    <div id="linksWrap"></div>
+    <button type="button" id="addLinkBtn" class="add-item">+ إضافة رابط</button>
+
+    <!-- إرسال الطلب -->
+    <button type="button" id="submitOrder" class="btn-strong" style="margin-top:10px;">
+      إرسال الطلب
+    </button>
+    <div id="newMsg" class="msg"></div>
+  </div>
+</section>
+  
  <!-- MY ORDERS -->
 <section id="view-my" class="view">
   <div class="card">
@@ -410,34 +440,54 @@ const pad5=(n)=>String(n).padStart(5,"0");
 const itemsWrap = $("#itemsWrap");
 const addItemBtn = $("#addItemBtn");
 function makeItemRow(values={}){
-  const row=document.createElement("div");
-  row.className="item-row";
-  row.innerHTML = `
-    <input type="text" class="it-code" placeholder="كود الصنف" value="${values.itemCode||""}">
-    <input type="number" class="it-qty"  min="1" step="1" placeholder="الكمية" value="${values.quantity||""}">
-    <input type="number" class="it-price" min="0" step="0.01" placeholder="سعر البيع" value="${values.price||""}">
-    <button type="button" class="remove">🗑</button>`;
-  row.querySelector(".remove").onclick=()=> row.remove();
-  return row;
+const row=document.createElement("div");
+row.className="item-row";
+row.innerHTML = `
+<input type="text" class="it-code" placeholder="كود الصنف" value="${values.itemCode||""}">
+<input type="number" class="it-qty" min="1" step="1" placeholder="الكمية" value="${values.quantity||""}">
+<input type="number" class="it-price" min="0" step="0.01" placeholder="سعر البيع" value="${values.price||""}">
+<select class="it-ship" required>
+<option value="">اختر نوع الشحن</option>
+<option value="Sea freight">Sea freight</option>
+<option value="DHL freight">DHL freight</option>
+<option value="Air freight">Air freight</option>
+</select>
+<select class="it-status">
+<option value="created">جديد</option>
+<option value="ordered">تم الطلب من المصنع</option>
+<option value="shipped">تم الشحن</option>
+<option value="partial">وصلت جزئياً</option>
+<option value="delivered">وصلت بالكامل</option>
+</select>
+<input type="number" class="it-delivered" placeholder="الكمية المستلمة" min="0">
+<button type="button" class="remove">🗑</button>`;
+row.querySelector(".remove").onclick=()=> row.remove();
+return row;
 }
 function ensureAtLeastOneRow(){ if(!itemsWrap.children.length){ itemsWrap.appendChild(makeItemRow()); } }
 addItemBtn.onclick = ()=> itemsWrap.appendChild(makeItemRow());
 ensureAtLeastOneRow();
 
+
 /* ---------- links UI ---------- */
 const linksWrap = $("#linksWrap");
 const addLinkBtn = $("#addLinkBtn");
 function makeLinkRow(values={}){
-  const r=document.createElement("div");
-  r.className="link-row";
-  r.innerHTML=`
-    <input class="ln-name" placeholder="اسم المرفق (مثال: عرض سعر)" value="${values.name||""}">
-    <input class="ln-url"  placeholder="https://example.com/file.pdf" value="${values.url||""}">
-    <button type="button" class="remove">🗑</button>`;
-  r.querySelector(".remove").onclick=()=>{ r.remove(); if(linksWrap.children.length < 2) addLinkBtn.disabled = false; };
-  return r;
+const r=document.createElement("div");
+r.className="link-row";
+r.innerHTML=`
+<input class="ln-name" placeholder="اسم المرفق (مثال: عرض سعر)" value="${values.name||""}">
+<input class="ln-url" placeholder="https://example.com/file.pdf" value="${values.url||""}">
+<button type="button" class="remove">🗑</button>`;
+r.querySelector(".remove").onclick=()=>{ r.remove(); if(linksWrap.children.length < 3) addLinkBtn.disabled = false; };
+return r;
 }
-addLinkBtn.onclick = ()=>{ if (linksWrap.children.length >= 2) return; linksWrap.appendChild(makeLinkRow()); if (linksWrap.children.length >= 2) addLinkBtn.disabled = true; };
+addLinkBtn.onclick = ()=>{ 
+  if (linksWrap.children.length >= 3) return;
+  linksWrap.appendChild(makeLinkRow());
+  if (linksWrap.children.length >= 3) addLinkBtn.disabled = true;
+};
+
 
 /* ---------- new order ---------- */
 const newMsg=$("#newMsg");
@@ -452,11 +502,14 @@ submitOrderBtn.addEventListener("click", async ()=>{
   const items = [...itemsWrap.querySelectorAll(".item-row")].map(r=>({
     itemCode: r.querySelector(".it-code").value.trim(),
     quantity: Number(r.querySelector(".it-qty").value),
-    price:    Number(r.querySelector(".it-price").value)
-  })).filter(x=>x.itemCode && Number.isFinite(x.quantity) && x.quantity>0 && Number.isFinite(x.price) && x.price>=0);
+    price:    Number(r.querySelector(".it-price").value),
+    shippingType: r.querySelector(".it-ship")?.value || "",
+    status: r.querySelector(".it-status")?.value || "created",
+    deliveredQty: Number(r.querySelector(".it-delivered")?.value || 0)
+  })).filter(x=>x.itemCode && x.shippingType && Number.isFinite(x.quantity) && x.quantity>0 && Number.isFinite(x.price) && x.price>=0);
 
   if(items.length===0){ showMsg(newMsg,"أضف صنفًا واحدًا على الأقل بشكل صحيح.","error"); return; }
-  if (linksWrap.children.length > 2) { showMsg(newMsg, "مسموح بمرفقين كحد أقصى.", "error"); return; }
+  if (linksWrap.children.length > 3) { showMsg(newMsg, "مسموح بثلاث مرفقات كحد أقصى.", "error"); return; }
 
   const attachments = [...linksWrap.querySelectorAll(".link-row")].map(r=>{
     const name=(r.querySelector(".ln-name").value||"ملف").trim();
@@ -473,12 +526,12 @@ submitOrderBtn.addEventListener("click", async ()=>{
     const tracking=code+pad5(seq);
 
     await db.collection("orders").doc(tracking).set({
-  tracking, branch, projectName, customerName,
-  items, attachments, createdBy: currentUser.uid,
-  createdByEmail: currentUser.email || "",    // ← جديد
-  status:"created",
-  createdAt: firebase.firestore.FieldValue.serverTimestamp()
-});
+      tracking, branch, projectName, customerName,
+      items, attachments, createdBy: currentUser.uid,
+      createdByEmail: currentUser.email || "",
+      status:"created",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
     showMsg(newMsg,`تم تسجيل الطلب. رقم التتبّع: ${tracking}`,"success");
     $("#projectName").value=""; $("#customerName").value="";
@@ -492,6 +545,38 @@ submitOrderBtn.addEventListener("click", async ()=>{
   }finally{
     submitOrderBtn.classList.remove("loading"); submitOrderBtn.disabled=false;
   }
+});
+
+/* ---------- admin expandable orders ---------- */
+document.addEventListener("click", (e) => {
+const toggleBtn = e.target.closest(".toggle-items");
+if (!toggleBtn) return;
+const tr = toggleBtn.closest("tr");
+const tracking = tr?.dataset?.id;
+const container = tr.nextElementSibling?.classList.contains("sub-items-row") ? tr.nextElementSibling : null;
+
+
+if (container) {
+container.hidden = !container.hidden;
+toggleBtn.textContent = container.hidden ? "🔽" : "🔼";
+} else {
+const newRow = document.createElement("tr");
+newRow.className = "sub-items-row";
+newRow.innerHTML = `<td colspan="100%"><div class="loading">جاري تحميل الأصناف...</div></td>`;
+tr.parentNode.insertBefore(newRow, tr.nextSibling);
+toggleBtn.textContent = "🔼";
+
+
+const r = (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
+if (r) {
+const inner = document.createElement("div");
+renderOrderItemsEdit(inner, r.items || [], tracking);
+newRow.innerHTML = `<td colspan="100%"></td>`;
+newRow.firstElementChild.appendChild(inner);
+} else {
+newRow.innerHTML = `<td colspan="100%"><div class="msg error">تعذّر تحميل الأصناف.</div></td>`;
+}
+}
 });
 
 /* ---------- MY ORDERS (Realtime) + details/print ---------- */
@@ -623,25 +708,28 @@ function renderAdmin(){ // NEW
     ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
     : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0));
 
-  adminBody.innerHTML = rows.map(r=>{
-    const items        = r.items || [];
-    const priceFirst   = items.length ? (items[0].price ?? "") : "";
-    const createdAtStr = fmtDate(r.createdAt);
-    const userLabel = usersById[r.createdBy]?.name
-                   || usersById[r.createdBy]?.email
-                   || r.createdBy;
+ adminBody.innerHTML = rows.map(r => {
+  const items        = r.items || [];
+  const priceFirst   = items.length ? (items[0].price ?? "") : "";
+  const createdAtStr = fmtDate(r.createdAt);
+  const userLabel = usersById[r.createdBy]?.name
+                 || usersById[r.createdBy]?.email
+                 || r.createdBy;
 
-    return `
-      <tr data-id="${r.tracking}">
-        <td>${r.tracking}</td>
-        <td>${createdAtStr}</td>
-        <td>${r.projectName||"-"}</td>
-        <td>${userLabel}</td>
-        <td><span class="badge ${r.status==='created'?'badge-new':'badge-ok'}">${statusLabel(r.status)}</span></td>
-        <td>${(typeof priceFirst==="number") ? priceFirst.toFixed(2) : priceFirst}</td>
-        <td><button type="button" class="btn-details" data-id="${r.tracking}">تفاصيل</button></td>
-      </tr>`;
-  }).join("");
+  return `
+    <tr data-id="${r.tracking}">
+      <td>
+        <button type="button" class="toggle-items">🔽</button>
+        <button type="button" class="btn-details" data-id="${r.tracking}">🖨️ طباعة</button>
+      </td>
+      <td>${r.tracking}</td>
+      <td>${createdAtStr}</td>
+      <td>${r.projectName || "-"}</td>
+      <td>${userLabel}</td>
+      <td><span class="badge ${r.status === 'created' ? 'badge-new' : 'badge-ok'}">${statusLabel(r.status)}</span></td>
+      <td>${(typeof priceFirst === "number") ? priceFirst.toFixed(2) : priceFirst}</td>
+    </tr>`;
+}).join("");
 }
 
 adminSearch.addEventListener("input",renderAdmin);
