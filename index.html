@@ -540,34 +540,33 @@ submitOrderBtn.addEventListener("click", async ()=>{
 
 /* ---------- admin expandable orders ---------- */
 document.addEventListener("click", (e) => {
-const toggleBtn = e.target.closest(".toggle-items");
-if (!toggleBtn) return;
-const tr = toggleBtn.closest("tr");
-const tracking = tr?.dataset?.id;
-const container = tr.nextElementSibling?.classList.contains("sub-items-row") ? tr.nextElementSibling : null;
+  const toggleBtn = e.target.closest(".toggle-items");
+  if (!toggleBtn) return;
+  const tr = toggleBtn.closest("tr");
+  const tracking = tr?.dataset?.id;
+  const container = tr.nextElementSibling?.classList.contains("sub-items-row") ? tr.nextElementSibling : null;
 
+  if (container) {
+    container.hidden = !container.hidden;
+    toggleBtn.textContent = container.hidden ? "🔽" : "🔼";
+  } else {
+    const newRow = document.createElement("tr");
+    newRow.className = "sub-items-row";
+    newRow.innerHTML = `<td colspan="100%"><div class="loading">جاري تحميل الأصناف...</div></td>`;
+    tr.parentNode.insertBefore(newRow, tr.nextSibling);
+    toggleBtn.textContent = "🔼";
 
-if (container) {
-container.hidden = !container.hidden;
-toggleBtn.textContent = container.hidden ? "🔽" : "🔼";
-} else {
-const newRow = document.createElement("tr");
-newRow.className = "sub-items-row";
-newRow.innerHTML = `<td colspan="100%"><div class="loading">جاري تحميل الأصناف...</div></td>`;
-tr.parentNode.insertBefore(newRow, tr.nextSibling);
-toggleBtn.textContent = "🔼";
-
-
-const r = (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
-if (r) {
-  const inner = document.createElement("div");
-  // تمرير true ليظهر حقول حالة الصنف والكمية المستلمة فقط في واجهة الإدارة
-  renderOrderItemsEdit(inner, r.items || [], tracking, true);
-  newRow.innerHTML = `<td colspan="100%"></td>`;
-  newRow.firstElementChild.appendChild(inner);
-} else {
-  newRow.innerHTML = `<td colspan="100%"><div class="msg error">تعذّر تحميل الأصناف.</div></td>`;
-}
+    const r = (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
+    if (r) {
+      const inner = document.createElement("div");
+      renderOrderItemsEdit(inner, r.items || [], tracking, true);
+      newRow.innerHTML = `<td colspan="100%"></td>`;
+      newRow.firstElementChild.appendChild(inner);
+    } else {
+      newRow.innerHTML = `<td colspan="100%"><div class="msg error">تعذّر تحميل الأصناف.</div></td>`;
+    }
+  } // ← إغلاق if(container)
+});   // ← إغلاق document.addEventListener
 
 /* ---------- MY ORDERS (Realtime) + details/print ---------- */
 let myUnsub=null, myRows=[];
