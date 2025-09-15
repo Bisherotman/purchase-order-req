@@ -1,45 +1,47 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>بوابة طلبات الشراء | المشاريع</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="بوابة تسجيل وإدارة طلبات الشراء لقسم المشاريع – شركة بيت الإباء">
+<title>بوابة طلبات الشراء | المشاريع</title>
 
-  <!-- أيقونة الموقع -->
-  <link rel="icon" href="img/pagelogo.png" type="image/png" />
 
-  <!-- ملف التنسيقات الأساسي -->
-  <link rel="stylesheet" href="style.css">
+<!-- أيقونة الموقع -->
+<link rel="icon" href="img/pagelogo.png" type="image/png" />
 
-  <!-- خطوط -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- ملف التنسيقات الأساسي -->
+<link rel="stylesheet" href="style.css">
+
+
+<!-- خطوط -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
+
 
 <body class="auth-out">
 
+
 <header>
-  <nav class="nav">
-    <!-- يسار -->
-    <a class="brand" href="#/login" id="brandLink">
-      <img src="img/pagelogo.png" alt="Bayt Alebaa Logo" />
-    </a>
-    <!-- وسط -->
-    <div class="title">
-      <span class="ar">بوابة طلبات الشراء لقسم المشاريع</span>
-      <span class="en">Projects Department Purchase Order Portal</span>
-    </div>
-    <!-- يمين -->
-    <div class="navlinks" id="navLinks">
-      <a href="#/new"   data-auth="user"  style="display:none">طلب جديد</a>
-      <a href="#/my"    data-auth="user"  style="display:none">طلبــاتي</a>
-      <a href="#/admin" data-auth="admin" style="display:none">إدارة الطلبات</a>
-      <!-- هذا الزر دائمًا أحمر مثل "خروج" -->
-      <a href="#/login" id="sessionBtn">دخول</a>
-    </div>
-  </nav>
+<nav class="nav">
+<a class="brand" href="#/login" id="brandLink">
+<img src="img/pagelogo.png" alt="Bayt Alebaa Logo" />
+</a>
+<div class="title">
+<span class="ar">بوابة طلبات الشراء لقسم المشاريع</span>
+<span class="en">Projects Department Purchase Order Portal</span>
+</div>
+<div class="navlinks" id="navLinks">
+<a href="#/new" data-auth="user" style="display:none">طلب جديد</a>
+<a href="#/my" data-auth="user" style="display:none">طلبــاتي</a>
+<a href="#/admin" data-auth="admin" style="display:none">إدارة الطلبات</a>
+<a href="#/login" id="sessionBtn">دخول</a>
+</div>
+</nav>
 </header>
 
-<div class="container">
+<main class="container">
 
   <!-- LOGIN -->
   <section id="view-login" class="view active">
@@ -216,7 +218,11 @@
     </div>
   </div>
 </section>
-  </div> <!-- /container -->
+  </main> <!-- /container -->
+
+  <footer style="text-align:center; padding:12px; font-size:13px; color:#999">
+&copy; 2025 شركة بيت الإباء – جميع الحقوق محفوظة
+</footer>
 
 <!-- مودال تفاصيل الطلب (للأدمِن) -->
 <div id="orderModal" class="modal" hidden>
@@ -972,5 +978,10 @@ document.addEventListener('click', async (e) => {
 })();
 
 </script>
+  
+  <footer style="text-align:center; padding:12px; font-size:13px; color:#999">
+  &copy; 2025 شركة بيت الإباء – جميع الحقوق محفوظة
+</footer>
+  
 </body>
 </html>
