@@ -926,6 +926,10 @@
     `;
 
     // إظهار المودال
+    // تفعيل زر الطباعة
+document.getElementById("printDetailsBtn")?.addEventListener("click", () => {
+  window.print();
+});
     modal.classList.add('show');
   } catch (err) {
     console.error("openDetails error:", err);
