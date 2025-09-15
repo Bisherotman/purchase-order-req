@@ -427,33 +427,30 @@ const pad5=(n)=>String(n).padStart(5,"0");
 /* ---------- multi items UI ---------- */
 const itemsWrap = $("#itemsWrap");
 const addItemBtn = $("#addItemBtn");
-function makeItemRow(values = {}, isAdmin = false) {
-  const row = document.createElement("div");
-  row.className = "item-row";
-  row.innerHTML = `
-    <input type="text" class="it-code" placeholder="كود الصنف" value="${values.itemCode || ""}">
-    <input type="number" class="it-qty"  min="1" step="1" placeholder="الكمية" value="${values.quantity || ""}">
-    <input type="number" class="it-price" min="0" step="0.01" placeholder="سعر البيع" value="${values.price || ""}">
-    <select class="it-ship" required>
-      <option value="">اختر نوع الشحن</option>
-      <option value="Sea freight">Sea freight</option>
-      <option value="DHL freight">DHL freight</option>
-      <option value="Air freight">Air freight</option>
-    </select>
-    ${isAdmin ? `
-      <select class="it-status">
-        <option value="created">جديد</option>
-        <option value="ordered">تم الطلب من المصنع</option>
-        <option value="shipped">تم الشحن</option>
-        <option value="partial">وصلت جزئياً</option>
-        <option value="delivered">وصلت بالكامل</option>
-      </select>
-      <input type="number" class="it-delivered" placeholder="الكمية المستلمة" min="0" value="${values.deliveredQty || 0}">
-    ` : ""}
-    <button type="button" class="remove">🗑</button>
-  `;
-  row.querySelector(".remove").onclick = () => row.remove();
-  return row;
+function makeItemRow(values={}){
+const row=document.createElement("div");
+row.className="item-row";
+row.innerHTML = `
+<input type="text" class="it-code" placeholder="كود الصنف" value="${values.itemCode||""}">
+<input type="number" class="it-qty" min="1" step="1" placeholder="الكمية" value="${values.quantity||""}">
+<input type="number" class="it-price" min="0" step="0.01" placeholder="سعر البيع" value="${values.price||""}">
+<select class="it-ship" required>
+<option value="">اختر نوع الشحن</option>
+<option value="Sea freight">Sea freight</option>
+<option value="DHL freight">DHL freight</option>
+<option value="Air freight">Air freight</option>
+</select>
+<select class="it-status">
+<option value="created">جديد</option>
+<option value="ordered">تم الطلب من المصنع</option>
+<option value="shipped">تم الشحن</option>
+<option value="partial">وصلت جزئياً</option>
+<option value="delivered">وصلت بالكامل</option>
+</select>
+<input type="number" class="it-delivered" placeholder="الكمية المستلمة" min="0">
+<button type="button" class="remove">🗑</button>`;
+row.querySelector(".remove").onclick=()=> row.remove();
+return row;
 }
 function ensureAtLeastOneRow(){ if(!itemsWrap.children.length){ itemsWrap.appendChild(makeItemRow()); } }
 addItemBtn.onclick = ()=> itemsWrap.appendChild(makeItemRow());
@@ -473,12 +470,7 @@ r.innerHTML=`
 r.querySelector(".remove").onclick=()=>{ r.remove(); if(linksWrap.children.length < 3) addLinkBtn.disabled = false; };
 return r;
 }
-addLinkBtn.onclick = ()=>{ 
-  if (linksWrap.children.length >= 3) return;
-  linksWrap.appendChild(makeLinkRow());
-  if (linksWrap.children.length >= 3) addLinkBtn.disabled = true;
-};
-
+addLinkBtn.onclick = ()=>{ if (linksWrap.children.length >= 3) return; linksWrap.appendChild(makeLinkRow()); if (linksWrap.children.length >= 3) addLinkBtn.disabled = true; };
 
 /* ---------- new order ---------- */
 const newMsg=$("#newMsg");
@@ -540,33 +532,64 @@ submitOrderBtn.addEventListener("click", async ()=>{
 
 /* ---------- admin expandable orders ---------- */
 document.addEventListener("click", (e) => {
-  const toggleBtn = e.target.closest(".toggle-items");
-  if (!toggleBtn) return;
-  const tr = toggleBtn.closest("tr");
-  const tracking = tr?.dataset?.id;
-  const container = tr.nextElementSibling?.classList.contains("sub-items-row") ? tr.nextElementSibling : null;
+const toggleBtn = e.target.closest(".toggle-items");
+if (!toggleBtn) return;
+const tr = toggleBtn.closest("tr");
+const tracking = tr?.dataset?.id;
+const container = tr.nextElementSibling?.classList.contains("sub-items-row") ? tr.nextElementSibling : null;
 
-  if (container) {
-    container.hidden = !container.hidden;
-    toggleBtn.textContent = container.hidden ? "🔽" : "🔼";
-  } else {
-    const newRow = document.createElement("tr");
-    newRow.className = "sub-items-row";
-    newRow.innerHTML = `<td colspan="100%"><div class="loading">جاري تحميل الأصناف...</div></td>`;
-    tr.parentNode.insertBefore(newRow, tr.nextSibling);
-    toggleBtn.textContent = "🔼";
 
-    const r = (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
-    if (r) {
-      const inner = document.createElement("div");
-      renderOrderItemsEdit(inner, r.items || [], tracking, true);
-      newRow.innerHTML = `<td colspan="100%"></td>`;
-      newRow.firstElementChild.appendChild(inner);
-    } else {
-      newRow.innerHTML = `<td colspan="100%"><div class="msg error">تعذّر تحميل الأصناف.</div></td>`;
-    }
-  } // ← إغلاق if(container)
-});   // ← إغلاق document.addEventListener
+if (container) {
+container.hidden = !container.hidden;
+toggleBtn.textContent = container.hidden ? "🔽" : "🔼";
+} else {
+const newRow = document.createElement("tr");
+newRow.className = "sub-items-row";
+newRow.innerHTML = `<td colspan="100%"><div class="loading">جاري تحميل الأصناف...</div></td>`;
+tr.parentNode.insertBefore(newRow, tr.nextSibling);
+toggleBtn.textContent = "🔼";
+
+
+const r = (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
+if (r) {
+const inner = document.createElement("div");
+renderOrderItemsEdit(inner, r.items || [], tracking);
+newRow.innerHTML = `<td colspan="100%"></td>`;
+newRow.firstElementChild.appendChild(inner);
+} else {
+newRow.innerHTML = `<td colspan="100%"><div class="msg error">تعذّر تحميل الأصناف.</div></td>`;
+}
+}
+});
+
+
+/* ---------- table row renderer modification ---------- */
+function renderTableRow(r){
+const createdAtStr = r.createdAt || "-";
+const userLabel = r.user || "-";
+const priceFirst = r.total;
+return `
+<tr data-id="${r.tracking}">
+<td>${r.tracking}</td>
+<td>${createdAtStr}</td>
+<td>${r.projectName || "-"}</td>
+<td>${userLabel}</td>
+<td>
+<select class="status-dropdown" data-id="${r.tracking}">
+<option value="created" ${r.status === 'created' ? 'selected' : ''}>جديد</option>
+<option value="ordered" ${r.status === 'ordered' ? 'selected' : ''}>تم الطلب من المصنع</option>
+<option value="shipped" ${r.status === 'shipped' ? 'selected' : ''}>تم الشحن</option>
+<option value="partial" ${r.status === 'partial' ? 'selected' : ''}>وصلت جزئياً</option>
+<option value="delivered" ${r.status === 'delivered' ? 'selected' : ''}>وصلت بالكامل</option>
+</select>
+</td>
+<td>${(typeof priceFirst === "number") ? priceFirst.toFixed(2) : priceFirst}</td>
+<td style="white-space: nowrap; text-align: left;">
+<button type="button" class="toggle-items btn-sm" title="عرض التفاصيل" style="margin-inline-end: 6px;">🔽</button>
+<button type="button" class="btn-details btn-sm" title="طباعة الطلب" data-id="${r.tracking}">🖨️</button>
+</td>
+</tr>`;
+}
 
 /* ---------- MY ORDERS (Realtime) + details/print ---------- */
 let myUnsub=null, myRows=[];
@@ -726,6 +749,37 @@ adminFilterBranch.addEventListener("change",renderAdmin);
 adminFilterStatus.addEventListener("change", renderAdmin);
 adminFilterUser.addEventListener("change", renderAdmin);
 adminSort.addEventListener("change", renderAdmin);
+
+  // ✅ تحديث الحالة مباشرة عند تغييرها
+document.addEventListener("change", async (e) => {
+  const select = e.target.closest(".status-dropdown");
+  if (!select) return;
+
+  const newStatus = select.value;
+  const tracking = select.dataset.id;
+
+  if (!tracking || !newStatus) return;
+
+  select.disabled = true;
+  select.style.opacity = 0.6;
+
+  try {
+    await db.collection("orders").doc(tracking).update({ status: newStatus });
+
+    const row = adminRows.find(r => r.tracking === tracking);
+    if (row) row.status = newStatus;
+
+    select.style.border = "2px solid #6c1d2c";
+    setTimeout(() => {
+      select.style.border = "";
+    }, 1000);
+  } catch (err) {
+    alert("فشل التحديث: " + (err.message || err));
+  } finally {
+    select.disabled = false;
+    select.style.opacity = 1;
+  }
+});
 
 function statusLabel(s){ return {created:"جديد",ordered:"تم الطلب من المصنع",shipped:"تم الشحن",delivered:"وصلت"}[s] || s; }
 function statusClass(s){ return {created:"s-created",ordered:"s-ordered",shipped:"s-shipped",delivered:"s-delivered"}[s] || "s-created"; }
