@@ -1,445 +1,456 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="description" content="بوابة تسجيل وإدارة طلبات الشراء لقسم المشاريع – شركة بيت الإباء">
-<title>بوابة طلبات الشراء | المشاريع</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="بوابة تسجيل وإدارة طلبات الشراء لقسم المشاريع – شركة بيت الإباء">
+  <title>بوابة طلبات الشراء | المشاريع</title>
 
 
-<!-- أيقونة الموقع -->
-<link rel="icon" href="img/pagelogo.png" type="image/png" />
+  <!-- أيقونة الموقع -->
+  <link rel="icon" href="img/pagelogo.png" type="image/png" />
 
 
-<!-- ملف التنسيقات الأساسي -->
-<link rel="stylesheet" href="style.css">
+  <!-- ملف التنسيقات الأساسي -->
+  <link rel="stylesheet" href="style.css">
 
 
-<!-- خطوط -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- خطوط -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;600;700&display=swap"
+    rel="stylesheet">
 </head>
 
 
 <body class="auth-out">
 
 
-<header>
-<nav class="nav">
-<a class="brand" href="#/login" id="brandLink">
-<img src="img/pagelogo.png" alt="Bayt Alebaa Logo" />
-</a>
-<div class="title">
-<span class="ar">بوابة طلبات الشراء لقسم المشاريع</span>
-<span class="en">Projects Department Purchase Order Portal</span>
-</div>
-<div class="navlinks" id="navLinks">
-<a href="#/new" data-auth="user" style="display:none">طلب جديد</a>
-<a href="#/my" data-auth="user" style="display:none">طلبــاتي</a>
-<a href="#/admin" data-auth="admin" style="display:none">إدارة الطلبات</a>
-<a href="#/login" id="sessionBtn">دخول</a>
-</div>
-</nav>
-</header>
+  <header>
+    <nav class="nav">
+      <a class="brand" href="#/login" id="brandLink">
+        <img src="img/pagelogo.png" alt="Bayt Alebaa Logo" />
+      </a>
+      <div class="title">
+        <span class="ar">بوابة طلبات الشراء لقسم المشاريع</span>
+        <span class="en">Projects Department Purchase Order Portal</span>
+      </div>
+      <div class="navlinks" id="navLinks">
+        <a href="#/new" data-auth="user" style="display:none">طلب جديد</a>
+        <a href="#/my" data-auth="user" style="display:none">طلبــاتي</a>
+        <a href="#/admin" data-auth="admin" style="display:none">إدارة الطلبات</a>
+        <a href="#/login" id="sessionBtn">دخول</a>
+      </div>
+    </nav>
+  </header>
 
-<main class="container">
+  <main class="container">
 
-  <!-- LOGIN -->
-  <section id="view-login" class="view active">
-    <div class="card">
-      <h2>تسجيل الدخول</h2>
-      <form id="loginForm">
-        <label for="loginEmail">الإيميل</label>
-        <div class="input-wrap">
-          <input id="loginEmail" type="email"
-       placeholder="example@baytalebaa.com"
-       inputmode="email" autocomplete="username" />
-          <button type="button" id="clearEmail" class="input-clear">✕</button>
+    <!-- LOGIN -->
+    <section id="view-login" class="view active">
+      <div class="card">
+        <h2>تسجيل الدخول</h2>
+        <form id="loginForm">
+          <label for="loginEmail">الإيميل</label>
+          <div class="input-wrap">
+            <input id="loginEmail" type="email" placeholder="example@baytalebaa.com" inputmode="email"
+              autocomplete="username" />
+            <button type="button" id="clearEmail" class="input-clear">✕</button>
+          </div>
+
+          <label for="loginPassword" style="margin-top:14px">كلمة المرور</label>
+          <div class="pwd-wrap input-wrap">
+            <input id="loginPassword" type="password" required placeholder="••••••••" />
+            <button type="button" class="pwd-toggle" id="togglePwd" aria-label="إظهار/إخفاء كلمة المرور">👁️</button>
+            <button type="button" class="pwd-clear" id="clearPwd" aria-label="مسح كلمة المرور">✕</button>
+          </div>
+
+          <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:400">
+            <input id="rememberEmail" type="checkbox" style="width:18px;height:18px" />
+            <span class="helper">تذكّر الإيميل</span>
+          </label>
+
+          <button type="submit" id="loginBtn" class="btn-strong" style="margin-top:10px">دخول</button>
+          <div id="loginMsg" class="msg"></div>
+          <div class="helper">* إنشاء الحسابات يتم عبر الإدارة فقط.</div>
+        </form>
+      </div>
+    </section>
+
+    <!-- NEW ORDER -->
+    <section id="view-new" class="view">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>تسجيل طلب شراء</h2>
+          <div class="helper" id="whoami"></div>
         </div>
 
-        <label for="loginPassword" style="margin-top:14px">كلمة المرور</label>
-        <div class="pwd-wrap input-wrap">
-          <input id="loginPassword" type="password" required placeholder="••••••••" />
-          <button type="button" class="pwd-toggle" id="togglePwd" aria-label="إظهار/إخفاء كلمة المرور">👁️</button>
-          <button type="button" class="pwd-clear"  id="clearPwd" aria-label="مسح كلمة المرور">✕</button>
+        <!-- معلومات المشروع -->
+        <div class="section-box">معلومات المشروع</div>
+        <div class="row">
+          <div>
+            <label for="projectName">اسم المشروع</label>
+            <input id="projectName" type="text" placeholder="...مشروع أبراج" required />
+          </div>
+          <div>
+            <label for="customerName">اسم العميل</label>
+            <input id="customerName" type="text" placeholder="...اسم العميل" required />
+          </div>
         </div>
 
-        <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:400">
-          <input id="rememberEmail" type="checkbox" style="width:18px;height:18px" />
-          <span class="helper">تذكّر الإيميل</span>
+        <!-- الأصناف -->
+        <div class="section-box">الأصناف</div>
+        <div class="items-head">
+          <button type="button" id="addItemBtn" class="add-item">+ إضافة صنف</button>
+        </div>
+        <div id="itemsWrap">
+          <!-- يتم توليد الأصناف هنا عبر JavaScript -->
+        </div>
+
+        <!-- المرفقات -->
+        <label style="font-weight:700; display:block; margin-top:14px;">
+          روابط المرفقات (اختياري – حد أقصى 3)
         </label>
+        <div id="linksWrap"></div>
+        <button type="button" id="addLinkBtn" class="add-item">+ إضافة رابط</button>
 
-        <button type="submit" id="loginBtn" class="btn-strong" style="margin-top:10px">دخول</button>
-        <div id="loginMsg" class="msg"></div>
-        <div class="helper">* إنشاء الحسابات يتم عبر الإدارة فقط.</div>
-      </form>
-    </div>
-  </section>
-
-  <!-- NEW ORDER -->
-<section id="view-new" class="view">
-  <div class="card">
-    <div class="row" style="justify-content:space-between">
-      <h2>تسجيل طلب شراء</h2>
-      <div class="helper" id="whoami"></div>
-    </div>
-
-    <!-- معلومات المشروع -->
-    <div class="section-box">معلومات المشروع</div>
-    <div class="row">
-      <div>
-        <label for="projectName">اسم المشروع</label>
-        <input id="projectName" type="text" placeholder="...مشروع أبراج" required />
+        <!-- إرسال الطلب -->
+        <button type="button" id="submitOrder" class="btn-strong" style="margin-top:10px;">
+          إرسال الطلب
+        </button>
+        <div id="newMsg" class="msg"></div>
       </div>
-      <div>
-        <label for="customerName">اسم العميل</label>
-        <input id="customerName" type="text" placeholder="...اسم العميل" required />
+    </section>
+
+    <!-- MY ORDERS -->
+    <section id="view-my" class="view">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>طلبــاتي</h2>
+          <div class="helper" id="whoamiMy">—</div>
+        </div>
+
+        <div class="filters">
+          <input id="mySearch" class="chip-input" placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
+
+          <select id="myFilterStatus" class="chip-select" title="الحالة">
+            <option value="">كل الحالات</option>
+            <option value="created">جديد</option>
+            <option value="ordered">تم الطلب من المصنع</option>
+            <option value="shipped">تم الشحن</option>
+            <option value="delivered">وصلت</option>
+          </select>
+
+          <select id="mySort" class="chip-select" title="الترتيب">
+            <option value="createdAt_desc">الأحدث أولاً</option>
+            <option value="createdAt_asc">الأقدم أولاً</option>
+          </select>
+        </div>
+
+        <div id="myTableWrap" class="card" style="padding:0">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>التتبّع</th>
+                  <th>الصنف</th>
+                  <th>الكمية</th>
+                  <th>السعر</th>
+                  <th>المشروع</th>
+                  <th>الحالة</th>
+                  <th>التاريخ</th>
+                  <th>تفاصيل</th>
+                </tr>
+              </thead>
+              <tbody id="myOrdersBody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- الأصناف -->
-    <div class="section-box">الأصناف</div>
-    <div class="items-head">
-      <button type="button" id="addItemBtn" class="add-item">+ إضافة صنف</button>
-    </div>
-    <div id="itemsWrap">
-      <!-- يتم توليد الأصناف هنا عبر JavaScript -->
-    </div>
+    <!-- ADMIN -->
+    <section id="view-admin" class="view">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>إدارة الطلبات</h2>
+          <div class="helper" id="whoamiAdmin">—</div>
+        </div>
 
-    <!-- المرفقات -->
-    <label style="font-weight:700; display:block; margin-top:14px;">
-      روابط المرفقات (اختياري – حد أقصى 3)
-    </label>
-    <div id="linksWrap"></div>
-    <button type="button" id="addLinkBtn" class="add-item">+ إضافة رابط</button>
+        <div class="filters">
+          <input id="adminSearch" class="chip-input"
+            placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
 
-    <!-- إرسال الطلب -->
-    <button type="button" id="submitOrder" class="btn-strong" style="margin-top:10px;">
-      إرسال الطلب
-    </button>
-    <div id="newMsg" class="msg"></div>
-  </div>
-</section>
-  
- <!-- MY ORDERS -->
-<section id="view-my" class="view">
-  <div class="card">
-    <div class="row" style="justify-content:space-between">
-      <h2>طلبــاتي</h2>
-      <div class="helper" id="whoamiMy">—</div>
-    </div>
+          <select id="adminFilterBranch" class="chip-select" title="الفرع">
+            <option value="">كل الفروع</option>
+            <option>Riyadh</option>
+            <option>Dammam</option>
+            <option>Jeddah</option>
+            <option>Makkah</option>
+            <option>Madina</option>
+            <option>HQ</option>
+          </select>
 
-    <div class="filters">
-      <input id="mySearch" class="chip-input"
-             placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
+          <select id="adminFilterStatus" class="chip-select" title="الحالة">
+            <option value="">كل الحالات</option>
+            <option value="created">جديد</option>
+            <option value="ordered">تم الطلب من المصنع</option>
+            <option value="shipped">تم الشحن</option>
+            <option value="delivered">وصلت</option>
+          </select>
 
-      <select id="myFilterStatus" class="chip-select" title="الحالة">
-        <option value="">كل الحالات</option>
-        <option value="created">جديد</option>
-        <option value="ordered">تم الطلب من المصنع</option>
-        <option value="shipped">تم الشحن</option>
-        <option value="delivered">وصلت</option>
-      </select>
+          <select id="adminFilterUser" class="chip-select" title="المستخدم">
+            <option value="">كل المستخدمين</option>
+          </select>
 
-      <select id="mySort" class="chip-select" title="الترتيب">
-        <option value="createdAt_desc">الأحدث أولاً</option>
-        <option value="createdAt_asc">الأقدم أولاً</option>
-      </select>
-    </div>
+          <select id="adminSort" class="chip-select" title="الترتيب">
+            <option value="createdAt_desc">الأحدث أولاً</option>
+            <option value="createdAt_asc">الأقدم أولاً</option>
+          </select>
+        </div>
 
-    <div id="myTableWrap" class="card" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>التتبّع</th><th>الصنف</th><th>الكمية</th><th>السعر</th>
-              <th>المشروع</th><th>الحالة</th><th>التاريخ</th><th>تفاصيل</th>
-            </tr>
-          </thead>
-          <tbody id="myOrdersBody"></tbody>
-        </table>
+        <div id="adminTableWrap" class="card" style="padding:0">
+          <div class="table-wrap">
+            <table id="ordersTable">
+              <thead>
+                <tr>
+                  <th>رقم</th>
+                  <th>التاريخ</th>
+                  <th>المشروع</th>
+                  <th>المستخدم</th>
+                  <th>الحالة</th>
+                  <th>المبلغ</th>
+                  <th>تفاصيل</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrdersBody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
-
- <!-- ADMIN -->
-<section id="view-admin" class="view">
-  <div class="card">
-    <div class="row" style="justify-content:space-between">
-      <h2>إدارة الطلبات</h2>
-      <div class="helper" id="whoamiAdmin">—</div>
-    </div>
-
-    <div class="filters">
-      <input id="adminSearch" class="chip-input"
-             placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
-
-      <select id="adminFilterBranch" class="chip-select" title="الفرع">
-        <option value="">كل الفروع</option>
-        <option>Riyadh</option><option>Dammam</option><option>Jeddah</option>
-        <option>Makkah</option><option>Madina</option><option>HQ</option>
-      </select>
-
-      <select id="adminFilterStatus" class="chip-select" title="الحالة">
-        <option value="">كل الحالات</option>
-        <option value="created">جديد</option>
-        <option value="ordered">تم الطلب من المصنع</option>
-        <option value="shipped">تم الشحن</option>
-        <option value="delivered">وصلت</option>
-      </select>
-
-      <select id="adminFilterUser" class="chip-select" title="المستخدم">
-        <option value="">كل المستخدمين</option>
-      </select>
-
-      <select id="adminSort" class="chip-select" title="الترتيب">
-        <option value="createdAt_desc">الأحدث أولاً</option>
-        <option value="createdAt_asc">الأقدم أولاً</option>
-      </select>
-    </div>
-
-    <div id="adminTableWrap" class="card" style="padding:0">
-      <div class="table-wrap">
-        <table id="ordersTable">
-          <thead>
-            <tr>
-              <th>رقم</th>
-              <th>التاريخ</th>
-              <th>المشروع</th>
-              <th>المستخدم</th>
-              <th>الحالة</th>
-              <th>المبلغ</th>
-              <th>تفاصيل</th>
-            </tr>
-          </thead>
-          <tbody id="adminOrdersBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
   </main> <!-- /container -->
 
   <footer style="text-align:center; padding:12px; font-size:13px; color:#999">
-&copy; 2025 شركة بيت الإباء – جميع الحقوق محفوظة
-</footer>
+    &copy; 2025 شركة بيت الإباء – جميع الحقوق محفوظة
+  </footer>
 
-<!-- مودال تفاصيل الطلب (للأدمِن) -->
-<div id="orderModal" class="modal" hidden>
-  <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
-    <header class="modal__header">
-      <h3 id="orderModalTitle">تفاصيل الطلب</h3>
-      <button class="modal__close" aria-label="إغلاق">×</button>
-    </header>
-    <div class="modal__body">
-      <div class="meta">
-        <div><strong>رقم الطلب:</strong> <span id="m_id"></span></div>
-        <div><strong>التاريخ:</strong> <span id="m_date"></span></div>
-        <div><strong>المشروع:</strong> <span id="m_project"></span></div>
-        <div><strong>المستخدم:</strong> <span id="m_user"></span></div>
-        <div><strong>الحالة:</strong> <span id="m_status"></span></div>
-        <div><strong>المبلغ:</strong> <span id="m_total"></span></div>
+  <!-- مودال تفاصيل الطلب (للأدمِن) -->
+  <div id="orderModal" class="modal" hidden>
+    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+      <header class="modal__header">
+        <h3 id="orderModalTitle">تفاصيل الطلب</h3>
+        <button class="modal__close" aria-label="إغلاق">×</button>
+      </header>
+      <div class="modal__body">
+        <div class="meta">
+          <div><strong>رقم الطلب:</strong> <span id="m_id"></span></div>
+          <div><strong>التاريخ:</strong> <span id="m_date"></span></div>
+          <div><strong>المشروع:</strong> <span id="m_project"></span></div>
+          <div><strong>المستخدم:</strong> <span id="m_user"></span></div>
+          <div><strong>الحالة:</strong> <span id="m_status"></span></div>
+          <div><strong>المبلغ:</strong> <span id="m_total"></span></div>
+        </div>
+        <h4>الأصناف</h4>
+        <div id="m_items" class="items"></div>
       </div>
-      <h4>الأصناف</h4>
-      <div id="m_items" class="items"></div>
+      <footer class="modal__footer">
+        <button class="btn" data-action="print">طباعة</button>
+        <button class="btn btn-primary modal__close">إغلاق</button>
+      </footer>
     </div>
-    <footer class="modal__footer">
-      <button class="btn" data-action="print">طباعة</button>
-      <button class="btn btn-primary modal__close">إغلاق</button>
-    </footer>
   </div>
-</div>
 
-<!-- تفاصيل/طباعة لطلباتي (المودال القديم لديك، أبقيناه كما هو) -->
-<div id="detailsModal" class="modal" aria-hidden="true">
-  <div class="backdrop"></div>
-  <div class="modal-card printable">
-    <div class="modal-header">
-      <div class="inv-brand">
-        <img src="img/pagelogo.png" alt="logo">
-        <div class="inv-title">نموذج طلب شراء</div>
+  <!-- تفاصيل/طباعة لطلباتي (المودال القديم لديك، أبقيناه كما هو) -->
+  <div id="detailsModal" class="modal" aria-hidden="true">
+    <div class="backdrop"></div>
+    <div class="modal-card printable">
+      <div class="modal-header">
+        <div class="inv-brand">
+          <img src="img/pagelogo.png" alt="logo">
+          <div class="inv-title">نموذج طلب شراء</div>
+        </div>
+        <div style="display:flex; gap:8px">
+          <button class="btn-strong" id="printDetailsBtn" style="padding:8px 12px;border-radius:10px">طباعة</button>
+          <button class="close-x" id="closeDetails">✕</button>
+        </div>
       </div>
-      <div style="display:flex; gap:8px">
-        <button class="btn-strong" id="printDetailsBtn" style="padding:8px 12px;border-radius:10px">طباعة</button>
-        <button class="close-x" id="closeDetails">✕</button>
-      </div>
+      <div id="detailsBody" class="t-small"></div>
     </div>
-    <div id="detailsBody" class="t-small"></div>
   </div>
-</div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore-compat.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore-compat.js"></script>
 
-<script>
-/* ---------- Firebase ---------- */
-const firebaseConfig = {
-  apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
-  authDomain: "purchase-order-req.firebaseapp.com",
-  projectId: "purchase-order-req",
-  storageBucket: "purchase-order-req.appspot.com",
-  messagingSenderId: "72898448492",
-  appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db   = firebase.firestore();
+  <script>
+    /* ---------- Firebase ---------- */
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
+      authDomain: "purchase-order-req.firebaseapp.com",
+      projectId: "purchase-order-req",
+      storageBucket: "purchase-order-req.appspot.com",
+      messagingSenderId: "72898448492",
+      appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-/* ---------- helpers / routing ---------- */
-const $ = (s)=>document.querySelector(s);
-const routes = { "#/login":"view-login", "#/new":"view-new", "#/my":"view-my", "#/admin":"view-admin" };
-const navLinks = $("#navLinks");
-const sessionBtn = $("#sessionBtn");
-  // === Gregorian date formatter (Arabic UI) ===
-const AR_GREG = 'ar-SA-u-ca-gregory-nu-latn';
-function fmtDate(ts, { withTime = false } = {}) {
-  if (!ts?.toDate) return '';
-  const d = ts.toDate();
-  try {
-    return withTime
-      ? d.toLocaleString(AR_GREG, { dateStyle: 'medium', timeStyle: 'short' })
-      : d.toLocaleDateString(AR_GREG, { dateStyle: 'medium' });
-  } catch {
-    // احتياط لو متصفح قديم ما يدعم الامتداد
-    return withTime
-      ? d.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
-      : d.toLocaleDateString('en-GB', { dateStyle: 'medium' });
-  }
-}
+    /* ---------- helpers / routing ---------- */
+    const $ = (s) => document.querySelector(s);
+    const routes = { "#/login": "view-login", "#/new": "view-new", "#/my": "view-my", "#/admin": "view-admin" };
+    const navLinks = $("#navLinks");
+    const sessionBtn = $("#sessionBtn");
+    // === Gregorian date formatter (Arabic UI) ===
+    const AR_GREG = 'ar-SA-u-ca-gregory-nu-latn';
+    function fmtDate(ts, { withTime = false } = {}) {
+      if (!ts?.toDate) return '';
+      const d = ts.toDate();
+      try {
+        return withTime
+          ? d.toLocaleString(AR_GREG, { dateStyle: 'medium', timeStyle: 'short' })
+          : d.toLocaleDateString(AR_GREG, { dateStyle: 'medium' });
+      } catch {
+        // احتياط لو متصفح قديم ما يدعم الامتداد
+        return withTime
+          ? d.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+          : d.toLocaleDateString('en-GB', { dateStyle: 'medium' });
+      }
+    }
 
 
-function setActive(hash){ navLinks.querySelectorAll("a").forEach(a=>a.classList.toggle("active", a.getAttribute("href")==hash)); }
-function showMsg(el, text, type="success"){ el.textContent=text; el.className="msg "+type; el.style.display="block"; }
-function hideMsg(el){ el.style.display="none"; }
-function showView(id){ document.querySelectorAll(".view").forEach(v=>v.classList.remove("active")); document.getElementById(id).classList.add("active"); window.scrollTo({top:0,behavior:"smooth"}); }
+    function setActive(hash) { navLinks.querySelectorAll("a").forEach(a => a.classList.toggle("active", a.getAttribute("href") == hash)); }
+    function showMsg(el, text, type = "success") { el.textContent = text; el.className = "msg " + type; el.style.display = "block"; }
+    function hideMsg(el) { el.style.display = "none"; }
+    function showView(id) { document.querySelectorAll(".view").forEach(v => v.classList.remove("active")); document.getElementById(id).classList.add("active"); window.scrollTo({ top: 0, behavior: "smooth" }); }
 
-function route(){
-  const h = location.hash || "#/login";
-  if (!currentUser && h !== "#/login") { location.hash = "#/login"; setActive("#/login"); showView("view-login"); return; }
-  if (!canSeeAdmin && h === "#/admin") { location.hash = "#/new"; }
-  const target = routes[location.hash] || "view-login";
-  setActive(location.hash);
-  showView(target);
-}
-window.addEventListener("hashchange", route);
-  
+    function route() {
+      const h = location.hash || "#/login";
+      if (!currentUser && h !== "#/login") { location.hash = "#/login"; setActive("#/login"); showView("view-login"); return; }
+      if (!canSeeAdmin && h === "#/admin") { location.hash = "#/new"; }
+      const target = routes[location.hash] || "view-login";
+      setActive(location.hash);
+      showView(target);
+    }
+    window.addEventListener("hashchange", route);
 
-/* ---------- state ---------- */
-const loginForm=$("#loginForm"), loginMsg=$("#loginMsg"), loginBtn=$("#loginBtn");
-const whoami=$("#whoami"), whoamiMy=$("#whoamiMy"), whoamiAdmin=$("#whoamiAdmin");
-let currentUser=null, userProfile=null, canSeeAdmin=false, isAdmin = false;
 
-/* ---------- remember email + toggle/clear pwd & email ---------- */
-const rememberCk = $("#rememberEmail");
-const savedEmail = localStorage.getItem("savedEmail");
-if(savedEmail){ $("#loginEmail").value = savedEmail; rememberCk.checked = true; showEmailClearIfNeeded(); }
-function showEmailClearIfNeeded(){
-  const v = $("#loginEmail").value.trim();
-  $("#clearEmail").style.display = v ? "flex" : "none";
-}
-$("#loginEmail").addEventListener("input", showEmailClearIfNeeded);
-$("#clearEmail").onclick = ()=>{ $("#loginEmail").value=""; $("#loginEmail").focus(); showEmailClearIfNeeded(); };
+    /* ---------- state ---------- */
+    const loginForm = $("#loginForm"), loginMsg = $("#loginMsg"), loginBtn = $("#loginBtn");
+    const whoami = $("#whoami"), whoamiMy = $("#whoamiMy"), whoamiAdmin = $("#whoamiAdmin");
+    let currentUser = null, userProfile = null, canSeeAdmin = false, isAdmin = false;
 
-function showPwdButtonsIfNeeded(){
-  const v = $("#loginPassword").value;
-  const has = v && v.length>0;
-  $("#togglePwd").style.display = has ? "flex" : "none";
-  $("#clearPwd").style.display  = has ? "flex" : "none";
-}
-$("#togglePwd").onclick = ()=>{
-  const f=$("#loginPassword");
-  const show = (f.type==="password");
-  f.type = show ? "text" : "password";
-  $("#togglePwd").textContent = show ? "إخفاء" : "إظهار";
-};
-$("#loginPassword").addEventListener("input", showPwdButtonsIfNeeded);
-$("#clearPwd").onclick = ()=>{ $("#loginPassword").value=""; $("#loginPassword").focus(); showPwdButtonsIfNeeded(); };
+    /* ---------- remember email + toggle/clear pwd & email ---------- */
+    const rememberCk = $("#rememberEmail");
+    const savedEmail = localStorage.getItem("savedEmail");
+    if (savedEmail) { $("#loginEmail").value = savedEmail; rememberCk.checked = true; showEmailClearIfNeeded(); }
+    function showEmailClearIfNeeded() {
+      const v = $("#loginEmail").value.trim();
+      $("#clearEmail").style.display = v ? "flex" : "none";
+    }
+    $("#loginEmail").addEventListener("input", showEmailClearIfNeeded);
+    $("#clearEmail").onclick = () => { $("#loginEmail").value = ""; $("#loginEmail").focus(); showEmailClearIfNeeded(); };
 
-/* ---------- MY ORDERS elements ---------- */
-const myBody = $("#myOrdersBody"),
+    function showPwdButtonsIfNeeded() {
+      const v = $("#loginPassword").value;
+      const has = v && v.length > 0;
+      $("#togglePwd").style.display = has ? "flex" : "none";
+      $("#clearPwd").style.display = has ? "flex" : "none";
+    }
+    $("#togglePwd").onclick = () => {
+      const f = $("#loginPassword");
+      const show = (f.type === "password");
+      f.type = show ? "text" : "password";
+      $("#togglePwd").textContent = show ? "إخفاء" : "إظهار";
+    };
+    $("#loginPassword").addEventListener("input", showPwdButtonsIfNeeded);
+    $("#clearPwd").onclick = () => { $("#loginPassword").value = ""; $("#loginPassword").focus(); showPwdButtonsIfNeeded(); };
+
+    /* ---------- MY ORDERS elements ---------- */
+    const myBody = $("#myOrdersBody"),
       mySearch = $("#mySearch"),
       myFilterStatus = $("#myFilterStatus"),
       mySort = $("#mySort");
 
-/* ---------- auth ---------- */
-loginForm.addEventListener("submit", async (e)=>{
-  e.preventDefault(); hideMsg(loginMsg);
-  loginBtn.classList.add("loading");
-  const email=$("#loginEmail").value.trim(), pass=$("#loginPassword").value;
-  try{
-    await auth.signInWithEmailAndPassword(email,pass);
-    if(rememberCk.checked) localStorage.setItem("savedEmail", email);
-    else localStorage.removeItem("savedEmail");
-    showMsg(loginMsg,"تم تسجيل الدخول.","success");
-  }catch(err){
-    showMsg(loginMsg,"خطأ: "+(err.message||err),"error");
-  }finally{
-    loginBtn.classList.remove("loading");
-  }
-});
-sessionBtn.addEventListener("click",(e)=>{ if(currentUser){ e.preventDefault(); auth.signOut(); } });
+    /* ---------- auth ---------- */
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault(); hideMsg(loginMsg);
+      loginBtn.classList.add("loading");
+      const email = $("#loginEmail").value.trim(), pass = $("#loginPassword").value;
+      try {
+        await auth.signInWithEmailAndPassword(email, pass);
+        if (rememberCk.checked) localStorage.setItem("savedEmail", email);
+        else localStorage.removeItem("savedEmail");
+        showMsg(loginMsg, "تم تسجيل الدخول.", "success");
+      } catch (err) {
+        showMsg(loginMsg, "خطأ: " + (err.message || err), "error");
+      } finally {
+        loginBtn.classList.remove("loading");
+      }
+    });
+    sessionBtn.addEventListener("click", (e) => { if (currentUser) { e.preventDefault(); auth.signOut(); } });
 
-function displayNameOrEmail(u, profile){
-  return (profile && profile.name) ? profile.name : (u.displayName || u.email);
-}
+    function displayNameOrEmail(u, profile) {
+      return (profile && profile.name) ? profile.name : (u.displayName || u.email);
+    }
 
-/* شعار → صفحة مناسبة */
-document.getElementById("brandLink").addEventListener("click",(e)=>{
-  e.preventDefault();
-  if (currentUser) { location.hash = "#/new"; }
-  else            { location.hash = "#/login"; }
-});
+    /* شعار → صفحة مناسبة */
+    document.getElementById("brandLink").addEventListener("click", (e) => {
+      e.preventDefault();
+      if (currentUser) { location.hash = "#/new"; }
+      else { location.hash = "#/login"; }
+    });
 
-auth.onAuthStateChanged(async (user)=>{
-  currentUser = user;
-  document.body.classList.toggle('auth-out', !user);
-  document.body.classList.toggle('auth-in',  !!user);
+    auth.onAuthStateChanged(async (user) => {
+      currentUser = user;
+      document.body.classList.toggle('auth-out', !user);
+      document.body.classList.toggle('auth-in', !!user);
 
-  if (!user) {
-    userProfile=null; canSeeAdmin=false;
-    navLinks.querySelectorAll("[data-auth]").forEach(a=>a.style.display="none");
-    sessionBtn.textContent="دخول"; sessionBtn.classList.remove("ghost");
-    sessionBtn.setAttribute("href","#/login");
-    if (myUnsub) { myUnsub(); myUnsub=null; }
-    if (location.hash !== "#/login") location.hash = "#/login";
-    showView("view-login"); setActive("#/login");
-    return;
-  }
+      if (!user) {
+        userProfile = null; canSeeAdmin = false;
+        navLinks.querySelectorAll("[data-auth]").forEach(a => a.style.display = "none");
+        sessionBtn.textContent = "دخول"; sessionBtn.classList.remove("ghost");
+        sessionBtn.setAttribute("href", "#/login");
+        if (myUnsub) { myUnsub(); myUnsub = null; }
+        if (location.hash !== "#/login") location.hash = "#/login";
+        showView("view-login"); setActive("#/login");
+        return;
+      }
 
-  const snap=await db.collection("users").doc(user.uid).get();
-  if(!snap.exists){ showMsg(loginMsg,"حسابك غير مهيأ. تواصل مع الإدارة لإسناد فرع لك.","error"); await auth.signOut(); return; }
-  userProfile=snap.data(); canSeeAdmin=!!userProfile.isAdmin || userProfile.branch==="HQ";
+      const snap = await db.collection("users").doc(user.uid).get();
+      if (!snap.exists) { showMsg(loginMsg, "حسابك غير مهيأ. تواصل مع الإدارة لإسناد فرع لك.", "error"); await auth.signOut(); return; }
+      userProfile = snap.data(); canSeeAdmin = !!userProfile.isAdmin || userProfile.branch === "HQ";
 
-  const badge=`مرحباً، ${displayNameOrEmail(user,userProfile)} — الفرع: ${userProfile.branch}${canSeeAdmin?' — إدارة':''}`;
-  $("#whoami").textContent=badge; $("#whoamiMy").textContent=badge; $("#whoamiAdmin").textContent=badge;
+      const badge = `مرحباً، ${displayNameOrEmail(user, userProfile)} — الفرع: ${userProfile.branch}${canSeeAdmin ? ' — إدارة' : ''}`;
+      $("#whoami").textContent = badge; $("#whoamiMy").textContent = badge; $("#whoamiAdmin").textContent = badge;
 
-  navLinks.querySelectorAll("[data-auth]").forEach(a=>{
-    const t=a.dataset.auth; a.style.display=(t==="user")? "" : (canSeeAdmin? "" : "none");
-  });
-  sessionBtn.textContent="خروج"; sessionBtn.setAttribute("href","#/login");
+      navLinks.querySelectorAll("[data-auth]").forEach(a => {
+        const t = a.dataset.auth; a.style.display = (t === "user") ? "" : (canSeeAdmin ? "" : "none");
+      });
+      sessionBtn.textContent = "خروج"; sessionBtn.setAttribute("href", "#/login");
 
-  if (location.hash === "#/login" || !location.hash) location.hash="#/new";
-  route();
-  subscribeMyOrders();
-  if(canSeeAdmin) loadAdminOrders();
-});
+      if (location.hash === "#/login" || !location.hash) location.hash = "#/new";
+      route();
+      subscribeMyOrders();
+      if (canSeeAdmin) loadAdminOrders();
+    });
 
-/* ---------- tracking / counters ---------- */
-const branchCodes={Riyadh:"RUH",Dammam:"DMM",Jeddah:"JED",Makkah:"MKK",Madina:"MED",HQ:"HQ"};
-const pad5=(n)=>String(n).padStart(5,"0");
+    /* ---------- tracking / counters ---------- */
+    const branchCodes = { Riyadh: "RUH", Dammam: "DMM", Jeddah: "JED", Makkah: "MKK", Madina: "MED", HQ: "HQ" };
+    const pad5 = (n) => String(n).padStart(5, "0");
 
-/* ---------- multi items UI ---------- */
-const itemsWrap = $("#itemsWrap");
-const addItemBtn = $("#addItemBtn");
-function makeItemRow(values={}){
-const row=document.createElement("div");
-row.className="item-row";
-row.innerHTML = `
-<input type="text" class="it-code" placeholder="كود الصنف" value="${values.itemCode||""}">
-<input type="number" class="it-qty" min="1" step="1" placeholder="الكمية" value="${values.quantity||""}">
-<input type="number" class="it-price" min="0" step="0.01" placeholder="سعر البيع" value="${values.price||""}">
+    /* ---------- multi items UI ---------- */
+    const itemsWrap = $("#itemsWrap");
+    const addItemBtn = $("#addItemBtn");
+    function makeItemRow(values = {}) {
+      const row = document.createElement("div");
+      row.className = "item-row";
+      row.innerHTML = `
+<input type="text" class="it-code" placeholder="كود الصنف" value="${values.itemCode || ""}">
+<input type="number" class="it-qty" min="1" step="1" placeholder="الكمية" value="${values.quantity || ""}">
+<input type="number" class="it-price" min="0" step="0.01" placeholder="سعر البيع" value="${values.price || ""}">
 <select class="it-ship" required>
 <option value="">اختر نوع الشحن</option>
 <option value="Sea freight">Sea freight</option>
@@ -447,142 +458,142 @@ row.innerHTML = `
 <option value="Air freight">Air freight</option>
 </select>
 <button type="button" class="remove">🗑</button>`;
-row.querySelector(".remove").onclick=()=> row.remove();
-return row;
-}
-function ensureAtLeastOneRow(){ if(!itemsWrap.children.length){ itemsWrap.appendChild(makeItemRow()); } }
-addItemBtn.onclick = ()=> itemsWrap.appendChild(makeItemRow());
+      row.querySelector(".remove").onclick = () => row.remove();
+      return row;
+    }
+    function ensureAtLeastOneRow() { if (!itemsWrap.children.length) { itemsWrap.appendChild(makeItemRow()); } }
+    addItemBtn.onclick = () => itemsWrap.appendChild(makeItemRow());
 
-/* ---------- links UI ---------- */
-const linksWrap = $("#linksWrap");
-const addLinkBtn = $("#addLinkBtn");
-function makeLinkRow(values={}){
-const r=document.createElement("div");
-r.className="link-row";
-r.innerHTML=`
-<input class="ln-name" placeholder="اسم المرفق (مثال: عرض سعر)" value="${values.name||""}">
-<input class="ln-url" placeholder="https://example.com/file.pdf" value="${values.url||""}">
+    /* ---------- links UI ---------- */
+    const linksWrap = $("#linksWrap");
+    const addLinkBtn = $("#addLinkBtn");
+    function makeLinkRow(values = {}) {
+      const r = document.createElement("div");
+      r.className = "link-row";
+      r.innerHTML = `
+<input class="ln-name" placeholder="اسم المرفق (مثال: عرض سعر)" value="${values.name || ""}">
+<input class="ln-url" placeholder="https://example.com/file.pdf" value="${values.url || ""}">
 <button type="button" class="remove">🗑</button>`;
-r.querySelector(".remove").onclick=()=>{ r.remove(); if(linksWrap.children.length < 3) addLinkBtn.disabled = false; };
-return r;
-}
-addLinkBtn.onclick = ()=>{ if (linksWrap.children.length >= 3) return; linksWrap.appendChild(makeLinkRow()); if (linksWrap.children.length >= 3) addLinkBtn.disabled = true; };
+      r.querySelector(".remove").onclick = () => { r.remove(); if (linksWrap.children.length < 3) addLinkBtn.disabled = false; };
+      return r;
+    }
+    addLinkBtn.onclick = () => { if (linksWrap.children.length >= 3) return; linksWrap.appendChild(makeLinkRow()); if (linksWrap.children.length >= 3) addLinkBtn.disabled = true; };
 
-/* ---------- new order ---------- */
-const newMsg=$("#newMsg");
-const submitOrderBtn = $("#submitOrder");
-submitOrderBtn.addEventListener("click", async ()=>{
-  hideMsg(newMsg);
-  if(!currentUser || !userProfile){ showMsg(newMsg,"يجب تسجيل الدخول أولاً.","error"); return; }
+    /* ---------- new order ---------- */
+    const newMsg = $("#newMsg");
+    const submitOrderBtn = $("#submitOrder");
+    submitOrderBtn.addEventListener("click", async () => {
+      hideMsg(newMsg);
+      if (!currentUser || !userProfile) { showMsg(newMsg, "يجب تسجيل الدخول أولاً.", "error"); return; }
 
-  const projectName = $("#projectName").value.trim();
-  const customerName= $("#customerName").value.trim();
+      const projectName = $("#projectName").value.trim();
+      const customerName = $("#customerName").value.trim();
 
-  const items = [...itemsWrap.querySelectorAll(".item-row")].map(r=>({
-    itemCode: r.querySelector(".it-code").value.trim(),
-    quantity: Number(r.querySelector(".it-qty").value),
-    price:    Number(r.querySelector(".it-price").value),
-    shippingType: r.querySelector(".it-ship")?.value || "",
-    status: r.querySelector(".it-status")?.value || "created",
-    deliveredQty: Number(r.querySelector(".it-delivered")?.value || 0)
-  })).filter(x=>x.itemCode && x.shippingType && Number.isFinite(x.quantity) && x.quantity>0 && Number.isFinite(x.price) && x.price>=0);
+      const items = [...itemsWrap.querySelectorAll(".item-row")].map(r => ({
+        itemCode: r.querySelector(".it-code").value.trim(),
+        quantity: Number(r.querySelector(".it-qty").value),
+        price: Number(r.querySelector(".it-price").value),
+        shippingType: r.querySelector(".it-ship")?.value || "",
+        status: r.querySelector(".it-status")?.value || "created",
+        deliveredQty: Number(r.querySelector(".it-delivered")?.value || 0)
+      })).filter(x => x.itemCode && x.shippingType && Number.isFinite(x.quantity) && x.quantity > 0 && Number.isFinite(x.price) && x.price >= 0);
 
-  if(items.length===0){ showMsg(newMsg,"أضف صنفًا واحدًا على الأقل بشكل صحيح.","error"); return; }
-  if (linksWrap.children.length > 3) { showMsg(newMsg, "مسموح بثلاث مرفقات كحد أقصى.", "error"); return; }
+      if (items.length === 0) { showMsg(newMsg, "أضف صنفًا واحدًا على الأقل بشكل صحيح.", "error"); return; }
+      if (linksWrap.children.length > 3) { showMsg(newMsg, "مسموح بثلاث مرفقات كحد أقصى.", "error"); return; }
 
-  const attachments = [...linksWrap.querySelectorAll(".link-row")].map(r=>{
-    const name=(r.querySelector(".ln-name").value||"ملف").trim();
-    const url = r.querySelector(".ln-url").value.trim();
-    return url ? {name, url} : null;
-  }).filter(Boolean);
+      const attachments = [...linksWrap.querySelectorAll(".link-row")].map(r => {
+        const name = (r.querySelector(".ln-name").value || "ملف").trim();
+        const url = r.querySelector(".ln-url").value.trim();
+        return url ? { name, url } : null;
+      }).filter(Boolean);
 
-  submitOrderBtn.classList.add("loading"); submitOrderBtn.disabled=true;
+      submitOrderBtn.classList.add("loading"); submitOrderBtn.disabled = true;
 
-  try{
-    const branch=userProfile.branch, code=branchCodes[branch]||"UNK";
-    const counterRef=db.collection("counters").doc(branch);
-    const seq=await db.runTransaction(async(tx)=>{ const s=await tx.get(counterRef); let next=1; if(s.exists) next=(s.data().next||1); tx.set(counterRef,{next:next+1},{merge:true}); return next; });
-    const tracking=code+pad5(seq);
+      try {
+        const branch = userProfile.branch, code = branchCodes[branch] || "UNK";
+        const counterRef = db.collection("counters").doc(branch);
+        const seq = await db.runTransaction(async (tx) => { const s = await tx.get(counterRef); let next = 1; if (s.exists) next = (s.data().next || 1); tx.set(counterRef, { next: next + 1 }, { merge: true }); return next; });
+        const tracking = code + pad5(seq);
 
-    await db.collection("orders").doc(tracking).set({
-      tracking, branch, projectName, customerName,
-      items, attachments, createdBy: currentUser.uid,
-      createdByEmail: currentUser.email || "",
-      status:"created",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        await db.collection("orders").doc(tracking).set({
+          tracking, branch, projectName, customerName,
+          items, attachments, createdBy: currentUser.uid,
+          createdByEmail: currentUser.email || "",
+          status: "created",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
+        $("#projectName").value = ""; $("#customerName").value = "";
+        itemsWrap.innerHTML = ""; ensureAtLeastOneRow();
+        linksWrap.innerHTML = ""; addLinkBtn.disabled = false;
+
+        subscribeMyOrders(); if (canSeeAdmin) loadAdminOrders();
+
+      } catch (err) {
+        console.error(err); showMsg(newMsg, "خطأ أثناء الإرسال: " + (err.message || err), "error");
+      } finally {
+        submitOrderBtn.classList.remove("loading"); submitOrderBtn.disabled = false;
+      }
     });
 
-    showMsg(newMsg,`تم تسجيل الطلب. رقم التتبّع: ${tracking}`,"success");
-    $("#projectName").value=""; $("#customerName").value="";
-    itemsWrap.innerHTML=""; ensureAtLeastOneRow();
-    linksWrap.innerHTML=""; addLinkBtn.disabled=false;
+    /* ---------- admin expandable orders ---------- */
+    // تحديث حالة الطلب عند تغييره (للأدمن فقط)
+    document.addEventListener("change", (e) => {
+      const select = e.target.closest(".order-status-select");
+      if (!select) return;
 
-    subscribeMyOrders(); if(canSeeAdmin) loadAdminOrders();
+      const tr = select.closest("tr");
+      const tracking = tr?.dataset?.tracking;
+      const newStatus = select.value;
 
-  }catch(err){
-    console.error(err); showMsg(newMsg,"خطأ أثناء الإرسال: "+(err.message||err),"error");
-  }finally{
-    submitOrderBtn.classList.remove("loading"); submitOrderBtn.disabled=false;
-  }
-});
+      if (!tracking || !newStatus) return;
 
-/* ---------- admin expandable orders ---------- */
-  // تحديث حالة الطلب عند تغييره (للأدمن فقط)
-document.addEventListener("change", (e) => {
-  const select = e.target.closest(".order-status-select");
-  if (!select) return;
+      // تحديث محلي في adminRows (اختياري)
+      const order = adminRows.find(o => o.tracking === tracking);
+      if (order) order.status = newStatus;
 
-  const tr = select.closest("tr");
-  const tracking = tr?.dataset?.tracking;
-  const newStatus = select.value;
-  
-  if (!tracking || !newStatus) return;
+      // عرض رسالة أو تنفيذ حفظ في قاعدة البيانات (لاحقاً)
+      console.log(`تم تحديث الطلب ${tracking} إلى: ${newStatus}`);
+    });
 
-  // تحديث محلي في adminRows (اختياري)
-  const order = adminRows.find(o => o.tracking === tracking);
-  if (order) order.status = newStatus;
-
-  // عرض رسالة أو تنفيذ حفظ في قاعدة البيانات (لاحقاً)
-  console.log(`تم تحديث الطلب ${tracking} إلى: ${newStatus}`);
-});
-
-document.addEventListener("click", (e) => {
-const toggleBtn = e.target.closest(".toggle-items");
-if (!toggleBtn) return;
-const tr = toggleBtn.closest("tr");
-const tracking = tr?.dataset?.tracking;
-const container = tr.nextElementSibling?.classList.contains("sub-items-row") ? tr.nextElementSibling : null;
+    document.addEventListener("click", (e) => {
+      const toggleBtn = e.target.closest(".toggle-items");
+      if (!toggleBtn) return;
+      const tr = toggleBtn.closest("tr");
+      const tracking = tr?.dataset?.tracking;
+      const container = tr.nextElementSibling?.classList.contains("sub-items-row") ? tr.nextElementSibling : null;
 
 
-if (container) {
-container.hidden = !container.hidden;
-toggleBtn.textContent = container.hidden ? "🔽" : "🔼";
-} else {
-const newRow = document.createElement("tr");
-newRow.className = "sub-items-row";
-newRow.innerHTML = `<td colspan="100%"><div class="loading">جاري تحميل الأصناف...</div></td>`;
-tr.parentNode.insertBefore(newRow, tr.nextSibling);
-toggleBtn.textContent = "🔼";
+      if (container) {
+        container.hidden = !container.hidden;
+        toggleBtn.textContent = container.hidden ? "🔽" : "🔼";
+      } else {
+        const newRow = document.createElement("tr");
+        newRow.className = "sub-items-row";
+        newRow.innerHTML = `<td colspan="100%"><div class="loading">جاري تحميل الأصناف...</div></td>`;
+        tr.parentNode.insertBefore(newRow, tr.nextSibling);
+        toggleBtn.textContent = "🔼";
 
 
-const r = (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
-if (r) {
-const inner = document.createElement("div");
-renderOrderItemsEdit(inner, r.items || [], tracking);
-newRow.innerHTML = `<td colspan="100%"></td>`;
-newRow.firstElementChild.appendChild(inner);
-} else {
-newRow.innerHTML = `<td colspan="100%"><div class="msg error">تعذّر تحميل الأصناف.</div></td>`;
-}
-}
-});
+        const r = (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
+        if (r) {
+          const inner = document.createElement("div");
+          renderOrderItemsEdit(inner, r.items || [], tracking);
+          newRow.innerHTML = `<td colspan="100%"></td>`;
+          newRow.firstElementChild.appendChild(inner);
+        } else {
+          newRow.innerHTML = `<td colspan="100%"><div class="msg error">تعذّر تحميل الأصناف.</div></td>`;
+        }
+      }
+    });
 
-/* ---------- table row renderer modification ---------- */
-function renderTableRow(r){
-const createdAtStr = r.createdAt || "-";
-const userLabel = r.user || "-";
-const priceFirst = r.total;
-return `
+    /* ---------- table row renderer modification ---------- */
+    function renderTableRow(r) {
+      const createdAtStr = r.createdAt || "-";
+      const userLabel = r.user || "-";
+      const priceFirst = r.total;
+      return `
 <tr data-id="${r.tracking}">
 <td>${r.tracking}</td>
 <td>${createdAtStr}</td>
@@ -603,15 +614,15 @@ return `
 <button type="button" class="btn-details btn-sm" title="طباعة الطلب" data-id="${r.tracking}">🖨️</button>
 </td>
 </tr>`;
-}
+    }
 
-/* ---------- MY ORDERS (Realtime) + details/print ---------- */
+    /* ---------- MY ORDERS (Realtime) + details/print ---------- */
 
-function renderMyRow(r) {
-  const createdAtStr = r.createdAt || "-";
-  const priceFirst = r.total ?? "";
+    function renderMyRow(r) {
+      const createdAtStr = r.createdAt || "-";
+      const priceFirst = r.total ?? "";
 
-  return `
+      return `
     <tr data-id="${r.tracking}">
       <td>${r.tracking}</td>
       <td>${createdAtStr}</td>
@@ -623,387 +634,220 @@ function renderMyRow(r) {
       </td>
     </tr>
   `;
-}
+    }
 
-let myUnsub=null, myRows=[];
-function subscribeMyOrders(){
-  if(myUnsub){ myUnsub(); myUnsub=null; }
-  if(!currentUser) return;
-  const q=db.collection("orders").where("createdBy","==",currentUser.uid);
-  myUnsub=q.onSnapshot((snap)=>{ myRows=snap.docs.map(d=>({id:d.id,...d.data()})); renderMy(myRows); },
-    (err)=>{ console.error(err); showMsg(document.getElementById("newMsg"),"تعذّر تحميل طلباتك: "+(err.message||err),"error"); });
-}
-const myTableBody = $("#myOrdersBody");
-function renderMy(rows){
-  // فلتر الحالة
-  const selectedStatus = (myFilterStatus?.value || "").trim();
-  if (selectedStatus) {
-    rows = rows.filter(r => (r.status || "") === selectedStatus);
-  }
+    let myUnsub = null, myRows = [];
+    function subscribeMyOrders() {
+      if (myUnsub) { myUnsub(); myUnsub = null; }
+      if (!currentUser) return;
+      const q = db.collection("orders").where("createdBy", "==", currentUser.uid);
+      myUnsub = q.onSnapshot((snap) => { myRows = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderMy(myRows); },
+        (err) => { console.error(err); showMsg(document.getElementById("newMsg"), "تعذّر تحميل طلباتك: " + (err.message || err), "error"); });
+    }
+    const myTableBody = $("#myOrdersBody");
+    function renderMy(rows) {
+      // فلتر الحالة
+      const selectedStatus = (myFilterStatus?.value || "").trim();
+      if (selectedStatus) {
+        rows = rows.filter(r => (r.status || "") === selectedStatus);
+      }
 
-  // البحث
-  const term = (mySearch.value || "").trim().toLowerCase();
-  rows = rows.filter(r=>{
-    if (!term) return true;
-    const inTracking = (r.tracking||"").toLowerCase().includes(term);
-    const inProj     = (r.projectName||"").toLowerCase().includes(term);
-    const inCust     = (r.customerName||"").toLowerCase().includes(term);
-    const inItems    = (r.items||[]).some(it => (it.itemCode||"").toLowerCase().includes(term));
-    return inTracking || inProj || inCust || inItems;
-  });
+      // البحث
+      const term = (mySearch.value || "").trim().toLowerCase();
+      rows = rows.filter(r => {
+        if (!term) return true;
+        const inTracking = (r.tracking || "").toLowerCase().includes(term);
+        const inProj = (r.projectName || "").toLowerCase().includes(term);
+        const inCust = (r.customerName || "").toLowerCase().includes(term);
+        const inItems = (r.items || []).some(it => (it.itemCode || "").toLowerCase().includes(term));
+        return inTracking || inProj || inCust || inItems;
+      });
 
-  // الترتيب
-  rows.sort((a,b)=> (mySort.value==="createdAt_desc"
-    ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
-    : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0)));
+      // الترتيب
+      rows.sort((a, b) => (mySort.value === "createdAt_desc"
+        ? (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)
+        : (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0)));
 
-  // العرض
-  myTableBody.innerHTML = rows.map(r=>{
-    const items      = r.items || [];
-    const firstCode  = items[0]?.itemCode || "";
-    const extra      = items.length>1 ? ` (+${items.length-1})` : "";
-    const qtySum     = items.reduce((s,x)=>s+(x.quantity||0),0);
-    const priceFirst = items.length ? (items[0].price ?? "") : "";
-    const createdAtStr = fmtDate(r.createdAt, { withTime: true });
+      // العرض
+      myTableBody.innerHTML = rows.map(r => {
+        const items = r.items || [];
+        const firstCode = items[0]?.itemCode || "";
+        const extra = items.length > 1 ? ` (+${items.length - 1})` : "";
+        const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
+        const priceFirst = items.length ? (items[0].price ?? "") : "";
+        const createdAtStr = fmtDate(r.createdAt, { withTime: true });
 
-    return `
+        return `
       <tr>
         <td><strong>${r.tracking}</strong></td>
         <td>${firstCode}${extra}</td>
         <td>${qtySum}</td>
-        <td>${(typeof priceFirst==="number") ? priceFirst.toFixed(2) : priceFirst}</td>
-        <td>${r.projectName||"-"}</td>
+        <td>${(typeof priceFirst === "number") ? priceFirst.toFixed(2) : priceFirst}</td>
+        <td>${r.projectName || "-"}</td>
         <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
         <td>${createdAtStr}</td>
         <td><button type="button" class="btn-strong" data-open="${r.tracking}" style="padding:6px 10px;border-radius:10px">تفاصيل</button></td>
       </tr>`;
-  }).join("");
-}
-  //document.querySelectorAll('[data-open]').forEach(btn=>{ btn.onclick = ()=> openDetails(btn.dataset.open); });
-mySearch.addEventListener("input",()=>renderMy(myRows));
-mySort.addEventListener("change",()=>renderMy(myRows));
-myFilterStatus.addEventListener("change", ()=>renderMy(myRows));
+      }).join("");
+    }
+    //document.querySelectorAll('[data-open]').forEach(btn=>{ btn.onclick = ()=> openDetails(btn.dataset.open); });
+    mySearch.addEventListener("input", () => renderMy(myRows));
+    mySort.addEventListener("change", () => renderMy(myRows));
+    myFilterStatus.addEventListener("change", () => renderMy(myRows));
 
-/* ---------- ADMIN (بحث مُحسّن + زر التفاصيل) ---------- */
-const adminBody = $("#adminOrdersBody"),
+    /* ---------- ADMIN (بحث مُحسّن + زر التفاصيل) ---------- */
+    const adminBody = $("#adminOrdersBody"),
       adminSearch = $("#adminSearch"),
       adminFilterBranch = $("#adminFilterBranch"),
       adminFilterStatus = $("#adminFilterStatus"),
-      adminFilterUser   = $("#adminFilterUser"),
-      adminSort         = $("#adminSort");
-  let usersById = {}; // uid -> {name, email, ...}
+      adminFilterUser = $("#adminFilterUser"),
+      adminSort = $("#adminSort");
+    let usersById = {}; // uid -> {name, email, ...}
 
-let adminRows=[];
-async function loadAdminOrders(){ // NEW
-  if(!canSeeAdmin) return;
+    let adminRows = [];
+    async function loadAdminOrders() { // NEW
+      if (!canSeeAdmin) return;
 
-  const [ordersSnap, usersSnap] = await Promise.all([
-    db.collection("orders").get(),
-    db.collection("users").get()
-  ]);
+      const [ordersSnap, usersSnap] = await Promise.all([
+        db.collection("orders").get(),
+        db.collection("users").get()
+      ]);
 
-  usersById = {};
-  usersSnap.forEach(d => usersById[d.id] = d.data() || {});
+      usersById = {};
+      usersSnap.forEach(d => usersById[d.id] = d.data() || {});
 
-  adminRows = ordersSnap.docs.map(d => ({ id:d.id, ...d.data() }));
-  populateAdminUsers(adminRows);
-  renderAdmin();
-}
-
-function populateAdminUsers(rows){ // NEW
-  const map = new Map(); // uid -> label
-  rows.forEach(r=>{
-    const uid = (r.createdBy || "").trim();
-    if (!uid) return;
-    const label = (usersById[uid]?.name || usersById[uid]?.email || uid);
-    map.set(uid, label);
-  });
-
-  adminFilterUser.innerHTML =
-    `<option value="">كل المستخدمين</option>` +
-    [...map.entries()]
-      .sort((a,b)=> a[1].localeCompare(b[1], 'ar'))
-      .map(([uid,label]) => `<option value="${uid}">${label}</option>`)
-      .join("");
-}
-
-function renderAdmin(){ // NEW
-  const term = (adminSearch.value || "").trim().toLowerCase();
-  const fb   = (adminFilterBranch.value || "");
-  const fs   = (adminFilterStatus.value || "");
-  const fu   = (adminFilterUser.value || ""); // ← UID
-  const sort = (adminSort.value || "createdAt_desc");
-
-  let rows = adminRows.filter(r=>{
-    if (fb && r.branch !== fb) return false;
-    if (fs && (r.status||"") !== fs) return false;
-    if (fu && (r.createdBy || "") !== fu) return false;
-
-    if (!term) return true;
-    const inTracking = (r.tracking||"").toLowerCase().includes(term);
-    const inProj     = (r.projectName||"").toLowerCase().includes(term);
-    const inCust     = (r.customerName||"").toLowerCase().includes(term);
-    const inItems    = (r.items||[]).some(it => (it.itemCode||"").toLowerCase().includes(term));
-    const inUserName = (usersById[r.createdBy]?.name || "").toLowerCase().includes(term);
-    const inUserMail = (usersById[r.createdBy]?.email||"").toLowerCase().includes(term);
-    return inTracking || inProj || inCust || inItems || inUserName || inUserMail;
-  });
-
-  rows.sort((a,b)=> sort==="createdAt_desc"
-    ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
-    : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0));
-
-adminBody.innerHTML = rows.map(r => renderTableRow({
-  ...r,
-  user: usersById[r.createdBy]?.name || usersById[r.createdBy]?.email || r.createdBy,
-  createdAt: fmtDate(r.createdAt),
-  total: r.items?.[0]?.price ?? ""
-})).join("");
-
-
-adminSearch.addEventListener("input",renderAdmin);
-adminFilterBranch.addEventListener("change",renderAdmin);
-adminFilterStatus.addEventListener("change", renderAdmin);
-adminFilterUser.addEventListener("change", renderAdmin);
-adminSort.addEventListener("change", renderAdmin);
-
-  // ✅ تحديث الحالة مباشرة عند تغييرها
-document.addEventListener("change", async (e) => {
-  const select = e.target.closest(".order-status-select");
-  if (!select) return;
-
-  const tracking = select.dataset.tracking;
-  const newStatus = select.value;
-
-  if (!tracking || !newStatus) return;
-
-  select.disabled = true;
-  select.style.opacity = 0.6;
-
-  try {
-    await db.collection("orders").doc(tracking).update({ status: newStatus });
-
-    const row = adminRows.find(r => r.tracking === tracking);
-    if (row) row.status = newStatus;
-
-    select.style.border = "2px solid #6c1d2c";
-    setTimeout(() => {
-      select.style.border = "";
-    }, 1000);
-  } catch (err) {
-    alert("فشل التحديث: " + (err.message || err));
-  } finally {
-    select.disabled = false;
-    select.style.opacity = 1;
-  }
-});
-
-function statusLabel(s){ return {created:"جديد",ordered:"تم الطلب من المصنع",shipped:"تم الشحن",delivered:"وصلت"}[s] || s; }
-function statusClass(s){ return {created:"s-created",ordered:"s-ordered",shipped:"s-shipped",delivered:"s-delivered"}[s] || "s-created"; }
-
-/* ---------- init ---------- */
-route();
-(function () {
-  const emailInput   = document.getElementById('loginEmail');
-  const emailWrap    = emailInput.closest('.input-wrap');
-  const emailClear   = document.getElementById('clearEmail');
-
-  const passInput    = document.getElementById('loginPassword');
-  const passWrap     = passInput.closest('.input-wrap');
-  const passToggle   = document.getElementById('togglePwd');
-  const passClear    = document.getElementById('clearPwd');
-
-  function bindInputState(input, wrap){
-    const update = () => wrap.classList.toggle('has-value', !!input.value.trim());
-    input.addEventListener('input', update);
-    update(); // يدعم الـ autofill
-  }
-
-  bindInputState(emailInput, emailWrap);
-  emailClear.addEventListener('click', () => {
-    emailInput.value = '';
-    emailInput.focus();
-    emailWrap.classList.remove('has-value');
-  });
-
-  bindInputState(passInput, passWrap);
-  passToggle.addEventListener('click', () => {
-    const show = passInput.type === 'password';
-    passInput.type = show ? 'text' : 'password';
-    passToggle.textContent = show ? 'إخفاء' : 'إظهار';
-    passInput.focus();
-  });
-  passClear.addEventListener('click', () => {
-    passInput.value = '';
-    passInput.type = 'password';
-    passToggle.textContent = 'إظهار';
-    passInput.focus();
-    passWrap.classList.remove('has-value');
-  });
-
-  // 🔧 مهم: فعّل ظهور الأزرار فور التحميل (يعالج حالة الـAutofill)
-  showPwdButtonsIfNeeded();
-})();
-
-// إغلاق مودال الأدمِن
-(function(){
-  const modal = document.getElementById('orderModal');
-  modal?.addEventListener('click', (e) => {
-    if (e.target === modal || e.target.classList.contains('modal__close')) {
-      modal.hidden = true;
-      document.documentElement.style.overflow = '';
-    }
-  });
-  modal?.querySelector('[data-action="print"]')?.addEventListener('click', ()=>window.print());
-})();
-
-// مودال واحد (detailsModal) يُستخدم للصفحتين
-// مودال واحد (detailsModal) يُستخدم للصفحتين
-async function openDetails(tracking) {
-  try {
-    // ابحث محليًا بدل window.*
-    let r =
-      (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
-      (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
-  
-    // لو ما لقيناها محليًا، جيبها من Firestore باستخدام db المحلي
-    if (!r) {
-      const doc = await db.collection('orders').doc(tracking).get();
-      if (doc.exists) r = { id: doc.id, ...doc.data() };
+      adminRows = ordersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      populateAdminUsers(adminRows);
+      renderAdmin();
     }
 
-    if (!r) { alert('تعذّر إيجاد تفاصيل هذا الطلب الآن.'); return; }
+    function populateAdminUsers(rows) { // NEW
+      const map = new Map(); // uid -> label
+      rows.forEach(r => {
+        const uid = (r.createdBy || "").trim();
+        if (!uid) return;
+        const label = (usersById[uid]?.name || usersById[uid]?.email || uid);
+        map.set(uid, label);
+      });
 
-    // بناء HTML
-    const items  = r.items || [];
-    const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
-    const rowsHtml = items.length
-      ? items.map((it, i) => `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${it.itemCode || ''}</td>
-            <td>${it.quantity ?? ''}</td>
-            <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price ?? '')}</td>
-          </tr>
-        `).join('')
-      : '<tr><td colspan="4" class="muted">لا توجد أصناف.</td></tr>';
-
-    const attachHtml = (r.attachments?.length)
-      ? `<ul>${r.attachments.map(a => `<li><a href="${a.url}" target="_blank">${a.name}</a></li>`).join('')}</ul>`
-      : `<div class="muted">لا توجد مرفقات.</div>`;
-
-    const createdAtStr = fmtDate(r.createdAt, { withTime: true });
-
-    const modal = document.getElementById('detailsModal');
-    const body  = document.getElementById('detailsBody');
-
-    body.innerHTML = `
-      <div class="inv-head">
-        <div class="inv-brand">
-          <img src="img/pagelogo.png" alt="logo">
-          <div>
-            <div class="inv-title">طلب شراء</div>
-            <div class="muted">رقم التتبّع: <b>${r.tracking}</b></div>
-          </div>
-        </div>
-        <div style="margin-inline-start:auto;text-align:left">
-          <div>الفرع: <b>${r.branch || '-'}</b></div>
-          <div>التاريخ: ${createdAtStr}</div>
-        </div>
-      </div>
-
-      <div class="inv-grid" style="margin:10px 0 14px">
-        <div><b>اسم المشروع:</b> ${r.projectName || '-'}</div>
-        <div><b>اسم العميل:</b> ${r.customerName || '-'}</div>
-        <div><b>الحالة:</b> ${statusLabel(r.status || 'created')}</div>
-      </div>
-
-      <table class="table-like">
-        <thead><tr><th>#</th><th>كود الصنف</th><th>الكمية</th><th>سعر البيع</th></tr></thead>
-        <tbody>${rowsHtml}</tbody>
-        <tfoot><tr><td colspan="2" class="total">إجمالي الكميات</td><td class="total">${qtySum}</td><td></td></tr></tfoot>
-      </table>
-
-      <div style="margin-top:10px">
-        <b>المرفقات:</b>
-        ${attachHtml}
-      </div>
-    `;
-
-    modal.classList.add('show');
-  } catch (err) {
-    console.error('openDetails error:', err);
-    alert('حدث خطأ أثناء فتح التفاصيل.');
-  }
-}
-
-// ✅ تسجيل حدث الضغط على الأزرار مرة واحدة فقط
-document.addEventListener('click', async (e) => {
-  const btn = e.target.closest('[data-open], .btn-details');
-  if (!btn) return;
-  e.preventDefault();
-
-  const tr = btn.closest('tr');
-  const tracking =
-    btn.dataset.open ||
-    btn.dataset.id ||
-    tr?.dataset.id ||
-    tr?.cells?.[0]?.textContent?.trim();
-
-  if (!tracking) {
-    console.warn('Details: لا يوجد رقم تتبّع');
-    return;
-  }
-
-  openDetails(tracking); // استدعاء دالة التفاصيل
-});
-
-// إغلاق/طباعة مودال التفاصيل
-(function(){
-  const modal = document.getElementById('detailsModal');
-  const closeBtn = document.getElementById('closeDetails');
-  const printBtn = document.getElementById('printDetailsBtn');
-
-  closeBtn && (closeBtn.onclick = () => modal.classList.remove('show'));
-  modal.querySelector('.backdrop')?.addEventListener('click', () => modal.classList.remove('show'));
-  printBtn && (printBtn.onclick = () => window.print());
-})();
-
-</script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
-    authDomain: "purchase-order-req.firebaseapp.com",
-    projectId: "purchase-order-req",
-    storageBucket: "purchase-order-req.appspot.com",
-    messagingSenderId: "72898448492",
-    appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  const loginForm = document.getElementById("loginForm");
-  const loginMsg = document.getElementById("loginMsg");
-
-  loginForm.onsubmit = async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value;
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      location.hash = "#/new"; // تحويل بعد تسجيل الدخول
-    } catch (err) {
-      console.error(err);
-      loginMsg.textContent = "فشل تسجيل الدخول. تحقق من المعلومات.";
-      loginMsg.style.color = "red";
+      adminFilterUser.innerHTML =
+        `<option value="">كل المستخدمين</option>` +
+        [...map.entries()]
+          .sort((a, b) => a[1].localeCompare(b[1], 'ar'))
+          .map(([uid, label]) => `<option value="${uid}">${label}</option>`)
+          .join("");
     }
-  };
-</script>
+
+    function renderAdmin() { // NEW
+      const term = (adminSearch.value || "").trim().toLowerCase();
+      const fb = (adminFilterBranch.value || "");
+      const fs = (adminFilterStatus.value || "");
+      const fu = (adminFilterUser.value || ""); // ← UID
+      const sort = (adminSort.value || "createdAt_desc");
+
+      let rows = adminRows.filter(r => {
+        if (fb && r.branch !== fb) return false;
+        if (fs && (r.status || "") !== fs) return false;
+        if (fu && (r.createdBy || "") !== fu) return false;
+
+        if (!term) return true;
+        const inTracking = (r.tracking || "").toLowerCase().includes(term);
+        const inProj = (r.projectName || "").toLowerCase().includes(term);
+        const inCust = (r.customerName || "").toLowerCase().includes(term);
+        const inItems = (r.items || []).some(it => (it.itemCode || "").toLowerCase().includes(term));
+        const inUserName = (usersById[r.createdBy]?.name || "").toLowerCase().includes(term);
+        const inUserMail = (usersById[r.createdBy]?.email || "").toLowerCase().includes(term);
+        return inTracking || inProj || inCust || inItems || inUserName || inUserMail;
+      });
+
+      rows.sort((a, b) => sort === "createdAt_desc"
+        ? (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)
+        : (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0));
+
+      adminBody.innerHTML = rows.map(r => renderTableRow({
+        ...r,
+        user: usersById[r.createdBy]?.name || usersById[r.createdBy]?.email || r.createdBy,
+        createdAt: fmtDate(r.createdAt),
+        total: r.items?.[0]?.price ?? ""
+      })).join("");
+
+
+      adminSearch.addEventListener("input", renderAdmin);
+      adminFilterBranch.addEventListener("change", renderAdmin);
+      adminFilterStatus.addEventListener("change", renderAdmin);
+      adminFilterUser.addEventListener("change", renderAdmin);
+      adminSort.addEventListener("change", renderAdmin);
+
+      // ✅ تحديث الحالة مباشرة عند تغييرها
+      document.addEventListener("change", async (e) => {
+        const select = e.target.closest(".order-status-select");
+        if (!select) return;
+
+        const tracking = select.dataset.tracking;
+        const newStatus = select.value;
+
+        if (!tracking || !newStatus) return;
+
+        select.disabled = true;
+        select.style.opacity = 0.6;
+
+        try {
+          await db.collection("orders").doc(tracking).update({ status: newStatus });
+
+          const row = adminRows.find(r => r.tracking === tracking);
+          if (row) row.status = newStatus;
+
+          select.style.border = "2px solid #6c1d2c";
+          setTimeout(() => {
+            select.style.border = "";
+          }, 1000);
+        } catch (err) {
+          alert("فشل التحديث: " + (err.message || err));
+        } finally {
+          select.disabled = false;
+          select.style.opacity = 1;
+        }
+      });
+
+      function statusLabel(s) { return { created: "جديد", ordered: "تم الطلب من المصنع", shipped: "تم الشحن", delivered: "وصلت" }[s] || s; }
+      function statusClass(s) { return { created: "s-created", ordered: "s-ordered", shipped: "s-shipped", delivered: "s-delivered" }[s] || "s-created"; }
+    }
+
+
+      // ✅ تسجيل حدث الضغط على الأزرار مرة واحدة فقط
+      document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('[data-open], .btn-details');
+        if (!btn) return;
+        e.preventDefault();
+
+        const tr = btn.closest('tr');
+        const tracking =
+          btn.dataset.open ||
+          btn.dataset.id ||
+          tr?.dataset.id ||
+          tr?.cells?.[0]?.textContent?.trim();
+
+        if (!tracking) {
+          console.warn('Details: لا يوجد رقم تتبّع');
+          return;
+        }
+
+        openDetails(tracking); // استدعاء دالة التفاصيل
+      });
+
+      // إغلاق/طباعة مودال التفاصيل
+      (function () {
+        const modal = document.getElementById('detailsModal');
+        const closeBtn = document.getElementById('closeDetails');
+        const printBtn = document.getElementById('printDetailsBtn');
+
+        closeBtn && (closeBtn.onclick = () => modal.classList.remove('show'));
+        modal.querySelector('.backdrop')?.addEventListener('click', () => modal.classList.remove('show'));
+        printBtn && (printBtn.onclick = () => window.print());
+      })();
+      // Ensure all opened blocks are closed
+    </script>
 
 </body>
+
 </html>
