@@ -6,9 +6,7 @@
 }
 
 /* أساسيات */
-*,
-*::before,
-*::after{ box-sizing:border-box; }
+*,*::before,*::after{ box-sizing:border-box; }
 
 body{
   margin:0; font-family:"Tajawal","Inter",sans-serif;
@@ -38,7 +36,6 @@ header{
   text-decoration:none; border-bottom:0;
 }
 .navlinks a:hover{ transform:translateY(-2px); filter:brightness(1.1); }
-/* إزالة الخط السفلي لأي روابط داخل الشريط */
 .nav a{ text-decoration:none !important; }
 
 /* البطاقات والعناوين */
@@ -75,39 +72,23 @@ label{ font-weight:700; margin-top:14px; display:block; }
 /* غلاف الإدخال + أزرار مسح/إظهار كلمة المرور */
 .input-wrap{ position:relative; background:#f1f1f1; border-radius:12px; overflow:visible; margin-top:10px; }
 .input-wrap input{ padding-inline-end:90px; padding-inline-start:14px; border:0; background:transparent; color:#111; }
-/* أزرار مسح/إظهار كلمة المرور */
-.input-clear,
-.pwd-toggle,
-.pwd-clear{
-  display:none;
-  position:absolute; top:50%; transform:translateY(-50%);
+.input-clear,.pwd-toggle,.pwd-clear{
+  display:none; position:absolute; top:50%; transform:translateY(-50%);
   left:10px; width:32px; height:32px;
   border-radius:8px; border:1px solid #d1d5db;
   background:#f3f4f6; z-index:3;
-  align-items:center; justify-content:center;
-  cursor:pointer; font-size:14px;
+  align-items:center; justify-content:center; cursor:pointer; font-size:14px;
 }
-/* العين قبل الـ X */
 .pwd-toggle{ left:46px; }
-
-/* تظهر تلقائيًا عند وجود قيمة */
 .input-wrap.has-value .input-clear{ display:flex; }
 .pwd-wrap.has-value .pwd-toggle,
 .pwd-wrap.has-value .pwd-clear{ display:flex; }
-
-/* تظهر أيضًا عند التركيز حتى لو فاضية */
 .pwd-wrap:focus-within .pwd-toggle,
 .pwd-wrap:focus-within .pwd-clear{ display:flex; }
-
 
 /* عرض/إخفاء الواجهات حسب الحالة */
 .view{ display:none !important; }
 .view.active{ display:block !important; }
-body.auth-out #view-login{ display:block !important; }
-body.auth-out #view-new,
-body.auth-out #view-my,
-body.auth-out #view-admin{ display:none !important; }
-body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:none; }
 
 /* استجابة */
 @media (max-width:720px){
@@ -118,7 +99,7 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
   .card{ padding:20px; }
 }
 
-/* دارك (اختياري مبسّط) */
+/* دارك */
 @media (prefers-color-scheme:dark){
   body{ background:#ffffff; color:#111827; }
   .card{ background:#eeeeee; }
@@ -134,8 +115,8 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 .field input[type="number"],
 .field textarea{
   width:100%; max-width:100%; min-width:0; display:block; padding:10px 12px;
-  border:1px solid #e5e7eb; border-radius:10px; background:#fff; line-height:1.4;
-  white-space:normal; overflow-wrap:break-word; word-break:break-word;
+  border:1px solid #e5e7eb; border-radius:10px; background:#fff;
+  line-height:1.4; white-space:normal; overflow-wrap:break-word; word-break:break-word;
 }
 .form-row{ display:flex; gap:12px; flex-wrap:wrap; }
 .form-row > *{ min-width:220px; flex:1 1 280px; }
@@ -173,56 +154,49 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 .btn-primary{ background:#6c1d2c; color:#fff; border-color:#5a1724; }
 .btn:hover{ background:#f8fafc; }
 .btn-primary:hover{ filter:brightness(.95); }
-/* الأزرار داخل الجداول وغيرها ما تكون بعرض 100% */
 .btn,.btn-details,.btn-primary,.btn-strong{width:auto}
 
-/* === زر التوسيع وزر الطباعة في جدول الطلبات الإدارية === */
+/* زر التوسيع وزر الطباعة */
 .toggle-items,
 .btn-details {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 4px 10px;
-  font-size: 14px;
-  border: none;
-  border-radius: 6px;
-  background-color: #f3f4f6;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  display:inline-block;
+  margin-left:6px;
+  padding:4px 10px;
+  font-size:14px;
+  border:none;
+  border-radius:6px;
+  background-color:#f3f4f6;
+  cursor:pointer;
+  transition:background-color 0.2s;
 }
-
 .toggle-items:hover,
-.btn-details:hover {
-  background-color: #e5e7eb;
-}
+.btn-details:hover { background-color:#e5e7eb; }
 
 /* واجهة الأصناف والروابط */
 .items-head{display:flex;justify-content:flex-end;margin:8px 0}
 .add-item{border:1px dashed #d1d5db;background:#fff;color:#111}
-.item-row,.link-row{ display:grid;gap:8px;align-items:center;margin-bottom:8px }
-.item-row{grid-template-columns:1fr 120px 140px auto}
-.link-row{grid-template-columns:1fr 1.5fr auto}
-.item-row .remove,.link-row .remove{height:40px}
+.item-row,.link-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
+.item-row .it-code  { flex:1 1 180px; }
+.item-row .it-qty   { flex:0 1 100px; }
+.item-row .it-price { flex:0 1 120px; }
+.item-row .it-ship  { flex:0 1 150px; }
+.item-row .remove   { flex:0 0 auto; }
 
-/* عنوان قسم */
-.section-box{font-weight:800;color:#6b7280;margin:10px 0}
+.item-row input,
+.item-row select { min-width:0; }
 
-/* جدول الطباعة العام */
-.table-like{
-  width:100%;border-collapse:separate;border-spacing:0;
-  border:1px solid #e5e7eb;border-radius:12px;overflow:hidden
+.item-row button.remove {
+  background:none; border:none; font-size:18px;
+  cursor:pointer; color:#b91c1c; margin-top:0; align-self:center;
 }
-.table-like thead th{background:#f8fafc;padding:10px;text-align:right;border-bottom:1px solid #e5e7eb}
-.table-like td{padding:8px 10px;border-bottom:1px solid #f1f5f9}
-.table-like tfoot .total{font-weight:800}
 
-/* ===== المودال (عام) ===== */
+/* ===== المودال ===== */
 .modal{
   position:fixed; inset:0; display:none; place-items:center;
   background:rgba(0,0,0,.35); padding:16px; z-index:1000;
 }
 .modal.show{ display:grid; }
 .modal[hidden]{ display:none; }
-
 .modal__dialog{
   width:min(900px,96vw); max-height:90vh; overflow:auto;
   background:#fff; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.2);
@@ -234,10 +208,7 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 .modal__footer{ border-top:1px solid #f1f5f9; border-bottom:0; }
 .modal__body{ padding:16px; }
 
-.items{ display:grid; gap:8px; }
-.items .item{ display:grid; grid-template-columns:1fr auto auto; gap:8px; padding:8px 10px; border:1px solid #f1f5f9; border-radius:10px; background:#fcfcfd; }
-
-/* ===== تفاصيل طلباتي (detailsModal) ===== */
+/* ===== تفاصيل طلباتي ===== */
 #detailsModal .modal-card{
   width:min(900px,96vw);
   max-height:90vh;
@@ -251,7 +222,7 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
   gap:12px; padding:14px 16px; border-bottom:1px solid #f1f5f9;
 }
 #detailsModal .inv-brand{ display:flex; align-items:center; gap:12px; }
-#detailsModal .inv-brand img{ width:70px; height:auto; object-fit:contain; } /* تصغير الشعار */
+#detailsModal .inv-brand img{ width:70px; height:auto; object-fit:contain; }
 #detailsModal .inv-title{ font-weight:800; font-size:18px; color:#5a1524; }
 #detailsModal .t-small{ padding:16px; font-size:14px; }
 #detailsModal .muted{ color:#6b7280; }
@@ -259,60 +230,42 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
 #detailsModal .table-like td{ padding:8px 10px; border-bottom:1px solid #f1f5f9; text-align:right; }
 #detailsModal .table-like thead th{ background:#f8fafc; position:sticky; top:0; }
 #detailsModal .table-like .total{ font-weight:700; }
-#detailsModal .backdrop{position:absolute;inset:0} /* كليك برة يقفل */
+#detailsModal .backdrop{position:absolute;inset:0}
 #detailsModal img{ max-width:100%; height:auto; }
 
-/* شارة الحالة في (طلباتي) */
-.status{
-  display:inline-block;padding:4px 10px;border-radius:999px;font-size:.85rem;
-  border:1px solid transparent;background:#fff7ed;border-color:#fed7aa /* created */
-}
+/* شارة الحالة */
+.status{ display:inline-block;padding:4px 10px;border-radius:999px;font-size:.85rem;border:1px solid transparent;background:#fff7ed;border-color:#fed7aa }
 .s-created{background:#fff7ed;border-color:#fed7aa}
 .s-ordered{background:#fff7ed;border-color:#fed7aa}
 .s-shipped{background:#fef3c7;border-color:#fde68a}
 .s-delivered{background:#ecfdf5;border-color:#a7f3d0}
 
-/* == شريط فلاتر صغير على شكل Chips == */
-.filters{
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  margin:8px 0 6px;
-}
-/* مدخل البحث بحجم ثابت صغير */
+/* فلاتر صغيرة */
+.filters{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:8px 0 6px; }
 .chip-input{
-  height:32px; font-size:14px;
-  padding:4px 12px;
-  border:1px solid #e5e7eb; border-radius:999px;
-  background:#fff;
-  width:220px !important;   /* يتجاوز القاعدة العامة */
-  box-shadow:none; outline:0;
+  height:32px; font-size:14px; padding:4px 12px;
+  border:1px solid #e5e7eb; border-radius:999px; background:#fff;
+  width:220px !important; box-shadow:none; outline:0;
 }
 .chip-input:hover{ background:#f8fafc; }
-/* select صغير */
 .chip-select{
-  height:32px; font-size:14px;
-  padding:4px 28px 4px 10px;
-  border:1px solid #e5e7eb; border-radius:999px;
-  background:#fff;
+  height:32px; font-size:14px; padding:4px 28px 4px 10px;
+  border:1px solid #e5e7eb; border-radius:999px; background:#fff;
   width:auto !important; min-width:0;
   appearance:none; -webkit-appearance:none; -moz-appearance:none;
   background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%236b7280" d="M6 8 0 0h12z"/></svg>');
   background-repeat:no-repeat; background-position:right 8px center; background-size:12px 8px;
 }
 .chip-select:hover{ background-color:#f8fafc; }
-/* تحسين تركيز للكيبورد */
 .chip-input:focus,
 .chip-select:focus{
-  outline:0;
-  border-color:var(--brand-light);
+  outline:0; border-color:var(--brand-light);
   box-shadow:0 0 0 2px rgba(108,29,44,.25);
 }
-@media (max-width:720px){
-  .chip-input{ width:160px !important; }
-}
+@media (max-width:720px){ .chip-input{ width:160px !important; } }
 
-/* زر إغلاق موحّد (detailsModal: .close-x و orderModal: .modal__close) */
-.close-x,
-.modal__close{
+/* زر إغلاق موحّد */
+.close-x,.modal__close{
   width:36px; height:36px;
   display:inline-flex; align-items:center; justify-content:center;
   border:1px solid #e5e7eb;
@@ -321,135 +274,30 @@ body.auth-out .container > :not(#view-login){ pointer-events:none; user-select:n
   cursor:pointer;
   transition: background .2s ease, color .2s ease, box-shadow .2s ease, transform .08s ease;
 }
-.close-x:hover,
-.modal__close:hover{
+.close-x:hover,.modal__close:hover{
   background: linear-gradient(180deg, var(--brand-light), var(--brand));
-  color:#fff;
-  border-color:#5a1724;
+  color:#fff; border-color:#5a1724;
   box-shadow: 0 6px 16px rgba(108,29,44,.25);
 }
-.close-x:active,
-.modal__close:active{ transform: scale(.96); }
-.close-x:focus-visible,
-.modal__close:focus-visible{
+.close-x:active,.modal__close:active{ transform: scale(.96); }
+.close-x:focus-visible,.modal__close:focus-visible{
   outline:3px solid rgba(108,29,44,.35);
   outline-offset:2px;
 }
 
-/* طباعة: اخفِ أزرار الطباعة والإغلاق */
+/* طباعة */
 @media print{
   #printDetailsBtn, .close-x, .modal__close{ display:none !important; }
   body{ background:#fff; }
 }
-/* === إظهار/إخفاء أزرار كلمة المرور/المسح بالاعتماد على .has-value === */
-.input-wrap .input-clear,
-.input-wrap .pwd-toggle,
-.input-wrap .pwd-clear{
-  /* مخفية افتراضياً */
-  display:none;
 
-  /* تموضع ثابت فوق الحقل */
-  position:absolute; top:50%; transform:translateY(-50%);
-  left:10px;                 /* RTL: الأزرار على اليسار */
-  width:32px !important; height:32px !important;
-  border-radius:8px; border:1px solid #d1d5db;
-  background:#f3f4f6; z-index:3; align-items:center; justify-content:center;
-}
-
-/* وقت يكون الحقل فيه قيمة تظهر الأزرار تلقائياً */
-.input-wrap.has-value .input-clear{ display:flex; }
-.pwd-wrap.has-value .pwd-toggle,
-.pwd-wrap.has-value .pwd-clear{ display:flex; }
-
-/* ترتيب العين قبل الـ X */
-.pwd-toggle{ left:46px; }
-
-/* أعطِ مساحة داخل الحقل للأزرار (RTL: inline-end = يسار) */
-.input-wrap input{ padding-inline-end:90px; }
-
-/* لو كان عندك overflow يقطع الظلال، خليه مرئي */
-.input-wrap{ position:relative; overflow:visible; }
-
-/* اجبار ظهور أزرار كلمة المرور وقت الكتابة أو التركيز */
-.pwd-wrap.has-value .pwd-toggle,
-.pwd-wrap.has-value .pwd-clear,
-.pwd-wrap:focus-within .pwd-toggle,
-.pwd-wrap:focus-within .pwd-clear{
+/* ===== أزرار الإدارة إلى اليسار ===== */
+#adminOrdersBody td.action-cell,
+#view-admin tbody td.action-cell {
   display:flex !important;
+  justify-content:flex-start !important; /* يسار دائم */
+  align-items:center !important;
+  gap:8px !important;
+  text-align:left !important;
+  direction:ltr !important;
 }
-
-/* مساحة كافية للأزرار داخل الحقل + السماح بالخروج عن حدود الغلاف */
-.pwd-wrap.input-wrap input{ padding-inline-end:90px; }
-.pwd-wrap.input-wrap{ position:relative; overflow:visible; }
-
-/* جعل عناصر صف الصنف على سطر واحد مع المحاذاة الصحيحة */
-/* إعادة ضبط أحجام الحقول داخل صف الصنف */
-.item-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-/* حدد أساس عرض لكل عنصر حتى لا يختفي */
-.item-row .it-code      { flex: 1 1 180px; } /* كود الصنف */
-.item-row .it-qty       { flex: 0 1 100px; } /* الكمية */
-.item-row .it-price     { flex: 0 1 120px; } /* السعر */
-.item-row .it-ship      { flex: 0 1 150px; } /* نوع الشحن */
-.item-row .remove       { flex: 0 0 auto;  } /* زر الحذف يبقى صغير وثابت */
-
-.item-row input,
-.item-row select {
-  flex: 1;
-  min-width: 0;
-}
-
-.item-row button.remove {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: #b91c1c;        /* لون أحمر بسيط أو غيّره حسب التصميم */
-  margin-top: 0;         /* يلغي نزول الزر */
-  align-self: center;
-}
-
-/* محاذاة زر السهم والطباعة بجانب بعض وبحجم موحّد */
-#adminOrdersBody td:first-child {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;            /* مسافة بين الزرين */
-}
-
-/* شكل زر السهم */
-button.toggle-items {
-  background: none;
-  border: none;
-  color: #111;         /* أيقونة سوداء بسيطة */
-  font-size: 18px;
-  cursor: pointer;
-  padding: 4px;
-}
-
-/* شكل زر الطباعة */
-button.btn-details {
-  background: none;
-  border: 1px solid #ccc;
-  color: #111;         /* أيقونة سوداء */
-  font-size: 16px;
-  border-radius: 6px;
-  padding: 4px 8px;
-  cursor: pointer;
-}
-
-/* عمود الأزرار (أقصى يسار الجدول في RTL) */
-#adminOrdersBody td:first-child {
-  display: flex;
-  justify-content: flex-start;   /* ← يحطهم يسار الجدول حتى مع RTL */
-  align-items: center;
-  gap: 8px;
-  text-align: left;              /* يثبت النص والأزرار يسار */
-  direction: ltr;                /* مهم حتى يحافظ على ترتيب الأزرار */
-}
-
