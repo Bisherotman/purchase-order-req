@@ -323,7 +323,7 @@ window.addEventListener("hashchange", route);
 /* ---------- state ---------- */
 const loginForm=$("#loginForm"), loginMsg=$("#loginMsg"), loginBtn=$("#loginBtn");
 const whoami=$("#whoami"), whoamiMy=$("#whoamiMy"), whoamiAdmin=$("#whoamiAdmin");
-let currentUser=null, userProfile=null, canSeeAdmin=false;
+let currentUser=null, userProfile=null, canSeeAdmin=false, isAdmin = false;
 
 /* ---------- remember email + toggle/clear pwd & email ---------- */
 const rememberCk = $("#rememberEmail");
@@ -537,8 +537,7 @@ document.addEventListener("change", (e) => {
   const tr = select.closest("tr");
   const tracking = tr?.dataset?.tracking;
   const newStatus = select.value;
-  const tracking = select.dataset.tracking; // بدل .id بـ .tracking
-
+  
   if (!tracking || !newStatus) return;
 
   // تحديث محلي في adminRows (اختياري)
