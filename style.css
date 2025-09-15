@@ -159,15 +159,18 @@ label{ font-weight:700; margin-top:14px; display:block; }
 /* زر التوسيع وزر الطباعة */
 .toggle-items,
 .btn-details {
-  display:inline-block;
-  margin-left:6px;
-  padding:4px 10px;
-  font-size:14px;
-  border:none;
-  border-radius:6px;
-  background-color:#f3f4f6;
-  cursor:pointer;
-  transition:background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;        
+  padding: 0 10px;      
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
 }
 .toggle-items:hover,
 .btn-details:hover { background-color:#e5e7eb; }
