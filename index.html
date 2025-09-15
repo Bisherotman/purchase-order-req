@@ -970,5 +970,40 @@ document.addEventListener('click', async (e) => {
 })();
 
 </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
+    authDomain: "purchase-order-req.firebaseapp.com",
+    projectId: "purchase-order-req",
+    storageBucket: "purchase-order-req.appspot.com",
+    messagingSenderId: "72898448492",
+    appId: "1:72898448492:web:33a0ec622cbcae47e11c49"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const loginForm = document.getElementById("loginForm");
+  const loginMsg = document.getElementById("loginMsg");
+
+  loginForm.onsubmit = async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      location.hash = "#/new"; // تحويل بعد تسجيل الدخول
+    } catch (err) {
+      console.error(err);
+      loginMsg.textContent = "فشل تسجيل الدخول. تحقق من المعلومات.";
+      loginMsg.style.color = "red";
+    }
+  };
+</script>
+
 </body>
 </html>
