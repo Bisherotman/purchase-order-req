@@ -535,8 +535,9 @@ document.addEventListener("change", (e) => {
   if (!select) return;
 
   const tr = select.closest("tr");
-  const tracking = tr?.dataset?.id;
+  const tracking = tr?.dataset?.tracking;
   const newStatus = select.value;
+  const tracking = select.dataset.tracking; // بدل .id بـ .tracking
 
   if (!tracking || !newStatus) return;
 
@@ -552,7 +553,7 @@ document.addEventListener("click", (e) => {
 const toggleBtn = e.target.closest(".toggle-items");
 if (!toggleBtn) return;
 const tr = toggleBtn.closest("tr");
-const tracking = tr?.dataset?.id;
+const tracking = tr?.dataset?.tracking;
 const container = tr.nextElementSibling?.classList.contains("sub-items-row") ? tr.nextElementSibling : null;
 
 
@@ -782,11 +783,11 @@ adminSort.addEventListener("change", renderAdmin);
 
   // ✅ تحديث الحالة مباشرة عند تغييرها
 document.addEventListener("change", async (e) => {
-  const select = e.target.closest(".status-dropdown");
+  const select = e.target.closest(".order-status-select");
   if (!select) return;
 
-  const newStatus = select.value;
   const tracking = select.dataset.tracking;
+  const newStatus = select.value;
 
   if (!tracking || !newStatus) return;
 
