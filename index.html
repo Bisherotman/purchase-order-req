@@ -528,15 +528,6 @@
         const seq = await db.runTransaction(async (tx) => { const s = await tx.get(counterRef); let next = 1; if (s.exists) next = (s.data().next || 1); tx.set(counterRef, { next: next + 1 }, { merge: true }); return next; });
         const tracking = code + pad5(seq);
 
-        // Debug: log what will be saved
-        console.log('Saving order:', {
-          tracking, branch, projectName, customerName,
-          items, attachments, createdBy: currentUser.uid,
-          createdByEmail: currentUser.email || "",
-          status: "created",
-          createdAt: '[serverTimestamp]'
-        });
-
         await db.collection("orders").doc(tracking).set({
           tracking, branch, projectName, customerName,
           items, attachments, createdBy: currentUser.uid,
@@ -553,7 +544,7 @@
         subscribeMyOrders(); if (canSeeAdmin) loadAdminOrders();
 
       } catch (err) {
-        console.error('Order submit error:', err); showMsg(newMsg, "خطأ أثناء الإرسال: " + (err.message || err), "error");
+        console.error(err); showMsg(newMsg, "خطأ أثناء الإرسال: " + (err.message || err), "error");
       } finally {
         submitOrderBtn.classList.remove("loading"); submitOrderBtn.disabled = false;
       }
@@ -743,8 +734,6 @@
       usersSnap.forEach(d => usersById[d.id] = d.data() || {});
 
       adminRows = ordersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-      // Debug: log all admin orders loaded
-      console.log('Admin Orders loaded:', adminRows);
       populateAdminUsers(adminRows);
       renderAdmin();
     }
