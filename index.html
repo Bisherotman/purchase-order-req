@@ -963,12 +963,12 @@ document.addEventListener('click', async (e) => {
   const modal = document.getElementById('detailsModal');
   const closeBtn = document.getElementById('closeDetails');
   const printBtn = document.getElementById('printDetailsBtn');
+
   closeBtn && (closeBtn.onclick = () => modal.classList.remove('show'));
-  modal?.querySelector('.backdrop')?.addEventListener('click', () => modal.classList.remove('show'));
+  modal.querySelector('.backdrop')?.addEventListener('click', () => modal.classList.remove('show'));
   printBtn && (printBtn.onclick = () => window.print());
 })();
 
 </script>
-  
 </body>
 </html>
