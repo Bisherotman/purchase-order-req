@@ -480,31 +480,73 @@
     }
     addLinkBtn.onclick = () => { if (linksWrap.children.length >= 3) return; linksWrap.appendChild(makeLinkRow()); if (linksWrap.children.length >= 3) addLinkBtn.disabled = true; };
 
-    /* ---------- new order ---------- */
-    const newMsg = $("#newMsg");
-    const submitOrderBtn = $("#submitOrder");
-    submitOrderBtn.addEventListener("click", async () => {
+   // ⚡️ تعريف المتغيرات
+const newMsg = $("#newMsg");
+const submitOrderBtn = $("#submitOrder");
+const confirmSendBtn = $("#confirmSendBtn");
+
+// عند الضغط على "إرسال" يتم عرض نافذة التأكيد
+submitOrderBtn.addEventListener("click", () => {
+  hideMsg(newMsg);
+  showConfirmModal();
+});
+
+// إظهار مودال التأكيد
+function showConfirmModal() {
+  $("#confirmModal").hidden = false;
+}
+
+// إخفاء مودال التأكيد
+function hideConfirmModal() {
+  $("#confirmModal").hidden = true;
+}
+
+// عند تأكيد الإرسال
+confirmSendBtn.addEventListener("click", async () => {
+  hideConfirmModal();
   hideMsg(newMsg);
 
-  // ⛳️ رسالة تأكيد قبل الإرسال
-  if (!confirm("هل أنت متأكد أنك تريد إرسال الطلب؟")) return;
+  // ✅ التحقق من الحقول الأساسية
+  const projectName = $("#projectName").value.trim();
+  const customerName = $("#customerName").value.trim();
+  const branch = $("#branch").value.trim();
 
-  if (!currentUser || !userProfile) {
-    showMsg(newMsg, "يجب تسجيل الدخول أولاً.", "error");
+  if (!projectName || !customerName || !branch) {
+    showMsg(newMsg, "يرجى تعبئة جميع الحقول المطلوبة.", "error");
     return;
   }
 
-      const projectName = $("#projectName").value.trim();
-      const customerName = $("#customerName").value.trim();
+  // ✅ التحقق من وجود صنف واحد على الأقل مع بيانات كاملة
+  const itemRows = [...document.querySelectorAll(".item-row")];
+  const allItemsValid = itemRows.length > 0 && itemRows.every(row => {
+    const code = row.querySelector(".it-code")?.value.trim();
+    const qty  = row.querySelector(".it-qty")?.value.trim();
+    const ship = row.querySelector(".it-ship")?.value.trim();
+    return code && qty && ship;
+  });
 
-      if (!projectName) {
-  showMsg(newMsg, "يرجى إدخال اسم المشروع", "error");
-  return;
-}
-if (!customerName) {
-  showMsg(newMsg, "يرجى إدخال اسم العميل", "error");
-  return;
-}
+  if (!allItemsValid) {
+    showMsg(newMsg, "يرجى تعبئة معلومات الأصناف بالكامل.", "error");
+    return;
+  }
+
+  // ✅ التحقق من وجود مرفق واحد على الأقل
+  const attachRows = [...document.querySelectorAll(".link-row")];
+  const allAttachmentsValid = attachRows.length > 0 && attachRows.every(row => {
+    const name = row.querySelector(".link-name")?.value.trim();
+    const url  = row.querySelector(".link-url")?.value.trim();
+    return name && url;
+  });
+
+  if (!allAttachmentsValid) {
+    showMsg(newMsg, "يرجى إدخال روابط المرفقات بالكامل.", "error");
+    return;
+  }
+
+  // ✅ إذا وصلنا هنا، كل شيء جاهز — نفذ الإرسال
+  await submitOrder(); // ← دالة الإرسال الخاصة بك
+});
+
 
 // تحقق من الأصناف
 const itemRows = [...itemsWrap.querySelectorAll(".item-row")];
@@ -992,6 +1034,24 @@ async function openDetails(tracking) {
 }
 
     </script>
+
+<!-- 🌟 مودال تأكيد الإرسال -->
+<div id="confirmModal" class="modal" hidden>
+  <div class="modal__dialog">
+    <div class="modal__header">
+      <strong>تأكيد الإرسال</strong>
+      <button class="modal__close" onclick="hideConfirmModal()">×</button>
+    </div>
+    <div class="modal__body">
+      <p style="font-weight:600">هل أنت متأكد من إرسال الطلب؟</p>
+      <p class="muted" style="font-size:14px;">بعد الإرسال، لا يمكنك التعديل على الطلب.</p>
+    </div>
+    <div class="modal__footer">
+      <button onclick="hideConfirmModal()" class="btn">إلغاء</button>
+      <button id="confirmSendBtn" class="btn-strong">تأكيد الإرسال</button>
+    </div>
+  </div>
+</div>
 
 </body>
 
