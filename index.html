@@ -484,11 +484,60 @@
     const newMsg = $("#newMsg");
     const submitOrderBtn = $("#submitOrder");
     submitOrderBtn.addEventListener("click", async () => {
-      hideMsg(newMsg);
-      if (!currentUser || !userProfile) { showMsg(newMsg, "يجب تسجيل الدخول أولاً.", "error"); return; }
+  hideMsg(newMsg);
+
+  // ⛳️ رسالة تأكيد قبل الإرسال
+  if (!confirm("هل أنت متأكد أنك تريد إرسال الطلب؟")) return;
+
+  if (!currentUser || !userProfile) {
+    showMsg(newMsg, "يجب تسجيل الدخول أولاً.", "error");
+    return;
+  }
 
       const projectName = $("#projectName").value.trim();
       const customerName = $("#customerName").value.trim();
+
+      if (!projectName) {
+  showMsg(newMsg, "يرجى إدخال اسم المشروع", "error");
+  return;
+}
+if (!customerName) {
+  showMsg(newMsg, "يرجى إدخال اسم العميل", "error");
+  return;
+}
+
+// تحقق من الأصناف
+const itemRows = [...itemsWrap.querySelectorAll(".item-row")];
+for (let i = 0; i < itemRows.length; i++) {
+  const row = itemRows[i];
+  const code = row.querySelector(".it-code")?.value.trim();
+  const qty = row.querySelector(".it-qty")?.value;
+  const price = row.querySelector(".it-price")?.value;
+  const ship = row.querySelector(".it-ship")?.value;
+
+  if (!code || !qty || !price || !ship) {
+    showMsg(newMsg, `يرجى تعبئة جميع الحقول في الصنف رقم ${i + 1}`, "error");
+    return;
+  }
+}
+
+// تحقق من المرفقات
+if (linksWrap.children.length === 0) {
+  showMsg(newMsg, "يجب إضافة مرفق واحد على الأقل", "error");
+  return;
+}
+
+// تحقق أن كل رابط يحتوي على اسم ورابط
+for (let i = 0; i < linksWrap.children.length; i++) {
+  const r = linksWrap.children[i];
+  const name = r.querySelector(".ln-name")?.value.trim();
+  const url = r.querySelector(".ln-url")?.value.trim();
+  if (!name || !url) {
+    showMsg(newMsg, `يرجى تعبئة اسم ورابط المرفق رقم ${i + 1}`, "error");
+    return;
+  }
+}
+
 
       const items = [...itemsWrap.querySelectorAll(".item-row")].map(r => ({
         itemCode: r.querySelector(".it-code").value.trim(),
