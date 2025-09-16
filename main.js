@@ -670,3 +670,5 @@ async function openDetails(tracking) {
     const modal = document.getElementById('detailsModal');
     const body  = document.getElementById('detailsBody');
 
+    </script>
+
