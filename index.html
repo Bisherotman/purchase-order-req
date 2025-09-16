@@ -488,7 +488,8 @@ const confirmSendBtn = $("#confirmSendBtn");
 // عند الضغط على "إرسال" يتم عرض نافذة التأكيد
 submitOrderBtn.addEventListener("click", () => {
   hideMsg(newMsg);
-  showConfirmModal();
+  if (!validateItems()) return;
+  showConfirmModal(); // أو تابع الإرسال حسب مشروعك
 });
 
 // إظهار مودال التأكيد
