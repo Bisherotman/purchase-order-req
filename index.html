@@ -549,19 +549,23 @@ confirmSendBtn.addEventListener("click", async () => {
 
 
 // تحقق من الأصناف
-const itemRows = [...itemsWrap.querySelectorAll(".item-row")];
-for (let i = 0; i < itemRows.length; i++) {
-  const row = itemRows[i];
-  const code = row.querySelector(".it-code")?.value.trim();
-  const qty = row.querySelector(".it-qty")?.value;
-  const price = row.querySelector(".it-price")?.value;
-  const ship = row.querySelector(".it-ship")?.value;
+function validateItems() {
+  const itemRows = [...itemsWrap.querySelectorAll(".item-row")];
+  for (let i = 0; i < itemRows.length; i++) {
+    const row = itemRows[i];
+    const code = row.querySelector(".it-code")?.value.trim();
+    const qty = row.querySelector(".it-qty")?.value;
+    const price = row.querySelector(".it-price")?.value;
+    const ship = row.querySelector(".it-ship")?.value;
 
-  if (!code || !qty || !price || !ship) {
-    showMsg(newMsg, `يرجى تعبئة جميع الحقول في الصنف رقم ${i + 1}`, "error");
-    return;
+    if (!code || !qty || !price || !ship) {
+      showMsg(newMsg, `يرجى تعبئة جميع الحقول في الصنف رقم ${i + 1}`, "error");
+      return false;
+    }
   }
+  return true;
 }
+
 
 // تحقق من المرفقات
 if (linksWrap.children.length === 0) {
