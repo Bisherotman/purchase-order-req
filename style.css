@@ -108,15 +108,24 @@ label{ font-weight:700; margin-top:14px; display:block; }
 }
 
 /* نماذج عامة */
-.form-section,.card,.panel{ max-width:100%; overflow:visible; }
 .field input[type="text"],
 .field input[type="search"],
 .field input[type="email"],
 .field input[type="number"],
-.field textarea{
-  width:100%; max-width:100%; min-width:0; display:block; padding:10px 12px;
-  border:1px solid #e5e7eb; border-radius:10px; background:#fff;
-  line-height:1.4; white-space:normal; overflow-wrap:break-word; word-break:break-word;
+.field textarea {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: block;
+  font-size: 17px;        /* ← تكبير الخط */
+  padding: 14px 16px;     /* ← زيادة سماكة الحقل */
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  line-height: 1.6;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .form-row{ display:flex; gap:12px; flex-wrap:wrap; }
 .form-row > *{ min-width:220px; flex:1 1 280px; }
