@@ -379,3 +379,52 @@ label{ font-weight:700; margin-top:14px; display:block; }
   background-color: #fee2e2;
 }
 
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+.modal .backdrop {
+  position: absolute;
+  inset: 0;
+  background: #0008;
+}
+.modal-box {
+  position: relative;
+  max-width: 400px;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 100px auto;
+  z-index: 1001;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.modal-title {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+.btn-strong {
+  background: var(--brand);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+.btn-light {
+  background: #eee;
+  color: #333;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+
