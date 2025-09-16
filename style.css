@@ -186,9 +186,9 @@ label{ font-weight:700; margin-top:14px; display:block; }
 .items-head{display:flex;justify-content:flex-end;margin:8px 0}
 .add-item{border:1px dashed #d1d5db;background:#fff;color:#111}
 .item-row .it-code  { flex: 1 1 110px; min-width: 100px; }
-.item-row .it-qty   { flex: 0 1 90px; min-width: 90px; }
-.item-row .it-price { flex: 0 1 90px; min-width: 90px; }
-.item-row .it-ship  { flex: 1 1 100px; min-width: 100px; }
+.item-row .it-qty   { flex: 0 1 110px; min-width: 110px; }
+.item-row .it-price { flex: 0 1 110px; min-width: 110px; }
+.item-row .it-ship  { flex: 0 1 90px; min-width: 90px; }
 .item-row .remove   { flex: 0 0 auto; margin-inline-start: auto; }
 
 .item-row input,
