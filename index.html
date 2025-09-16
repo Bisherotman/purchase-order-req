@@ -484,9 +484,15 @@
     const newMsg = $("#newMsg");
     const submitOrderBtn = $("#submitOrder");
     submitOrderBtn.addEventListener("click", async () => {
-      hideMsg(newMsg);
-      if (!currentUser || !userProfile) { showMsg(newMsg, "يجب تسجيل الدخول أولاً.", "error"); return; }
+  hideMsg(newMsg);
 
+  // ⛳️ رسالة تأكيد قبل الإرسال
+  if (!confirm("هل أنت متأكد أنك تريد إرسال الطلب؟")) return;
+
+  if (!currentUser || !userProfile) {
+    showMsg(newMsg, "يجب تسجيل الدخول أولاً.", "error");
+    return;
+  }
       const projectName = $("#projectName").value.trim();
       const customerName = $("#customerName").value.trim();
 
