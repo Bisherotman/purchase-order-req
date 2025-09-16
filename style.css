@@ -188,7 +188,7 @@ label{ font-weight:700; margin-top:14px; display:block; }
 .item-row .it-code  { flex: 1 1 130px; min-width: 100px; }
 .item-row .it-qty   { flex: 0 1 80px; min-width: 60px; }
 .item-row .it-price { flex: 0 1 80px; min-width: 60px; }
-.item-row .it-ship  { flex: 1 1 140px; min-width: 100px; }
+.item-row .it-ship  { flex: 1 1 100px; min-width: 100px; }
 .item-row .remove   { flex: 0 0 auto; margin-inline-start: auto; }
 
 .item-row input,
