@@ -179,7 +179,7 @@ label{ font-weight:700; margin-top:14px; display:block; }
 .items-head{display:flex;justify-content:flex-end;margin:8px 0}
 .add-item{border:1px dashed #d1d5db;background:#fff;color:#111}
 .item-row,.link-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
-.item-row .it-code  { flex:1 1 180px; }
+.item-row .it-code  { flex:1 1 100px; }
 .item-row .it-qty   { flex:0 1 100px; }
 .item-row .it-price { flex:0 1 120px; }
 .item-row .it-ship  { flex:0 1 150px; }
