@@ -488,7 +488,7 @@ const confirmSendBtn = $("#confirmSendBtn");
 // عند الضغط على "إرسال" يتم عرض نافذة التأكيد
 submitOrderBtn.addEventListener("click", () => {
   hideMsg(newMsg);
-  if (!validateItems()) return;
+  if (!validateOrderForm()) return;
   showConfirmModal(); // أو تابع الإرسال حسب مشروعك
 });
 
@@ -549,8 +549,8 @@ confirmSendBtn.addEventListener("click", async () => {
 });
 
 
-// تحقق من الأصناف
-function validateItems() {
+function validateOrderForm() {
+  // تحقق من الأصناف
   const itemRows = [...itemsWrap.querySelectorAll(".item-row")];
   for (let i = 0; i < itemRows.length; i++) {
     const row = itemRows[i];
@@ -564,26 +564,27 @@ function validateItems() {
       return false;
     }
   }
+
+  // تحقق من المرفقات
+  if (linksWrap.children.length === 0) {
+    showMsg(newMsg, "يجب إضافة مرفق واحد على الأقل", "error");
+    return false;
+  }
+
+  // تحقق من الروابط
+  for (let i = 0; i < linksWrap.children.length; i++) {
+    const r = linksWrap.children[i];
+    const name = r.querySelector(".ln-name")?.value.trim();
+    const url = r.querySelector(".ln-url")?.value.trim();
+    if (!name || !url) {
+      showMsg(newMsg, `يرجى تعبئة اسم و رابط المرفق رقم ${i + 1}`, "error");
+      return false;
+    }
+  }
+
   return true;
 }
 
-
-// تحقق من المرفقات
-if (linksWrap.children.length === 0) {
-  showMsg(newMsg, "يجب إضافة مرفق واحد على الأقل", "error");
-  return;
-}
-
-// تحقق أن كل رابط يحتوي على اسم ورابط
-for (let i = 0; i < linksWrap.children.length; i++) {
-  const r = linksWrap.children[i];
-  const name = r.querySelector(".ln-name")?.value.trim();
-  const url = r.querySelector(".ln-url")?.value.trim();
-  if (!name || !url) {
-    showMsg(newMsg, `يرجى تعبئة اسم ورابط المرفق رقم ${i + 1}`, "error");
-    return;
-  }
-}
 
 
       const items = [...itemsWrap.querySelectorAll(".item-row")].map(r => ({
