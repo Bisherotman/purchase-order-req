@@ -581,16 +581,6 @@ function validateOrderForm() {
 
   return true;
 }
-  try {
-    const code = branchCodes[branch] || "UNK";
-    const counterRef = db.collection("counters").doc(branch);
-    const seq = await db.runTransaction(async (tx) => {
-      const s = await tx.get(counterRef);
-      let next = 1;
-      if (s.exists) next = (s.data().next || 1);
-      tx.set(counterRef, { next: next + 1 }, { merge: true });
-      return next;
-    });
     const tracking = code + pad5(seq);
 
     await db.collection("orders").doc(tracking).set({
@@ -825,6 +815,68 @@ function validateOrderForm() {
           .map(([uid, label]) => `<option value="${uid}">${label}</option>`)
           .join("");
     }
+async function submitOrder() {
+  const projectName = $("#projectName").value.trim();
+  const customerName = $("#customerName").value.trim();
+  const branch = userProfile.branch;
+
+  const items = [...itemsWrap.querySelectorAll(".item-row")].map(r => ({
+    itemCode: r.querySelector(".it-code").value.trim(),
+    quantity: Number(r.querySelector(".it-qty").value),
+    price: Number(r.querySelector(".it-price").value),
+    shippingType: r.querySelector(".it-ship")?.value || "",
+    status: "created",
+    deliveredQty: 0
+  })).filter(x => x.itemCode && x.shippingType && Number.isFinite(x.quantity) && Number.isFinite(x.price));
+
+  const attachments = [...linksWrap.querySelectorAll(".link-row")].map(r => {
+    const name = (r.querySelector(".ln-name").value || "مرفق").trim();
+    const url = r.querySelector(".ln-url").value.trim();
+    return url ? { name, url } : null;
+  }).filter(Boolean);
+
+  submitOrderBtn.classList.add("loading");
+  submitOrderBtn.disabled = true;
+
+  try {
+    const code = branchCodes[branch] || "UNK";
+    const counterRef = db.collection("counters").doc(branch);
+    const seq = await db.runTransaction(async (tx) => {
+      const s = await tx.get(counterRef);
+      let next = 1;
+      if (s.exists) next = (s.data().next || 1);
+      tx.set(counterRef, { next: next + 1 }, { merge: true });
+      return next;
+    });
+    const tracking = code + pad5(seq);
+
+    await db.collection("orders").doc(tracking).set({
+      tracking, branch, projectName, customerName,
+      items, attachments, createdBy: currentUser.uid,
+      createdByEmail: currentUser.email || "",
+      status: "created",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
+    $("#projectName").value = "";
+    $("#customerName").value = "";
+    itemsWrap.innerHTML = "";
+    ensureAtLeastOneRow();
+    linksWrap.innerHTML = "";
+    addLinkBtn.disabled = false;
+
+    subscribeMyOrders();
+    if (canSeeAdmin) loadAdminOrders();
+
+  } catch (err) {
+    console.error(err);
+    showMsg(newMsg, "خطأ أثناء الإرسال: " + (err.message || err), "error");
+  } finally {
+    submitOrderBtn.classList.remove("loading");
+    submitOrderBtn.disabled = false;
+  }
+}
 
     function renderAdmin() { // NEW
       const term = (adminSearch.value || "").trim().toLowerCase();
