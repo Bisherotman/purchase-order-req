@@ -480,136 +480,105 @@
     }
     addLinkBtn.onclick = () => { if (linksWrap.children.length >= 3) return; linksWrap.appendChild(makeLinkRow()); if (linksWrap.children.length >= 3) addLinkBtn.disabled = true; };
 
-   // ⚡️ تعريف المتغيرات
-const newMsg = $("#newMsg");
-const submitOrderBtn = $("#submitOrder");
-const confirmSendBtn = $("#confirmSendBtn");
+    /* ---------- new order ---------- */
+    const newMsg = $("#newMsg");
+    const submitOrderBtn = $("#submitOrder");
+    submitOrderBtn.addEventListener("click", async () => {
+      hideMsg(newMsg);
+      if (!currentUser || !userProfile) { showMsg(newMsg, "يجب تسجيل الدخول أولاً.", "error"); return; }
 
-// عند الضغط على "إرسال" يتم عرض نافذة التأكيد
-submitOrderBtn.addEventListener("click", () => {
-  hideMsg(newMsg);
-  if (!validateOrderForm()) return;
-  showConfirmModal(); // أو تابع الإرسال حسب مشروعك
-});
+      const projectName = $("#projectName").value.trim();
+      const customerName = $("#customerName").value.trim();
 
-// إظهار مودال التأكيد
-function showConfirmModal() {
-  $("#confirmModal").hidden = false;
+      if (!projectName) {
+  showMsg(newMsg, "يرجى إدخال اسم المشروع", "error");
+  return;
+}
+if (!customerName) {
+  showMsg(newMsg, "يرجى إدخال اسم العميل", "error");
+  return;
 }
 
-// إخفاء مودال التأكيد
-function hideConfirmModal() {
-  $("#confirmModal").hidden = true;
+// تحقق من الأصناف
+const itemRows = [...itemsWrap.querySelectorAll(".item-row")];
+for (let i = 0; i < itemRows.length; i++) {
+  const row = itemRows[i];
+  const code = row.querySelector(".it-code")?.value.trim();
+  const qty = row.querySelector(".it-qty")?.value;
+  const price = row.querySelector(".it-price")?.value;
+  const ship = row.querySelector(".it-ship")?.value;
+
+  if (!code || !qty || !price || !ship) {
+    showMsg(newMsg, `يرجى تعبئة جميع الحقول في الصنف رقم ${i + 1}`, "error");
+    return;
+  }
 }
 
-// عند تأكيد الإرسال
-confirmSendBtn.addEventListener("click", async () => {
-  hideConfirmModal();
-  hideMsg(newMsg);
-
-  // ✅ التحقق من الحقول الأساسية
-  const projectName = $("#projectName").value.trim();
-  const customerName = $("#customerName").value.trim();
-  const branch = $("#branch").value.trim();
-
-  if (!projectName || !customerName || !branch) {
-    showMsg(newMsg, "يرجى تعبئة جميع الحقول المطلوبة.", "error");
-    return;
-  }
-
-  // ✅ التحقق من وجود صنف واحد على الأقل مع بيانات كاملة
-  const itemRows = [...document.querySelectorAll(".item-row")];
-  const allItemsValid = itemRows.length > 0 && itemRows.every(row => {
-    const code = row.querySelector(".it-code")?.value.trim();
-    const qty  = row.querySelector(".it-qty")?.value.trim();
-    const ship = row.querySelector(".it-ship")?.value.trim();
-    return code && qty && ship;
-  });
-
-  if (!allItemsValid) {
-    showMsg(newMsg, "يرجى تعبئة معلومات الأصناف بالكامل.", "error");
-    return;
-  }
-
-  // ✅ التحقق من وجود مرفق واحد على الأقل
-  const attachRows = [...document.querySelectorAll(".link-row")];
-  const allAttachmentsValid = attachRows.length > 0 && attachRows.every(row => {
-    const name = row.querySelector(".link-name")?.value.trim();
-    const url  = row.querySelector(".link-url")?.value.trim();
-    return name && url;
-  });
-
-  if (!allAttachmentsValid) {
-    showMsg(newMsg, "يرجى إدخال روابط المرفقات بالكامل.", "error");
-    return;
-  }
-});
-
-
-function validateOrderForm() {
-  // تحقق من الأصناف
-  const itemRows = [...itemsWrap.querySelectorAll(".item-row")];
-  for (let i = 0; i < itemRows.length; i++) {
-    const row = itemRows[i];
-    const code = row.querySelector(".it-code")?.value.trim();
-    const qty = row.querySelector(".it-qty")?.value;
-    const price = row.querySelector(".it-price")?.value;
-    const ship = row.querySelector(".it-ship")?.value;
-
-    if (!code || !qty || !price || !ship) {
-      showMsg(newMsg, `يرجى تعبئة جميع الحقول في الصنف رقم ${i + 1}`, "error");
-      return false;
-    }
-  }
-
-  // تحقق من المرفقات
-  if (linksWrap.children.length === 0) {
-    showMsg(newMsg, "يجب إضافة مرفق واحد على الأقل", "error");
-    return false;
-  }
-
-  // تحقق من الروابط
-  for (let i = 0; i < linksWrap.children.length; i++) {
-    const r = linksWrap.children[i];
-    const name = r.querySelector(".ln-name")?.value.trim();
-    const url = r.querySelector(".ln-url")?.value.trim();
-    if (!name || !url) {
-      showMsg(newMsg, `يرجى تعبئة اسم و رابط المرفق رقم ${i + 1}`, "error");
-      return false;
-    }
-  }
-
-  return true;
+// تحقق من المرفقات
+if (linksWrap.children.length === 0) {
+  showMsg(newMsg, "يجب إضافة مرفق واحد على الأقل", "error");
+  return;
 }
-    const tracking = code + pad5(seq);
 
-    await db.collection("orders").doc(tracking).set({
-      tracking, branch, projectName, customerName,
-      items, attachments, createdBy: currentUser.uid,
-      createdByEmail: currentUser.email || "",
-      status: "created",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+// تحقق أن كل رابط يحتوي على اسم ورابط
+for (let i = 0; i < linksWrap.children.length; i++) {
+  const r = linksWrap.children[i];
+  const name = r.querySelector(".ln-name")?.value.trim();
+  const url = r.querySelector(".ln-url")?.value.trim();
+  if (!name || !url) {
+    showMsg(newMsg, `يرجى تعبئة اسم ورابط المرفق رقم ${i + 1}`, "error");
+    return;
+  }
+}
+
+
+      const items = [...itemsWrap.querySelectorAll(".item-row")].map(r => ({
+        itemCode: r.querySelector(".it-code").value.trim(),
+        quantity: Number(r.querySelector(".it-qty").value),
+        price: Number(r.querySelector(".it-price").value),
+        shippingType: r.querySelector(".it-ship")?.value || "",
+        status: r.querySelector(".it-status")?.value || "created",
+        deliveredQty: Number(r.querySelector(".it-delivered")?.value || 0)
+      })).filter(x => x.itemCode && x.shippingType && Number.isFinite(x.quantity) && x.quantity > 0 && Number.isFinite(x.price) && x.price >= 0);
+
+      if (items.length === 0) { showMsg(newMsg, "أضف صنفًا واحدًا على الأقل بشكل صحيح.", "error"); return; }
+      if (linksWrap.children.length > 3) { showMsg(newMsg, "مسموح بثلاث مرفقات كحد أقصى.", "error"); return; }
+
+      const attachments = [...linksWrap.querySelectorAll(".link-row")].map(r => {
+        const name = (r.querySelector(".ln-name").value || "ملف").trim();
+        const url = r.querySelector(".ln-url").value.trim();
+        return url ? { name, url } : null;
+      }).filter(Boolean);
+
+      submitOrderBtn.classList.add("loading"); submitOrderBtn.disabled = true;
+
+      try {
+        const branch = userProfile.branch, code = branchCodes[branch] || "UNK";
+        const counterRef = db.collection("counters").doc(branch);
+        const seq = await db.runTransaction(async (tx) => { const s = await tx.get(counterRef); let next = 1; if (s.exists) next = (s.data().next || 1); tx.set(counterRef, { next: next + 1 }, { merge: true }); return next; });
+        const tracking = code + pad5(seq);
+
+        await db.collection("orders").doc(tracking).set({
+          tracking, branch, projectName, customerName,
+          items, attachments, createdBy: currentUser.uid,
+          createdByEmail: currentUser.email || "",
+          status: "created",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
+        $("#projectName").value = ""; $("#customerName").value = "";
+        itemsWrap.innerHTML = ""; ensureAtLeastOneRow();
+        linksWrap.innerHTML = ""; addLinkBtn.disabled = false;
+
+        subscribeMyOrders(); if (canSeeAdmin) loadAdminOrders();
+
+      } catch (err) {
+        console.error(err); showMsg(newMsg, "خطأ أثناء الإرسال: " + (err.message || err), "error");
+      } finally {
+        submitOrderBtn.classList.remove("loading"); submitOrderBtn.disabled = false;
+      }
     });
-
-    showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
-    $("#projectName").value = "";
-    $("#customerName").value = "";
-    itemsWrap.innerHTML = "";
-    ensureAtLeastOneRow();
-    linksWrap.innerHTML = "";
-    addLinkBtn.disabled = false;
-
-    subscribeMyOrders();
-    if (canSeeAdmin) loadAdminOrders();
-
-  } catch (err) {
-    console.error(err);
-    showMsg(newMsg, "خطأ أثناء الإرسال: " + (err.message || err), "error");
-  } finally {
-    submitOrderBtn.classList.remove("loading");
-    submitOrderBtn.disabled = false;
-  }
-}
 
     /* ---------- admin expandable orders ---------- */
     // تحديث حالة الطلب عند تغييره (للأدمن فقط)
@@ -815,68 +784,6 @@ function validateOrderForm() {
           .map(([uid, label]) => `<option value="${uid}">${label}</option>`)
           .join("");
     }
-async function submitOrder() {
-  const projectName = $("#projectName").value.trim();
-  const customerName = $("#customerName").value.trim();
-  const branch = userProfile.branch;
-
-  const items = [...itemsWrap.querySelectorAll(".item-row")].map(r => ({
-    itemCode: r.querySelector(".it-code").value.trim(),
-    quantity: Number(r.querySelector(".it-qty").value),
-    price: Number(r.querySelector(".it-price").value),
-    shippingType: r.querySelector(".it-ship")?.value || "",
-    status: "created",
-    deliveredQty: 0
-  })).filter(x => x.itemCode && x.shippingType && Number.isFinite(x.quantity) && Number.isFinite(x.price));
-
-  const attachments = [...linksWrap.querySelectorAll(".link-row")].map(r => {
-    const name = (r.querySelector(".ln-name").value || "مرفق").trim();
-    const url = r.querySelector(".ln-url").value.trim();
-    return url ? { name, url } : null;
-  }).filter(Boolean);
-
-  submitOrderBtn.classList.add("loading");
-  submitOrderBtn.disabled = true;
-
-  try {
-    const code = branchCodes[branch] || "UNK";
-    const counterRef = db.collection("counters").doc(branch);
-    const seq = await db.runTransaction(async (tx) => {
-      const s = await tx.get(counterRef);
-      let next = 1;
-      if (s.exists) next = (s.data().next || 1);
-      tx.set(counterRef, { next: next + 1 }, { merge: true });
-      return next;
-    });
-    const tracking = code + pad5(seq);
-
-    await db.collection("orders").doc(tracking).set({
-      tracking, branch, projectName, customerName,
-      items, attachments, createdBy: currentUser.uid,
-      createdByEmail: currentUser.email || "",
-      status: "created",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
-    $("#projectName").value = "";
-    $("#customerName").value = "";
-    itemsWrap.innerHTML = "";
-    ensureAtLeastOneRow();
-    linksWrap.innerHTML = "";
-    addLinkBtn.disabled = false;
-
-    subscribeMyOrders();
-    if (canSeeAdmin) loadAdminOrders();
-
-  } catch (err) {
-    console.error(err);
-    showMsg(newMsg, "خطأ أثناء الإرسال: " + (err.message || err), "error");
-  } finally {
-    submitOrderBtn.classList.remove("loading");
-    submitOrderBtn.disabled = false;
-  }
-}
 
     function renderAdmin() { // NEW
       const term = (adminSearch.value || "").trim().toLowerCase();
@@ -1079,24 +986,8 @@ async function openDetails(tracking) {
 
     </script>
 
-<!-- 🌟 مودال تأكيد الإرسال -->
-<div id="confirmModal" class="modal" hidden>
-  <div class="modal__dialog">
-    <div class="modal__header">
-      <strong>تأكيد الإرسال</strong>
-      <button class="modal__close" onclick="hideConfirmModal()">×</button>
-    </div>
-    <div class="modal__body">
-      <p style="font-weight:600">هل أنت متأكد من إرسال الطلب؟</p>
-      <p class="muted" style="font-size:14px;">بعد الإرسال، لا يمكنك التعديل على الطلب.</p>
-    </div>
-    <div class="modal__footer">
-      <button onclick="hideConfirmModal()" class="btn">إلغاء</button>
-      <button id="confirmSendBtn" class="btn-strong">تأكيد الإرسال</button>
-    </div>
-  </div>
-</div>
-
 </body>
 
 </html>
+
+هيك صح
