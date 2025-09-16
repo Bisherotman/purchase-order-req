@@ -1,30 +1,22 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="بوابة تسجيل وإدارة طلبات الشراء لقسم المشاريع – شركة بيت الإباء">
   <title>بوابة طلبات الشراء | المشاريع</title>
 
-
   <!-- أيقونة الموقع -->
   <link rel="icon" href="img/pagelogo.png" type="image/png" />
+
   <!-- ملف التنسيقات الأساسي -->
   <link rel="stylesheet" href="style.css">
-    <!-- ملف المحتوى الأساسي -->
-  <script src="main.js" defer></script>
 
   <!-- خطوط -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;600;700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
-
 <body class="auth-out">
-
-
   <header>
     <nav class="nav">
       <a class="brand" href="#/login" id="brandLink">
@@ -44,7 +36,6 @@
   </header>
 
   <main class="container">
-
     <!-- LOGIN -->
     <section id="view-login" class="view active">
       <div class="card">
@@ -52,8 +43,7 @@
         <form id="loginForm">
           <label for="loginEmail">الإيميل</label>
           <div class="input-wrap">
-            <input id="loginEmail" type="email" placeholder="example@baytalebaa.com" inputmode="email"
-              autocomplete="username" />
+            <input id="loginEmail" type="email" placeholder="example@baytalebaa.com" inputmode="email" autocomplete="username" />
             <button type="button" id="clearEmail" class="input-clear">✕</button>
           </div>
 
@@ -102,9 +92,7 @@
         <div class="items-head">
           <button type="button" id="addItemBtn" class="add-item">+ إضافة صنف</button>
         </div>
-        <div id="itemsWrap">
-          <!-- يتم توليد الأصناف هنا عبر JavaScript -->
-        </div>
+        <div id="itemsWrap"><!-- يتم توليد الأصناف هنا عبر JavaScript --></div>
 
         <!-- المرفقات -->
         <label style="font-weight:700; display:block; margin-top:14px;">
@@ -131,7 +119,6 @@
 
         <div class="filters">
           <input id="mySearch" class="chip-input" placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
-
           <select id="myFilterStatus" class="chip-select" title="الحالة">
             <option value="">كل الحالات</option>
             <option value="created">جديد</option>
@@ -139,7 +126,6 @@
             <option value="shipped">تم الشحن</option>
             <option value="delivered">وصلت</option>
           </select>
-
           <select id="mySort" class="chip-select" title="الترتيب">
             <option value="createdAt_desc">الأحدث أولاً</option>
             <option value="createdAt_asc">الأقدم أولاً</option>
@@ -177,9 +163,7 @@
         </div>
 
         <div class="filters">
-          <input id="adminSearch" class="chip-input"
-            placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
-
+          <input id="adminSearch" class="chip-input" placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
           <select id="adminFilterBranch" class="chip-select" title="الفرع">
             <option value="">كل الفروع</option>
             <option>Riyadh</option>
@@ -189,7 +173,6 @@
             <option>Madina</option>
             <option>HQ</option>
           </select>
-
           <select id="adminFilterStatus" class="chip-select" title="الحالة">
             <option value="">كل الحالات</option>
             <option value="created">جديد</option>
@@ -197,11 +180,9 @@
             <option value="shipped">تم الشحن</option>
             <option value="delivered">وصلت</option>
           </select>
-
           <select id="adminFilterUser" class="chip-select" title="المستخدم">
             <option value="">كل المستخدمين</option>
           </select>
-
           <select id="adminSort" class="chip-select" title="الترتيب">
             <option value="createdAt_desc">الأحدث أولاً</option>
             <option value="createdAt_asc">الأقدم أولاً</option>
@@ -228,7 +209,7 @@
         </div>
       </div>
     </section>
-  </main> <!-- /container -->
+  </main>
 
   <footer style="text-align:center; padding:12px; font-size:13px; color:#999">
     &copy; 2025 شركة بيت الإباء – جميع الحقوق محفوظة
@@ -260,7 +241,7 @@
     </div>
   </div>
 
-  <!-- تفاصيل/طباعة لطلباتي (المودال القديم لديك، أبقيناه كما هو) -->
+  <!-- تفاصيل/طباعة لطلباتي (المودال القديم) -->
   <div id="detailsModal" class="modal" aria-hidden="true">
     <div class="backdrop"></div>
     <div class="modal-card printable">
@@ -277,46 +258,13 @@
       <div id="detailsBody" class="t-small"></div>
     </div>
   </div>
-  
-    body.innerHTML = `
-      <div class="inv-head">
-        <div class="inv-brand">
-          <img src="img/pagelogo.png" alt="logo">
-          <div>
-            <div class="inv-title">طلب شراء</div>
-            <div class="muted">رقم التتبّع: <b>${r.tracking}</b></div>
-          </div>
-        </div>
-        <div style="margin-inline-start:auto;text-align:left">
-          <div>الفرع: <b>${r.branch || '-'}</b></div>
-          <div>التاريخ: ${createdAtStr}</div>
-        </div>
-      </div>
 
-      <div class="inv-grid" style="margin:10px 0 14px">
-        <div><b>اسم المشروع:</b> ${r.projectName || '-'}</div>
-        <div><b>اسم العميل:</b> ${r.customerName || '-'}</div>
-        <div><b>الحالة:</b> ${statusLabel(r.status || 'created')}</div>
-      </div>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore-compat.js"></script>
 
-      <table class="table-like">
-        <thead><tr><th>#</th><th>كود الصنف</th><th>الكمية</th><th>السعر</th><th>الشحن</th></tr></thead>
-        <tbody>${rowsHtml}</tbody>
-        <tfoot><tr><td colspan="2" class="total">الإجمالي</td><td class="total">${qtySum}</td><td colspan="2"></td></tr></tfoot>
-      </table>
-
-      <div style="margin-top:10px">
-        <b>المرفقات:</b>
-        ${attachHtml}
-      </div>
-    `;
-
-    modal.classList.add('show');
-  } catch (err) {
-    console.error("openDetails error:", err);
-    alert("فشل تحميل تفاصيل الطلب.");
-  }
-}
+  <!-- تطبيقك -->
+  <script defer src="main.js"></script>
 </body>
 </html>
-
