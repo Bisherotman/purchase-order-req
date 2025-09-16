@@ -330,3 +330,43 @@ label{ font-weight:700; margin-top:14px; display:block; }
   text-align:left !important;
   direction:ltr !important;
 }
+/* روابط المرفقات */
+.link-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: nowrap;
+}
+
+.link-row .link-name {
+  flex: 2 1 160px;
+  min-width: 140px;
+}
+
+.link-row .link-url {
+  flex: 3 1 260px;
+  min-width: 200px;
+}
+
+.link-row .remove {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #fef2f2;
+  color: #dc2626;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.link-row .remove:hover {
+  background-color: #fee2e2;
+}
+
