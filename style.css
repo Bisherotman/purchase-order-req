@@ -587,4 +587,22 @@ label{ font-weight:700; margin-top:14px; display:block; }
   margin:20px 0 8px; /* ← نزّل العنوان للأسفل */
   font-size:18px;
 }
+   /* اجعل كل select في الفلاتر بنفس شكل حقل البحث */
+.filters select {
+  height:32px;               /* نفس ارتفاع البحث */
+  font-size:14px;            /* حجم النص نفسه */
+  padding:4px 12px;          /* نفس الـ padding */
+  border:1px solid #e5e7eb;  /* نفس لون الإطار */
+  border-radius:999px;       /* شكل pill مثل البحث */
+  background:#fff;
+  color:#111;
+  width:auto;                /* لا يمتد 100% */
+  box-shadow:none;
+  outline:none;
+}
+.filters select:focus {
+  border-color:var(--brand-light);
+  box-shadow:0 0 0 2px rgba(204,169,177,.3);
+}
+
 
