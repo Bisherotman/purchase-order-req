@@ -267,6 +267,7 @@ submitOrderBtn.addEventListener("click", async () => {
     return url ? { name, url } : null;
   }).filter(Boolean);
 
+  submitOrderBtn.addEventListener("click", async () => {
   submitOrderBtn.classList.add("loading");
   submitOrderBtn.disabled = true;
 
@@ -274,6 +275,8 @@ submitOrderBtn.addEventListener("click", async () => {
     const branch = userProfile.branch;
     const code   = branchCodes[branch] || "UNK";
     const counterRef = db.collection("counters").doc(branch);
+
+    // احصل على رقم التسلسل الجديد
     const seq = await db.runTransaction(async (tx) => {
       const s = await tx.get(counterRef);
       let next = 1;
@@ -281,27 +284,36 @@ submitOrderBtn.addEventListener("click", async () => {
       tx.set(counterRef, { next: next + 1 }, { merge: true });
       return next;
     });
+
     const tracking = code + pad5(seq);
 
+    // إنشاء المستند في مجموعة الطلبات
     await db.collection("orders").doc(tracking).set({
-      tracking, branch, projectName, customerName,
-      items, attachments,
+      tracking,
+      branch,
+      projectName,
+      customerName,
+      items,
+      attachments,
       createdBy: currentUser.uid,
       createdByEmail: currentUser.email || "",
       status: "created",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
+    // إعادة ضبط الواجهة
     showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
     $("#projectName").value  = "";
     $("#customerName").value = "";
-    itemsWrap.innerHTML = "";
+    itemsWrap.innerHTML      = "";
     ensureAtLeastOneRow();
-    linksWrap.innerHTML = "";
-    addLinkBtn.disabled = false;
+    linksWrap.innerHTML      = "";
+    addLinkBtn.disabled      = false;
 
+    // تحديث الجداول
     subscribeMyOrders();
     if (canSeeAdmin) loadAdminOrders();
+
   } catch (err) {
     console.error(err);
     showMsg(newMsg, "خطأ أثناء الإرسال: " + (err.message || err), "error");
@@ -309,11 +321,29 @@ submitOrderBtn.addEventListener("click", async () => {
     submitOrderBtn.classList.remove("loading");
     submitOrderBtn.disabled = false;
   }
+});
+  
+// تسميات الحالة + كلاس
+function statusLabel(s) {
+  return {
+    created:   "جديد",
+    ordered:   "تم الطلب من المصنع",
+    shipped:   "تم الشحن",
+    partial:   "وصلت جزئياً",
+    delivered: "وصلت بالكامل"
+  }[s] || s || "غير معروف";
 }
 
-// تسميات الحالة + كلاس
-function statusLabel(s){ return {created:"جديد",ordered:"تم الطلب من المصنع",shipped:"تم الشحن",partial:"وصلت جزئياً",delivered:"وصلت بالكامل"}[s] || s || "غير معروف"; }
-function statusClass(s){ return {created:"s-created",ordered:"s-ordered",shipped:"s-shipped",partial:"s-partial",delivered:"s-delivered"}[s] || "s-created"; }
+function statusClass(s) {
+  return {
+    created:   "s-created",
+    ordered:   "s-ordered",
+    shipped:   "s-shipped",
+    partial:   "s-partial",
+    delivered: "s-delivered"
+  }[s] || "s-created";
+}
+
 
 /* ✅ تم التعديل هنا ليطابق جدول الإدارة لكن بلا أي تعديل حالة */
 function renderMy(rows){
