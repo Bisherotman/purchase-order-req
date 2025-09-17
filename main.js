@@ -644,12 +644,20 @@ async function openAdminModal(tracking) {
   confirmBtn.onclick = async () => {
     if (!pendingChanges.length) { alert('لا توجد تغييرات للحفظ.'); return; }
 
-    const updates = {};
-    pendingChanges.forEach(c => {
-      updates[`items.${c.idx}.${c.field}`] = c.value;
-    });
+    const docSnap = await db.collection('orders').doc(tracking).get();
+if (!docSnap.exists) return;
+const data = docSnap.data();
+const itemsClone = Array.isArray(data.items) ? [...data.items] : [];
 
-    await db.collection('orders').doc(tracking).update(updates);
+// دمج التغييرات في نسخة كاملة
+pendingChanges.forEach(c => {
+  if (!itemsClone[c.idx]) return;
+  itemsClone[c.idx] = { ...itemsClone[c.idx], [c.field]: c.value };
+});
+
+await db.collection('orders').doc(tracking).update({
+  items: itemsClone
+});
     await updateOrderStatus(tracking);
     alert('تم حفظ التغييرات بنجاح');
     pendingChanges = []; // تفريغ التغييرات بعد الحفظ
