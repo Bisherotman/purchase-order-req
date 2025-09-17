@@ -577,3 +577,39 @@ label { font-weight: 700; margin-top: 14px; display: block; }
 #adminSort, #mySort            { order: 3; }
 
 /* لو بتحب العكس بس غيّر أرقام order */
+
+/* =========================================================
+   ✨ أزرار الإضافة (صنف / رابط) بتصميم لطيف
+   ========================================================= */
+.add-fancy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  margin: 12px 0 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--brand);
+  background: #fff;
+  border: 1px dashed var(--brand-light);
+  border-radius: 14px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all .25s ease;
+}
+.add-fancy::before {
+  content: "＋";
+  font-size: 18px;
+  line-height: 1;
+}
+.add-fancy:hover {
+  background: var(--brand-light);
+  color: #fff;
+  border-color: var(--brand);
+  box-shadow: 0 4px 10px rgba(108,29,44,0.25);
+  transform: translateY(-2px);
+}
+.add-fancy:active {
+  transform: scale(0.98);
+}
