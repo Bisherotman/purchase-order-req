@@ -599,6 +599,8 @@ const totalPrice = (Array.isArray(r.items) ? r.items.reduce((s,x)=>s + (x.price 
 document.getElementById('m_total').textContent  = totalPrice;
   // مصفوفة لتجميع التغييرات مؤقتاً
   let pendingChanges = [];
+  const confirmBtn = document.getElementById('confirmAdminChanges');
+confirmBtn.style.display = 'none'; // إخفاء عند الفتح
 
   // تعبئة البيانات كما هي
   // ... (نفس الكود السابق لعرض البيانات)
@@ -629,22 +631,31 @@ document.getElementById('m_total').textContent  = totalPrice;
 
   // استماع للتغييرات فقط وتخزينها محلياً
   document.querySelectorAll('.item-status').forEach(sel=>{
-    sel.addEventListener('change', e=>{
-      const idx = e.target.dataset.index;
-      const newStatus = e.target.value;
-      const qtyBox = document.querySelector(`.item-qty-extra[data-index="${idx}"]`);
-      qtyBox.style.display = ['shipped','partial'].includes(newStatus)?'inline-block':'none';
-      pendingChanges.push({ idx, field:'status', value:newStatus });
-    });
-  });
+  sel.addEventListener('change', e=>{
+    const idx = e.target.dataset.index;
+    const newStatus = e.target.value;
+    const qtyBox = document.querySelector(`.item-qty-extra[data-index="${idx}"]`);
+    qtyBox.style.display = ['shipped','partial'].includes(newStatus)?'inline-block':'none';
 
-  document.querySelectorAll('.item-qty-extra').forEach(inp=>{
-    inp.addEventListener('input', e=>{
-      const idx = e.target.dataset.index;
-      const val = Number(e.target.value) || 0;
-      pendingChanges.push({ idx, field:'deliveredQty', value:val });
-    });
+    pendingChanges.push({ idx, field:'status', value:newStatus });
+
+    // إظهار زر التأكيد عند أول تعديل
+    confirmBtn.style.display = 'inline-block';
   });
+});
+
+
+ document.querySelectorAll('.item-qty-extra').forEach(inp=>{
+  inp.addEventListener('input', e=>{
+    const idx = e.target.dataset.index;
+    const val = Number(e.target.value) || 0;
+    pendingChanges.push({ idx, field:'deliveredQty', value:val });
+
+    // إظهار زر التأكيد عند أول تعديل
+    confirmBtn.style.display = 'inline-block';
+  });
+});
+
 
   // زر تأكيد: يحدّث Firestore دفعة واحدة
   const confirmBtn = document.getElementById('confirmAdminChanges');
