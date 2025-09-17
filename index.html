@@ -74,40 +74,38 @@
           <div class="helper" id="whoami"></div>
         </div>
 
-        <!-- معلومات المشروع -->
-        <div class="section-box">معلومات المشروع</div>
-        <div class="row">
-          <div>
-            <label for="projectName">اسم المشروع</label>
-            <input id="projectName" type="text" placeholder="...مشروع أبراج" required />
-          </div>
-          <div>
-            <label for="customerName">اسم العميل</label>
-            <input id="customerName" type="text" placeholder="...اسم العميل" required />
-          </div>
-        </div>
+     <!-- معلومات المشروع -->
+<div class="section-box">معلومات المشروع</div>
+<div class="row">
+  <div>
+    <label for="projectName">اسم المشروع</label>
+    <input id="projectName" type="text" placeholder="...مشروع أبراج" required />
+  </div>
+  <div>
+    <label for="customerName">اسم العميل</label>
+    <input id="customerName" type="text" placeholder="...اسم العميل" required />
+  </div>
+</div>
 
-        <!-- الأصناف -->
-        <div class="section-box">الأصناف</div>
-        <div class="items-head">
-          <button type="button" id="addItemBtn" class="add-item">+ إضافة صنف</button>
-        </div>
-        <div id="itemsWrap"><!-- يتم توليد الأصناف هنا عبر JavaScript --></div>
+<!-- الأصناف -->
+<div class="section-box">الأصناف</div>
+<!-- زر الإضافة الجديد تحت العنوان مباشرة -->
+<button type="button" id="addItemBtn" class="add-fancy">إضافة صنف</button>
 
-        <!-- المرفقات -->
-        <label style="font-weight:700; display:block; margin-top:14px;">
-          روابط المرفقات (حد أقصى 3)
-        </label>
-        <div id="linksWrap"></div>
-        <button type="button" id="addLinkBtn" class="add-item">+ إضافة رابط</button>
+<div id="itemsWrap"><!-- يتم توليد الأصناف هنا عبر JavaScript --></div>
 
-        <!-- إرسال الطلب -->
-        <button type="button" id="submitOrder" class="btn-strong" style="margin-top:10px;">
-          إرسال الطلب
-        </button>
-        <div id="newMsg" class="msg"></div>
-      </div>
-    </section>
+<!-- المرفقات -->
+<div class="section-box">روابط المرفقات (حد أقصى 3)</div>
+<!-- زر الإضافة الجديد تحت العنوان مباشرة -->
+<button type="button" id="addLinkBtn" class="add-fancy">إضافة رابط</button>
+
+<div id="linksWrap"></div>
+
+<!-- إرسال الطلب -->
+<button type="button" id="submitOrder" class="btn-strong" style="margin-top:10px;">
+  إرسال الطلب
+</button>
+<div id="newMsg" class="msg"></div>
 
     <!-- MY ORDERS -->
 <section id="view-my" class="view">
