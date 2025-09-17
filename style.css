@@ -115,6 +115,14 @@ input,select,button{
   background:#fff;
   color:#111;
 }
+/* استثناء لفلاتر البحث لترتيبها بجانب بعض بدون margin إضافي */
+.filters input,
+.filters select,
+.filters button {
+  margin-top: 0;     /* ألغِ الـ 10px في هذا السياق فقط */
+  width: auto;       /* حتى لا يأخذوا 100% ويصفّوا جنب بعض */
+}
+
 
 input:focus,select:focus{
   outline:0;
@@ -572,3 +580,11 @@ label{ font-weight:700; margin-top:14px; display:block; }
   background:#fff;
   width:220px !important;
   box-shadow
+
+   .section-box{
+  display:block;
+  font-weight:700;
+  margin:20px 0 8px; /* ← نزّل العنوان للأسفل */
+  font-size:18px;
+}
+
