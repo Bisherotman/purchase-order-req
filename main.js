@@ -602,14 +602,55 @@ async function updateOrderStatus(orderId){
   await db.collection("orders").doc(orderId).update({ status: overall });
 }
 
-// 🔵 فتح مودال الإدارة الجديد عند الضغط على زر التفاصيل
+// 🔵 فتح مودال إدارة الطلبات مع إمكانية تعديل حالة كل صنف
 document.addEventListener('click', async e=>{
   const btn = e.target.closest('[data-admin]');
   if (!btn) return;
   e.preventDefault();
-  const tracking = btn.dataset.admin;
-  openAdminModal(tracking);   // ← تأكّد أن دالة openAdminModal موجودة
+  openAdminModal(btn.dataset.admin);
 });
+
+async function openAdminModal(tracking) {
+  // جلب بيانات الطلب
+  const doc = await db.collection("orders").doc(tracking).get();
+  if (!doc.exists) return;
+  const r = { id: doc.id, ...doc.data() };
+
+  // إنشاء صفوف الجدول مع قائمة الحالة لكل صنف
+  const rowsHtml = (r.items || []).map((it, idx) => `
+    <tr>
+      <td>${idx + 1}</td>
+      <td>${it.itemCode || '-'}</td>
+      <td>${it.quantity ?? '-'}</td>
+      <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+      <td>${it.shippingType || '-'}</td>
+      <td>
+        <select class="item-status" data-index="${idx}" data-id="${r.tracking}">
+          <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
+          <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
+          <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
+          <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
+          <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
+        </select>
+      </td>
+    </tr>`).join('');
+  document.getElementById('m_items').innerHTML = rowsHtml;
+
+  // مستمع لتغيير حالة كل صنف
+  document.querySelectorAll('.item-status').forEach(sel=>{
+    sel.addEventListener('change', async e=>{
+      const idx = e.target.dataset.index;
+      const newStatus = e.target.value;
+      await db.collection('orders').doc(tracking)
+        .update({ [`items.${idx}.status`]: newStatus });
+      await updateOrderStatus(tracking);
+    });
+  });
+
+  // إظهار المودال الإداري
+  document.getElementById('orderModal').classList.add('show');
+}
+
 
 ensureAtLeastOneRow();
 route();
