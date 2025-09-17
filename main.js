@@ -589,7 +589,14 @@ async function openAdminModal(tracking) {
   const doc = await db.collection("orders").doc(tracking).get();
   if (!doc.exists) return;
   const r = { id: doc.id, ...doc.data() };
-
+  // تعبئة الحقول العلوية في المودال
+document.getElementById('m_id').textContent     = r.tracking || '-';
+document.getElementById('m_date').textContent   = fmtDate(r.createdAt, {withTime:true}) || '-';
+document.getElementById('m_project').textContent= r.projectName || '-';
+document.getElementById('m_user').textContent   = r.createdByEmail || '-';
+document.getElementById('m_status').textContent = statusLabel(r.status || 'created');
+const totalPrice = (Array.isArray(r.items) ? r.items.reduce((s,x)=>s + (x.price || 0),0) : 0).toFixed(2);
+document.getElementById('m_total').textContent  = totalPrice;
   // مصفوفة لتجميع التغييرات مؤقتاً
   let pendingChanges = [];
 
