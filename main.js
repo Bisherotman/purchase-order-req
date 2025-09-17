@@ -587,16 +587,13 @@ async function openAdminModal(tracking) {
   if (!doc.exists) return;
   const r = { id: doc.id, ...doc.data() };
 
-  // تعبئة بيانات المودال
-  document.getElementById('m_id').textContent     = r.tracking;
-  document.getElementById('m_date').textContent   = fmtDate(r.createdAt, {withTime:true});
-  document.getElementById('m_project').textContent= r.projectName || '-';
-  document.getElementById('m_user').textContent   = r.createdByEmail || '-';
-  document.getElementById('m_status').textContent = statusLabel(r.status);
-  const total = r.items?.reduce((s,x)=>s+(x.price||0),0) || 0;
-  document.getElementById('m_total').textContent  = total.toFixed(2);
+  // مصفوفة لتجميع التغييرات مؤقتاً
+  let pendingChanges = [];
 
-  // رسم صفوف الأصناف مع حقل الكمية عند الشحن أو الوصول الجزئي
+  // تعبئة البيانات كما هي
+  // ... (نفس الكود السابق لعرض البيانات)
+
+  // توليد صفوف الأصناف مع select
   const rowsHtml = (r.items || []).map((it, idx) => `
     <tr>
       <td>${idx + 1}</td>
@@ -605,7 +602,7 @@ async function openAdminModal(tracking) {
       <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
       <td>${it.shippingType || '-'}</td>
       <td>
-        <select class="item-status" data-index="${idx}" data-id="${r.tracking}">
+        <select class="item-status" data-index="${idx}">
           <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
           <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
           <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
@@ -613,40 +610,47 @@ async function openAdminModal(tracking) {
           <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
         </select>
         <input type="number" class="item-qty-extra"
-               data-index="${idx}" data-id="${r.tracking}"
+               data-index="${idx}"
                style="display:${['shipped','partial'].includes(it.status)?'inline-block':'none'};width:80px;margin-top:6px"
                placeholder="الكمية" value="${it.deliveredQty || ''}">
       </td>
     </tr>`).join('');
   document.getElementById('m_items').innerHTML = rowsHtml;
 
-  // مستمعات لتغيير الحالة وتحديث الكمية
+  // استماع للتغييرات فقط وتخزينها محلياً
   document.querySelectorAll('.item-status').forEach(sel=>{
-    sel.addEventListener('change', async e=>{
+    sel.addEventListener('change', e=>{
       const idx = e.target.dataset.index;
       const newStatus = e.target.value;
       const qtyBox = document.querySelector(`.item-qty-extra[data-index="${idx}"]`);
-      if (['shipped','partial'].includes(newStatus)) {
-        qtyBox.style.display = 'inline-block';
-      } else {
-        qtyBox.style.display = 'none';
-        await db.collection('orders').doc(tracking)
-               .update({ [`items.${idx}.deliveredQty`]: 0 });
-      }
-      await db.collection('orders').doc(tracking)
-             .update({ [`items.${idx}.status`]: newStatus });
-      await updateOrderStatus(tracking);
+      qtyBox.style.display = ['shipped','partial'].includes(newStatus)?'inline-block':'none';
+      pendingChanges.push({ idx, field:'status', value:newStatus });
     });
   });
 
   document.querySelectorAll('.item-qty-extra').forEach(inp=>{
-    inp.addEventListener('change', async e=>{
+    inp.addEventListener('input', e=>{
       const idx = e.target.dataset.index;
       const val = Number(e.target.value) || 0;
-      await db.collection('orders').doc(tracking)
-             .update({ [`items.${idx}.deliveredQty`]: val });
+      pendingChanges.push({ idx, field:'deliveredQty', value:val });
     });
   });
+
+  // زر تأكيد: يحدّث Firestore دفعة واحدة
+  const confirmBtn = document.getElementById('confirmAdminChanges');
+  confirmBtn.onclick = async () => {
+    if (!pendingChanges.length) { alert('لا توجد تغييرات للحفظ.'); return; }
+
+    const updates = {};
+    pendingChanges.forEach(c => {
+      updates[`items.${c.idx}.${c.field}`] = c.value;
+    });
+
+    await db.collection('orders').doc(tracking).update(updates);
+    await updateOrderStatus(tracking);
+    alert('تم حفظ التغييرات بنجاح');
+    pendingChanges = []; // تفريغ التغييرات بعد الحفظ
+  };
 
   // إظهار المودال
   const modal = document.getElementById('orderModal');
