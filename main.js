@@ -371,7 +371,8 @@ function renderMy(rows){
 
   // رسم الصفوف بأسلوب الإدارة لكن بلا select
   myBody.innerHTML = rows.map(r=>{
-    const total = r.items?.reduce((sum,x)=>sum+(x.price||0),0) || "";
+    const itemsArr = Array.isArray(r.items) ? r.items : [];
+const total    = itemsArr.reduce((sum,x)=>sum+(x.price||0),0) || "";
     return `
       <tr data-tracking="${r.tracking}">
         <td>${r.tracking}</td>
@@ -535,7 +536,8 @@ function loadAdminOrders() {
 }
 function renderAdmin(rows){
   adminBody.innerHTML = rows.map(r=>{
-    const total = r.items?.reduce((sum,x)=>sum+(x.price||0),0) || "";
+    const itemsArr = Array.isArray(r.items) ? r.items : [];
+const total    = itemsArr.reduce((sum,x)=>sum+(x.price||0),0) || "";
     return `
       <tr data-tracking="${r.tracking}">
         <td>${r.tracking}</td>
