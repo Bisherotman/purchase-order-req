@@ -548,22 +548,6 @@ function renderAdmin(rows){
       </tr>`;
   }).join("");
 }
-
-document.getElementById('m_items').innerHTML = rowsHtml;
-
-document.querySelectorAll('.item-status').forEach(sel=>{
-  sel.addEventListener('change', async e=>{
-    const idx = e.target.dataset.index;
-    const orderId = e.target.dataset.id;
-    const newStatus = e.target.value;
-
-    await db.collection('orders').doc(orderId)
-      .update({ [`items.${idx}.status`]: newStatus });
-
-    await updateOrderStatus(orderId);
-  });
-});
-
 async function updateOrderStatus(orderId){
   const snap = await db.collection("orders").doc(orderId).get();
   const items = snap.data().items || [];
