@@ -654,6 +654,22 @@ async function openAdminModal(tracking) {
   modal.classList.add('show');
 }
 
+// مستمعات إغلاق وطباعة لمودال الإدارة
+document.addEventListener('click', (e) => {
+  const modal = document.getElementById('orderModal');
+
+  // زر × أو زر إغلاق
+  if (e.target.closest('.modal__close')) {
+    modal.classList.remove('show');
+    modal.hidden = true;
+  }
+
+  // زر الطباعة
+  if (e.target.dataset.action === 'print') {
+    window.print();
+  }
+});
+
 
 ensureAtLeastOneRow();
 route();
