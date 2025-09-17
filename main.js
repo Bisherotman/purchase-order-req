@@ -577,13 +577,48 @@ document.addEventListener('click', async e=>{
   openAdminModal(btn.dataset.admin);
 });
 
+// =======================
+// 🟢 مودال إدارة الطلبات
+// =======================
 async function openAdminModal(tracking) {
-  // جلب بيانات الطلب
   const doc = await db.collection("orders").doc(tracking).get();
   if (!doc.exists) return;
   const r = { id: doc.id, ...doc.data() };
 
-   // مستمع لتغيير حالة الصنف
+  // تعبئة بيانات المودال
+  document.getElementById('m_id').textContent     = r.tracking;
+  document.getElementById('m_date').textContent   = fmtDate(r.createdAt, {withTime:true});
+  document.getElementById('m_project').textContent= r.projectName || '-';
+  document.getElementById('m_user').textContent   = r.createdByEmail || '-';
+  document.getElementById('m_status').textContent = statusLabel(r.status);
+  const total = r.items?.reduce((s,x)=>s+(x.price||0),0) || 0;
+  document.getElementById('m_total').textContent  = total.toFixed(2);
+
+  // رسم صفوف الأصناف مع حقل الكمية عند الشحن أو الوصول الجزئي
+  const rowsHtml = (r.items || []).map((it, idx) => `
+    <tr>
+      <td>${idx + 1}</td>
+      <td>${it.itemCode || '-'}</td>
+      <td>${it.quantity ?? '-'}</td>
+      <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+      <td>${it.shippingType || '-'}</td>
+      <td>
+        <select class="item-status" data-index="${idx}" data-id="${r.tracking}">
+          <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
+          <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
+          <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
+          <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
+          <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
+        </select>
+        <input type="number" class="item-qty-extra"
+               data-index="${idx}" data-id="${r.tracking}"
+               style="display:${['shipped','partial'].includes(it.status)?'inline-block':'none'};width:80px;margin-top:6px"
+               placeholder="الكمية" value="${it.deliveredQty || ''}">
+      </td>
+    </tr>`).join('');
+  document.getElementById('m_items').innerHTML = rowsHtml;
+
+  // مستمعات لتغيير الحالة وتحديث الكمية
   document.querySelectorAll('.item-status').forEach(sel=>{
     sel.addEventListener('change', async e=>{
       const idx = e.target.dataset.index;
@@ -611,8 +646,12 @@ async function openAdminModal(tracking) {
     });
   });
 
-  document.getElementById('orderModal').classList.add('show');
+  // إظهار المودال
+  const modal = document.getElementById('orderModal');
+  modal.hidden = false;
+  modal.classList.add('show');
 }
+
 
 ensureAtLeastOneRow();
 route();
