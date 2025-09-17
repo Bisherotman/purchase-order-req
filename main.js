@@ -634,23 +634,5 @@ async function openAdminModal(tracking) {
   document.getElementById('orderModal').classList.add('show');
 }
 
-const rowsHtml = (r.items || []).map((it, idx) => `
-  <tr>
-    <td>${idx + 1}</td>
-    <td>${it.itemCode || '-'}</td>
-    <td>${it.quantity ?? '-'}</td>
-    <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
-    <td>${it.shippingType || '-'}</td>
-    <td>
-      <select class="item-status" data-index="${idx}" data-id="${r.tracking}">
-        <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
-        <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
-        <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
-        <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
-        <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
-      </select>
-    </td>
-  </tr>`).join('');
-
 ensureAtLeastOneRow();
 route();
