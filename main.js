@@ -544,7 +544,7 @@ function renderAdmin(rows){
         <td>${displayNameOrEmail({email:r.createdByEmail||""}, {})}</td>
         <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
         <td>${typeof total==="number" ? total.toFixed(2) : total}</td>
-        <td><button type="button" class="btn-details btn-sm" data-id="${r.tracking}">🗂️</button></td>
+        <td><button type="button" class="btn-admin-details btn-sm" data-admin="${r.tracking}">🗂️</button></td>
       </tr>`;
   }).join("");
 }
@@ -601,36 +601,55 @@ async function openAdminModal(tracking) {
 
   // إنشاء صفوف الجدول مع قائمة الحالة لكل صنف
   const rowsHtml = (r.items || []).map((it, idx) => `
-    <tr>
-      <td>${idx + 1}</td>
-      <td>${it.itemCode || '-'}</td>
-      <td>${it.quantity ?? '-'}</td>
-      <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
-      <td>${it.shippingType || '-'}</td>
-      <td>
-        <select class="item-status" data-index="${idx}" data-id="${r.tracking}">
-          <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
-          <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
-          <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
-          <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
-          <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
-        </select>
-      </td>
-    </tr>`).join('');
+  <tr>
+    <td>${idx + 1}</td>
+    <td>${it.itemCode || '-'}</td>
+    <td>${it.quantity ?? '-'}</td>
+    <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+    <td>${it.shippingType || '-'}</td>
+    <td>
+      <select class="item-status" data-index="${idx}" data-id="${r.tracking}">
+        <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
+        <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
+        <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
+        <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
+        <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
+      </select>
+      <input type="number" class="item-qty-extra" data-index="${idx}" data-id="${r.tracking}"
+             style="display:${['shipped','partial'].includes(it.status)?'inline-block':'none'};width:80px;margin-top:6px"
+             placeholder="الكمية" value="${it.deliveredQty || ''}">
+    </td>
+  </tr>`).join('');
   document.getElementById('m_items').innerHTML = rowsHtml;
 
-  // مستمع لتغيير حالة كل صنف
+   // مستمع لتغيير حالة الصنف
   document.querySelectorAll('.item-status').forEach(sel=>{
     sel.addEventListener('change', async e=>{
       const idx = e.target.dataset.index;
       const newStatus = e.target.value;
+      const qtyBox = document.querySelector(`.item-qty-extra[data-index="${idx}"]`);
+      if (['shipped','partial'].includes(newStatus)) {
+        qtyBox.style.display = 'inline-block';
+      } else {
+        qtyBox.style.display = 'none';
+        await db.collection('orders').doc(tracking)
+               .update({ [`items.${idx}.deliveredQty`]: 0 });
+      }
       await db.collection('orders').doc(tracking)
-        .update({ [`items.${idx}.status`]: newStatus });
+             .update({ [`items.${idx}.status`]: newStatus });
       await updateOrderStatus(tracking);
     });
   });
 
-  // إظهار المودال الإداري
+  document.querySelectorAll('.item-qty-extra').forEach(inp=>{
+    inp.addEventListener('change', async e=>{
+      const idx = e.target.dataset.index;
+      const val = Number(e.target.value) || 0;
+      await db.collection('orders').doc(tracking)
+             .update({ [`items.${idx}.deliveredQty`]: val });
+    });
+  });
+
   document.getElementById('orderModal').classList.add('show');
 }
 
