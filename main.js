@@ -149,60 +149,166 @@ const branchCodes = { Riyadh:"RUH", Dammam:"DMM", Jeddah:"JED", Makkah:"MKK", Ma
 const pad5 = n => String(n).padStart(5,"0");
 
 const itemsWrap=$("#itemsWrap"), addItemBtn=$("#addItemBtn");
-function makeItemRow(values={}){ ... }   // (بقي كما هو – اختصرناه هنا)
-function ensureAtLeastOneRow(){ ... }
-addItemBtn.onclick=()=>itemsWrap.appendChild(makeItemRow());
+function makeItemRow(values = {}) {
+  const row = document.createElement("div");
+  row.className = "item-row";
+  row.innerHTML = `
+    <input type="text" class="it-code" placeholder="كود الصنف" value="${values.itemCode || ""}">
+    <input type="number" class="it-qty" min="1" step="1" placeholder="الكمية" value="${values.quantity || ""}">
+    <input type="number" class="it-price" min="0" step="0.01" placeholder="سعر البيع" value="${values.price || ""}">
+    <select class="it-ship" required>
+      <option value="">اختر نوع الشحن</option>
+      <option value="Sea freight">Sea freight</option>
+      <option value="DHL freight">DHL freight</option>
+      <option value="Air freight">Air freight</option>
+    </select>
+    <button type="button" class="remove">🗑</button>
+  `;
+  row.querySelector(".remove").onclick = () => row.remove();
+  return row;}
 
-const linksWrap=$("#linksWrap"), addLinkBtn=$("#addLinkBtn");
-function makeLinkRow(values={}){ ... }
-addLinkBtn.onclick=()=>{ ... };
+function ensureAtLeastOneRow() {
+  if (!itemsWrap.children.length) {
+    itemsWrap.appendChild(makeItemRow());
+  }
+}
+addItemBtn.onclick = () => itemsWrap.appendChild(makeItemRow());
 
-const newMsg=$("#newMsg"), submitOrderBtn=$("#submitOrder");
-submitOrderBtn.addEventListener("click", async ()=>{ ... });
+const linksWrap  = $("#linksWrap");
+const addLinkBtn = $("#addLinkBtn");
 
-/***************************************************
- * 🛠️ صفحة إدارة الطلبات (Admin)
- ***************************************************/
-const adminBody=$("#adminOrdersBody"),
-      adminSearch=$("#adminSearch"),
-      adminFilterBranch=$("#adminFilterBranch"),
-      adminFilterStatus=$("#adminFilterStatus"),
-      adminFilterUser=$("#adminFilterUser"),
-      adminSort=$("#adminSort");
+function makeLinkRow(values = {}) {
+  const r = document.createElement("div");
+  r.className = "link-row";
+  r.innerHTML = `
+    <input class="ln-name" placeholder="اسم المرفق (مثال: عرض سعر)" value="${values.name || ""}">
+    <input class="ln-url"  placeholder="https://example.com/file.pdf" value="${values.url  || ""}">
+    <button type="button" class="remove">🗑</button>`;
+  r.querySelector(".remove").onclick = () => {
+    r.remove();
+    if (linksWrap.children.length < 3) addLinkBtn.disabled = false;
+  };
+  return r;
+}
+addLinkBtn.onclick = () => {
+  if (linksWrap.children.length >= 3) return;
+  linksWrap.appendChild(makeLinkRow());
+  if (linksWrap.children.length >= 3) addLinkBtn.disabled = true;
+};
 
-let usersById={}, adminRows=[];
+const newMsg         = $("#newMsg");
+const submitOrderBtn = $("#submitOrder");
+submitOrderBtn.addEventListener("click", async () => {
+  hideMsg(newMsg);
 
-async function loadAdminOrders(){ ... }
-function populateAdminUsers(rows){ ... }
-function renderTableRow(r){ ... }
-function renderAdmin(){ ... }
+  if (!confirm("هل أنت متأكد أنك تريد إرسال الطلب؟")) return;
+  if (!currentUser || !userProfile) {
+    showMsg(newMsg, "يجب تسجيل الدخول أولاً.", "error");
+    return;
+  }
 
-adminSearch.addEventListener("input",renderAdmin);
-adminFilterBranch.addEventListener("change",renderAdmin);
-adminFilterStatus.addEventListener("change",renderAdmin);
-adminFilterUser.addEventListener("change",renderAdmin);
-adminSort.addEventListener("change",renderAdmin);
+  const projectName  = $("#projectName").value.trim();
+  const customerName = $("#customerName").value.trim();
+  if (!projectName)  { showMsg(newMsg, "يرجى إدخال اسم المشروع", "error"); return; }
+  if (!customerName) { showMsg(newMsg, "يرجى إدخال اسم العميل", "error"); return; }
 
-document.addEventListener("change", async e => { ... }); // تحديث الحالة
-document.addEventListener("click", e => { ... });        // توسيع الأصناف
+  const itemRows = [...itemsWrap.querySelectorAll(".item-row")];
+  for (let i = 0; i < itemRows.length; i++) {
+    const row  = itemRows[i];
+    const code = row.querySelector(".it-code")?.value.trim();
+    const qty  = row.querySelector(".it-qty")?.value;
+    const price= row.querySelector(".it-price")?.value;
+    const ship = row.querySelector(".it-ship")?.value;
+    if (!code || !qty || !price || !ship) {
+      showMsg(newMsg, `يرجى تعبئة جميع الحقول في الصنف رقم ${i + 1}`, "error");
+      return;
+    }
+  }
 
-/***************************************************
- * 📄 صفحة طلبــاتي (My Orders) – نسخة للقراءة فقط
- ***************************************************/
-const myBody         = $("#myOrdersBody"),
-      mySearch       = $("#mySearch"),
-      myFilterStatus = $("#myFilterStatus"),
-      mySort         = $("#mySort");
-let myUnsub=null, myRows=[];
+  if (linksWrap.children.length === 0) {
+    showMsg(newMsg, "يجب إضافة مرفق واحد على الأقل", "error");
+    return;
+  }
+  for (let i = 0; i < linksWrap.children.length; i++) {
+    const r = linksWrap.children[i];
+    const name = r.querySelector(".ln-name")?.value.trim();
+    const url  = r.querySelector(".ln-url")?.value.trim();
+    if (!name || !url) {
+      showMsg(newMsg, `يرجى تعبئة اسم ورابط المرفق رقم ${i + 1}`, "error");
+      return;
+    }
+  }
 
-function subscribeMyOrders(){
-  if (myUnsub){ myUnsub(); myUnsub=null; }
-  if (!currentUser) return;
-  const q = db.collection("orders").where("createdBy","==",currentUser.uid);
-  myUnsub = q.onSnapshot(snap=>{
-    myRows = snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderMy(myRows);
-  }, err=>{ console.error(err); showMsg($("#newMsg"),"تعذّر تحميل طلباتك: "+(err.message||err),"error"); });
+  const items = [...itemsWrap.querySelectorAll(".item-row")].map(r => ({
+    itemCode:     r.querySelector(".it-code").value.trim(),
+    quantity:     Number(r.querySelector(".it-qty").value),
+    price:        Number(r.querySelector(".it-price").value),
+    shippingType: r.querySelector(".it-ship")?.value || "",
+    status:       r.querySelector(".it-status")?.value || "created",
+    deliveredQty: Number(r.querySelector(".it-delivered")?.value || 0)
+  })).filter(x =>
+    x.itemCode && x.shippingType &&
+    Number.isFinite(x.quantity) && x.quantity > 0 &&
+    Number.isFinite(x.price) && x.price >= 0
+  );
+
+  if (items.length === 0) {
+    showMsg(newMsg, "أضف صنفًا واحدًا على الأقل بشكل صحيح.", "error");
+    return;
+  }
+  if (linksWrap.children.length > 3) {
+    showMsg(newMsg, "مسموح بثلاث مرفقات كحد أقصى.", "error");
+    return;
+  }
+
+  const attachments = [...linksWrap.querySelectorAll(".link-row")].map(r => {
+    const name = (r.querySelector(".ln-name").value || "ملف").trim();
+    const url  = r.querySelector(".ln-url").value.trim();
+    return url ? { name, url } : null;
+  }).filter(Boolean);
+
+  submitOrderBtn.classList.add("loading");
+  submitOrderBtn.disabled = true;
+
+  try {
+    const branch = userProfile.branch;
+    const code   = branchCodes[branch] || "UNK";
+    const counterRef = db.collection("counters").doc(branch);
+    const seq = await db.runTransaction(async (tx) => {
+      const s = await tx.get(counterRef);
+      let next = 1;
+      if (s.exists) next = (s.data().next || 1);
+      tx.set(counterRef, { next: next + 1 }, { merge: true });
+      return next;
+    });
+    const tracking = code + pad5(seq);
+
+    await db.collection("orders").doc(tracking).set({
+      tracking, branch, projectName, customerName,
+      items, attachments,
+      createdBy: currentUser.uid,
+      createdByEmail: currentUser.email || "",
+      status: "created",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
+    $("#projectName").value  = "";
+    $("#customerName").value = "";
+    itemsWrap.innerHTML = "";
+    ensureAtLeastOneRow();
+    linksWrap.innerHTML = "";
+    addLinkBtn.disabled = false;
+
+    subscribeMyOrders();
+    if (canSeeAdmin) loadAdminOrders();
+  } catch (err) {
+    console.error(err);
+    showMsg(newMsg, "خطأ أثناء الإرسال: " + (err.message || err), "error");
+  } finally {
+    submitOrderBtn.classList.remove("loading");
+    submitOrderBtn.disabled = false;
+  }
 }
 
 // تسميات الحالة + كلاس
@@ -273,7 +379,80 @@ document.addEventListener('click', async e=>{
   document.getElementById('printDetailsBtn').onclick = ()=> window.print();
 })();
 
-async function openDetails(tracking){ ... } // بقي كما هو
+async function openDetails(tracking) {
+  try {
+    let r =
+      (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
+      (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
+
+    if (!r) {
+      const doc = await db.collection('orders').doc(tracking).get();
+      if (doc.exists) r = { id: doc.id, ...doc.data() };
+    }
+
+    if (!r) { alert('تعذّر إيجاد تفاصيل هذا الطلب.'); return; }
+
+    const items = r.items || [];
+    const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
+    const createdAtStr = fmtDate(r.createdAt, { withTime: true });
+
+    const rowsHtml = items.length
+      ? items.map((it, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${it.itemCode || '-'}</td>
+          <td>${it.quantity ?? '-'}</td>
+          <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+          <td>${it.shippingType || '-'}</td>
+        </tr>`).join('')
+      : `<tr><td colspan="5" class="muted">لا توجد أصناف</td></tr>`;
+
+    const attachHtml = (r.attachments?.length)
+      ? `<ul>${r.attachments.map(a => `<li><a href="${a.url}" target="_blank">${a.name}</a></li>`).join('')}</ul>`
+      : `<div class="muted">لا توجد مرفقات</div>`;
+
+    const modal = document.getElementById('detailsModal');
+    const body  = document.getElementById('detailsBody');
+
+    body.innerHTML = `
+      <div class="inv-head">
+        <div class="inv-brand">
+          <img src="img/pagelogo.png" alt="logo">
+          <div>
+            <div class="inv-title">طلب شراء</div>
+            <div class="muted">رقم التتبّع: <b>${r.tracking}</b></div>
+          </div>
+        </div>
+        <div style="margin-inline-start:auto;text-align:left">
+          <div>الفرع: <b>${r.branch || '-'}</b></div>
+          <div>التاريخ: ${createdAtStr}</div>
+        </div>
+      </div>
+
+      <div class="inv-grid" style="margin:10px 0 14px">
+        <div><b>اسم المشروع:</b> ${r.projectName || '-'}</div>
+        <div><b>اسم العميل:</b> ${r.customerName || '-'}</div>
+        <div><b>الحالة:</b> ${statusLabel(r.status || 'created')}</div>
+      </div>
+
+      <table class="table-like">
+        <thead><tr><th>#</th><th>كود الصنف</th><th>الكمية</th><th>السعر</th><th>الشحن</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+        <tfoot><tr><td colspan="2" class="total">الإجمالي</td><td class="total">${qtySum}</td><td colspan="2"></td></tr></tfoot>
+      </table>
+
+      <div style="margin-top:10px">
+        <b>المرفقات:</b>
+        ${attachHtml}
+      </div>
+    `;
+
+    modal.classList.add('show');
+  } catch (err) {
+    console.error("openDetails error:", err);
+    alert("فشل تحميل تفاصيل الطلب.");
+  }
+}
 
 /***************************************************
  * 🚀 تشغيل أولي
