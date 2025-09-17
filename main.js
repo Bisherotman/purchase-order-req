@@ -381,7 +381,7 @@ function renderMy(rows){
         <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
         <td>${typeof total==="number" ? total.toFixed(2) : total}</td>
         <td style="white-space:nowrap;text-align:left;">
-          <button type="button" class="btn-details btn-sm" data-id="${r.tracking}">🗂️</button>
+          <button type="button" class="btn-details btn-sm" data-admin="${r.tracking}">🗂️</button>
         </td>
       </tr>`;
   }).join("");
@@ -601,6 +601,15 @@ async function updateOrderStatus(orderId){
 
   await db.collection("orders").doc(orderId).update({ status: overall });
 }
+
+// 🔵 فتح مودال الإدارة الجديد عند الضغط على زر التفاصيل
+document.addEventListener('click', async e=>{
+  const btn = e.target.closest('[data-admin]');
+  if (!btn) return;
+  e.preventDefault();
+  const tracking = btn.dataset.admin;
+  openAdminModal(tracking);   // ← تأكّد أن دالة openAdminModal موجودة
+});
 
 ensureAtLeastOneRow();
 route();
