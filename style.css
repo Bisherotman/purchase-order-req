@@ -608,4 +608,20 @@ label{ font-weight:700; margin-top:14px; display:block; }
   box-shadow:0 0 0 2px rgba(204,169,177,.3);
 }
 
+.items-table {
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+.items-table th,
+.items-table td {
+  border:1px solid #e5e7eb;
+  padding:8px 10px;
+  text-align:right;
+}
+.items-table select.item-status {
+  width:100%;
+  padding:4px 6px;
+  border-radius:8px;
+}
 
