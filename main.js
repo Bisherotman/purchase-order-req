@@ -549,6 +549,58 @@ function renderAdmin(rows){
   }).join("");
 }
 
+const rowsHtml = (r.items || []).map((it, idx) => `
+  <tr>
+    <td>${idx + 1}</td>
+    <td>${it.itemCode || '-'}</td>
+    <td>${it.quantity ?? '-'}</td>
+    <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+    <td>${it.shippingType || '-'}</td>
+    <td>
+      <select class="item-status" data-index="${idx}" data-id="${r.tracking}">
+        <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
+        <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
+        <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
+        <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
+        <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
+      </select>
+    </td>
+  </tr>`).join('');
+document.getElementById('m_items').innerHTML = rowsHtml;
+
+document.querySelectorAll('.item-status').forEach(sel=>{
+  sel.addEventListener('change', async e=>{
+    const idx = e.target.dataset.index;
+    const orderId = e.target.dataset.id;
+    const newStatus = e.target.value;
+
+    await db.collection('orders').doc(orderId)
+      .update({ [`items.${idx}.status`]: newStatus });
+
+    await updateOrderStatus(orderId);
+  });
+});
+
+async function updateOrderStatus(orderId){
+  const snap = await db.collection("orders").doc(orderId).get();
+  const items = snap.data().items || [];
+  const statuses = items.map(i => i.status);
+
+  let overall;
+  if (statuses.every(s => s === 'delivered')) {
+    overall = 'delivered';
+  } else if (statuses.some(s => s === 'partial' || s === 'delivered')) {
+    overall = 'partial';
+  } else if (statuses.every(s => s === 'shipped')) {
+    overall = 'shipped';
+  } else if (statuses.every(s => s === 'ordered')) {
+    overall = 'ordered';
+  } else {
+    overall = 'created';
+  }
+
+  await db.collection("orders").doc(orderId).update({ status: overall });
+}
 
 ensureAtLeastOneRow();
 route();
