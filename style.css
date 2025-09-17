@@ -89,9 +89,9 @@ header {
 h2 { font-size: 24px; margin-bottom: 14px; color: var(--brand-dark); }
 
 /* =========================================================
-   🖋️ الحقول والأزرار (من دون تعميم على كل الأزرار)
+   🖋️ الحقول والأزرار
    ========================================================= */
-input, select {
+input, select, button {
   font-family: inherit;
   font-size: 16px;
   padding: 12px 16px;
@@ -107,70 +107,32 @@ input:focus, select:focus {
   border-color: var(--brand-light);
   box-shadow: 0 0 0 3px rgba(204,169,177,.3);
 }
-
-/* لا نطبّق أي ستايل عام على كل button — نخلي الأزرار المتعمدة فقط */
-.btn,
-.btn-primary,
-.btn-details,
-.toggle-items,
-.btn-strong {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  color: #111;
+button {
+  background: linear-gradient(180deg, var(--brand-light), var(--brand));
+  color: #fff;
+  border: 0;
+  font-weight: bold;
   cursor: pointer;
-  transition: background .2s ease, filter .2s ease, color .2s ease, border-color .2s ease;
+  transition: background .2s ease;
 }
-.btn:hover,
-.btn-details:hover,
-.toggle-items:hover { background: #f8fafc; }
-
-/* زر قوي (مثل دخول/إرسال) — أبيض افتراضياً ويصير خمري عند hover */
+button:hover {
+  background: linear-gradient(180deg, var(--brand), var(--brand-dark));
+}
 .btn-strong {
-  border-radius: 12px;
   font-weight: 800;
-  background: #fff;
-  color: var(--brand-dark);
-  border-color: #e2d3d9;
+  border-radius: 12px;
   position: relative;
   overflow: hidden;
 }
-.btn-strong:hover,
-.btn-strong:focus {
-  background: linear-gradient(180deg, var(--brand-light), var(--brand));
-  color: #fff;
-  border-color: #5a1524;
-}
 .btn-strong.loading::after {
   content: '';
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
   animation: shimmer 1.2s infinite;
 }
 @keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
 
-/* زر أساسي خمري جاهز عند الحاجة */
-.btn-primary {
-  background: #6c1d2c;
-  color: #fff;
-  border-color: #5a1724;
-}
-.btn-primary:hover { filter: brightness(.95); }
-
-/* أزرار المساعدة داخل حقول الدخول تبقى صغيرة وفاتحة */
-.input-clear, .pwd-toggle, .pwd-clear {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background: #f3f4f6;
-  color: #111;
-  font-size: 14px;
-}
 /* =========================================================
    🏷️ عناصر مساعدة ورسائل
    ========================================================= */
@@ -524,92 +486,3 @@ label { font-weight: 700; margin-top: 14px; display: block; }
 }
 #detailsModal .table-like thead th {
   background: #f8fafc
-
-/* =========================================================
-   🎯 فلاتر على شكل Chips
-   ========================================================= */
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 12px 0 20px;
-  align-items: center;
-  direction: rtl;                 /* نلزم الترتيب RTL */
-}
-
-/* مظهر الشيب */
-.filters .chip-input,
-.filters .chip-select {
-  background: #fff;
-  border: 1px solid #e2d3d9;
-  border-radius: 999px;           /* pill */
-  height: 40px;
-  padding: 0 14px;
-  font-size: 14px;
-  color: var(--ink);
-  min-width: 140px;
-  width: auto !important;         /* نتجاوز عرض 100% */
-  margin-top: 0 !important;       /* نلغي هامش الـ inputs العام */
-  transition: border .2s, box-shadow .2s;
-}
-.filters .chip-input:focus,
-.filters .chip-select:focus {
-  border-color: var(--brand-light);
-  box-shadow: 0 0 0 3px rgba(108,29,44,.15);
-}
-
-/* سهم select */
-.filters .chip-select {
-  appearance: none; -webkit-appearance: none; -moz-appearance: none;
-  padding-right: 2rem;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%236c1d2c' stroke-width='1.5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.8rem center;
-  background-size: .8rem;
-}
-.filters .chip-input::placeholder { color: var(--muted); }
-
-/* ترتيب العناصر: نضع البحث أقصى اليمين ثم الفرع ثم الحالة ثم المستخدم ثم الترتيب */
-#adminSearch, #mySearch        { order: -1; flex: 1 1 260px; min-width: 240px; }
-#adminFilterBranch             { order: 0; }
-#adminFilterStatus, #myFilterStatus { order: 1; }
-#adminFilterUser               { order: 2; }
-#adminSort, #mySort            { order: 3; }
-
-/* لو بتحب العكس بس غيّر أرقام order */
-
-/* =========================================================
-   ✨ أزرار الإضافة (صنف / رابط) بتصميم لطيف
-   ========================================================= */
-.add-fancy {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 20px;
-  margin: 12px 0 18px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--brand);
-  background: #fff;
-  border: 1px dashed var(--brand-light);
-  border-radius: 14px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.06);
-  cursor: pointer;
-  transition: all .25s ease;
-}
-.add-fancy::before {
-  content: "＋";
-  font-size: 18px;
-  line-height: 1;
-}
-.add-fancy:hover {
-  background: var(--brand-light);
-  color: #fff;
-  border-color: var(--brand);
-  box-shadow: 0 4px 10px rgba(108,29,44,0.25);
-  transform: translateY(-2px);
-}
-.add-fancy:active {
-  transform: scale(0.98);
-}
