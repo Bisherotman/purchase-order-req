@@ -110,110 +110,49 @@
     </section>
 
     <!-- MY ORDERS -->
-       <section id="view-admin" class="view">
+    <section id="view-my" class="view">
       <div class="card">
         <div class="row" style="justify-content:space-between">
-          <h2>طلباتي</h2>
-          <div class="helper" id="whoamiAdmin">—</div>
+          <h2>طلبــاتي</h2>
+          <div class="helper" id="whoamiMy">—</div>
         </div>
 
         <div class="filters">
-          <input id="adminSearch" class="chip-input" placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
-          <select id="adminFilterBranch" class="chip-select" title="الفرع">
-            <option value="">كل الفروع</option>
-            <option>Riyadh</option>
-            <option>Dammam</option>
-            <option>Jeddah</option>
-            <option>Makkah</option>
-            <option>Madina</option>
-            <option>HQ</option>
-          </select>
-          <select id="adminFilterStatus" class="chip-select" title="الحالة">
+          <input id="mySearch" class="chip-input" placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
+          <select id="myFilterStatus" class="chip-select" title="الحالة">
             <option value="">كل الحالات</option>
             <option value="created">جديد</option>
             <option value="ordered">تم الطلب من المصنع</option>
             <option value="shipped">تم الشحن</option>
             <option value="delivered">وصلت</option>
           </select>
-          <select id="adminFilterUser" class="chip-select" title="المستخدم">
-            <option value="">كل المستخدمين</option>
-          </select>
-          <select id="adminSort" class="chip-select" title="الترتيب">
+          <select id="mySort" class="chip-select" title="الترتيب">
             <option value="createdAt_desc">الأحدث أولاً</option>
             <option value="createdAt_asc">الأقدم أولاً</option>
           </select>
         </div>
 
-        <div id="adminTableWrap" class="card" style="padding:0">
+        <div id="myTableWrap" class="card" style="padding:0">
           <div class="table-wrap">
-            <table id="ordersTable">
+            <table>
               <thead>
                 <tr>
-                  <th>رقم</th>
-                  <th>التاريخ</th>
+                  <th>التتبّع</th>
+                  <th>الصنف</th>
+                  <th>الكمية</th>
+                  <th>السعر</th>
                   <th>المشروع</th>
-                  <th>المستخدم</th>
                   <th>الحالة</th>
-                  <th>المبلغ</th>
+                  <th>التاريخ</th>
                   <th>تفاصيل</th>
                 </tr>
               </thead>
-              <tbody id="adminOrdersBody"></tbody>
+              <tbody id="myOrdersBody"></tbody>
             </table>
           </div>
         </div>
       </div>
     </section>
-  </main>
-
-  <footer style="text-align:center; padding:12px; font-size:13px; color:#999">
-    &copy; 2025 شركة بيت الإباء – جميع الحقوق محفوظة
-  </footer>
-
-  <!-- مودال تفاصيل الطلب (للأدمِن) -->
-  <div id="orderModal" class="modal" hidden>
-    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
-      <header class="modal__header">
-        <h3 id="orderModalTitle">تفاصيل الطلب</h3>
-        <button class="modal__close" aria-label="إغلاق">×</button>
-      </header>
-      <div class="modal__body">
-        <div class="meta">
-          <div><strong>رقم الطلب:</strong> <span id="m_id"></span></div>
-          <div><strong>التاريخ:</strong> <span id="m_date"></span></div>
-          <div><strong>المشروع:</strong> <span id="m_project"></span></div>
-          <div><strong>المستخدم:</strong> <span id="m_user"></span></div>
-          <div><strong>الحالة:</strong> <span id="m_status"></span></div>
-          <div><strong>المبلغ:</strong> <span id="m_total"></span></div>
-        </div>
-        <h4>الأصناف</h4>
-        <div id="m_items" class="items"></div>
-      </div>
-      <footer class="modal__footer">
-        <button class="btn" data-action="print">طباعة</button>
-        <button class="btn btn-primary modal__close">إغلاق</button>
-      </footer>
-    </div>
-  </div>
-
-  <!-- تفاصيل/طباعة لطلباتي (المودال القديم) -->
-  <div id="detailsModal" class="modal" aria-hidden="true">
-    <div class="backdrop"></div>
-    <div class="modal-card printable">
-      <div class="modal-header">
-        <div class="inv-brand">
-          <img src="img/pagelogo.png" alt="logo">
-          <div class="inv-title">نموذج طلب شراء</div>
-        </div>
-        <div style="display:flex; gap:8px">
-          <button class="btn-strong" id="printDetailsBtn" style="padding:8px 12px;border-radius:10px">طباعة</button>
-          <button class="close-x" id="closeDetails">✕</button>
-        </div>
-      </div>
-      <div id="detailsBody" class="t-small"></div>
-    </div>
-  </div>
-
 
     <!-- ADMIN -->
     <section id="view-admin" class="view">
