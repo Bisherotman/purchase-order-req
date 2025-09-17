@@ -599,8 +599,7 @@ const totalPrice = (Array.isArray(r.items) ? r.items.reduce((s,x)=>s + (x.price 
 document.getElementById('m_total').textContent  = totalPrice;
   // مصفوفة لتجميع التغييرات مؤقتاً
   let pendingChanges = [];
-  const confirmBtn = document.getElementById('confirmAdminChanges');
-confirmBtn.style.display = 'none'; // إخفاء عند الفتح
+  confirmBtn.style.display = 'none'; // إخفاء عند الفتح
 
   // تعبئة البيانات كما هي
   // ... (نفس الكود السابق لعرض البيانات)
