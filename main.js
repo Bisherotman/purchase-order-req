@@ -64,6 +64,15 @@ const loginForm = $("#loginForm"),
       loginMsg  = $("#loginMsg"),
       loginBtn  = $("#loginBtn");
 const whoami = $("#whoami"), whoamiMy = $("#whoamiMy"), whoamiAdmin = $("#whoamiAdmin");
+// عناصر صفحة "طلبــاتي"
+const myBody         = document.getElementById('myOrdersBody');
+const mySearch       = document.getElementById('mySearch');
+const mySort         = document.getElementById('mySort');
+const myFilterStatus = document.getElementById('myFilterStatus');
+
+// عناصر صفحة "إدارة الطلبات"
+const adminBody = document.getElementById('adminOrdersBody');
+
 let currentUser = null, userProfile = null, canSeeAdmin = false;
 
 const rememberCk = $("#rememberEmail");
@@ -518,11 +527,26 @@ function loadAdminOrders() {
       adminRows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       // إن كانت عندك دالة لعرض جدول الإدارة استدعها هنا:
       // renderAdmin(adminRows);
-      console.log("Admin orders:", adminRows);
+      renderAdmin(adminRows);
     }, (err) => {
       console.error("loadAdminOrders error:", err);
       showMsg(newMsg, "تعذّر تحميل طلبات الإدارة. حاول لاحقاً.", "error");
     });
+}
+function renderAdmin(rows){
+  adminBody.innerHTML = rows.map(r=>{
+    const total = r.items?.reduce((sum,x)=>sum+(x.price||0),0) || "";
+    return `
+      <tr data-tracking="${r.tracking}">
+        <td>${r.tracking}</td>
+        <td>${fmtDate(r.createdAt)}</td>
+        <td>${r.projectName || "-"}</td>
+        <td>${displayNameOrEmail({email:r.createdByEmail||""}, {})}</td>
+        <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
+        <td>${typeof total==="number" ? total.toFixed(2) : total}</td>
+        <td><button type="button" class="btn-details btn-sm" data-id="${r.tracking}">🗂️</button></td>
+      </tr>`;
+  }).join("");
 }
 
 
