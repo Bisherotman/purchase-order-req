@@ -683,3 +683,38 @@ label{ font-weight:700; margin-top:14px; display:block; }
   }
 }
 
+/* ====== أزرار تذييل مودال الإدارة ====== */
+.modal-footer-flex {
+  display: flex;
+  justify-content: space-between; /* الطباعة يمين – التأكيد والإغلاق يسار */
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-footer-flex .left-buttons,
+.modal-footer-flex .right-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* توحيد شكل جميع الأزرار */
+.modal-footer-flex .btn,
+#confirmAdminChanges,
+.modal__close,
+[data-action="print"] {
+  background: #6c1d2c;
+  color: #fff;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+.modal-footer-flex .btn:hover,
+#confirmAdminChanges:hover,
+.modal__close:hover,
+[data-action="print"]:hover {
+  background: #8b2438;
+}
