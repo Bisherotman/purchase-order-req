@@ -89,62 +89,88 @@ header {
 h2 { font-size: 24px; margin-bottom: 14px; color: var(--brand-dark); }
 
 /* =========================================================
-   🖋️ الحقول والأزرار  (مع استثناء فلاتر الشيبس)
+   🖋️ الحقول والأزرار (من دون تعميم على كل الأزرار)
    ========================================================= */
-input:not(.chip-input),
-select:not(.chip-select),
-button:not(.chip-btn) {
+input, select {
   font-family: inherit;
   font-size: 16px;
   padding: 12px 16px;
   border: 1px solid #e2d3d9;
-  border-radius: 12px;       /* يبقى 12px لكل الحقول العادية */
+  border-radius: 12px;
   width: 100%;
   margin-top: 10px;
   background: #fff;
   color: #111;
 }
-
-input:not(.chip-input):focus,
-select:not(.chip-select):focus {
+input:focus, select:focus {
   outline: 0;
   border-color: var(--brand-light);
   box-shadow: 0 0 0 3px rgba(204,169,177,.3);
 }
 
-button:not(.chip-btn) {
-  background: linear-gradient(180deg, var(--brand-light), var(--brand));
-  color: #fff;
-  border: 0;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background .2s ease;
-}
-
-button:not(.chip-btn):hover {
-  background: linear-gradient(180deg, var(--brand), var(--brand-dark));
-}
-
-/* أزرار قوية */
+/* لا نطبّق أي ستايل عام على كل button — نخلي الأزرار المتعمدة فقط */
+.btn,
+.btn-primary,
+.btn-details,
+.toggle-items,
 .btn-strong {
-  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+  transition: background .2s ease, filter .2s ease, color .2s ease, border-color .2s ease;
+}
+.btn:hover,
+.btn-details:hover,
+.toggle-items:hover { background: #f8fafc; }
+
+/* زر قوي (مثل دخول/إرسال) — أبيض افتراضياً ويصير خمري عند hover */
+.btn-strong {
   border-radius: 12px;
+  font-weight: 800;
+  background: #fff;
+  color: var(--brand-dark);
+  border-color: #e2d3d9;
   position: relative;
   overflow: hidden;
 }
+.btn-strong:hover,
+.btn-strong:focus {
+  background: linear-gradient(180deg, var(--brand-light), var(--brand));
+  color: #fff;
+  border-color: #5a1524;
+}
 .btn-strong.loading::after {
   content: '';
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
   animation: shimmer 1.2s infinite;
 }
+@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
 
-@keyframes shimmer {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(100%);  }
+/* زر أساسي خمري جاهز عند الحاجة */
+.btn-primary {
+  background: #6c1d2c;
+  color: #fff;
+  border-color: #5a1724;
 }
+.btn-primary:hover { filter: brightness(.95); }
 
+/* أزرار المساعدة داخل حقول الدخول تبقى صغيرة وفاتحة */
+.input-clear, .pwd-toggle, .pwd-clear {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  color: #111;
+  font-size: 14px;
+}
 /* =========================================================
    🏷️ عناصر مساعدة ورسائل
    ========================================================= */
