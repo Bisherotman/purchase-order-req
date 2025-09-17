@@ -504,5 +504,27 @@ function subscribeMyOrders() {
     });
 }
 
+// 🟢 جلب كل الطلبات لصفحة الإدارة
+let adminUnsub = null;
+let adminRows  = [];
+
+function loadAdminOrders() {
+  if (adminUnsub) { adminUnsub(); adminUnsub = null; }
+  if (!currentUser || !canSeeAdmin) return;
+
+  adminUnsub = db.collection("orders")
+    .orderBy("createdAt", "desc")
+    .onSnapshot((snap) => {
+      adminRows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // إن كانت عندك دالة لعرض جدول الإدارة استدعها هنا:
+      // renderAdmin(adminRows);
+      console.log("Admin orders:", adminRows);
+    }, (err) => {
+      console.error("loadAdminOrders error:", err);
+      showMsg(newMsg, "تعذّر تحميل طلبات الإدارة. حاول لاحقاً.", "error");
+    });
+}
+
+
 ensureAtLeastOneRow();
 route();
