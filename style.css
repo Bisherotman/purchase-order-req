@@ -625,35 +625,61 @@ label{ font-weight:700; margin-top:14px; display:block; }
   border-radius:8px;
 }
 
-/* تنسيق أفضل لصفحة الطباعة */
+/* طباعة مودال الإدارة + مودال التفاصيل */
 @media print {
-  body * { visibility: hidden; }
-  #detailsModal, #detailsModal * { visibility: visible; }
-  #detailsModal {
+  /* إخفاء كل شيء خارج المودالين */
+  body * {
+    visibility: hidden;
+  }
+
+  /* إظهار محتوى مودال الإدارة ومودال التفاصيل */
+  #detailsModal, #detailsModal *,
+  #orderModal,  #orderModal  * {
+    visibility: visible;
+  }
+
+  /* تنسيق مساحة الطباعة لكلا المودالين */
+  #detailsModal, #orderModal {
     position: absolute;
     inset: 0;
     margin: 0;
     padding: 20px;
     background: #fff;
+    width: 100%;
+    max-width: 100%;
   }
-  #detailsModal .modal-card {
+
+  /* شكل البطاقة الداخلية */
+  #detailsModal .modal-card,
+  #orderModal  .modal-card {
     box-shadow: none;
     border: none;
     width: 100%;
     max-width: 100%;
   }
-  #detailsModal .modal-header {
+
+  /* ترويسة المودال */
+  #detailsModal .modal-header,
+  #orderModal  .modal-header {
     border-bottom: 2px solid #6c1d2c;
     padding-bottom: 12px;
     margin-bottom: 20px;
   }
+
+  /* تنسيق الجدول */
   #detailsModal .table-like th,
-  #detailsModal .table-like td {
+  #detailsModal .table-like td,
+  #orderModal  .table-like th,
+  #orderModal  .table-like td {
     border: 1px solid #ccc;
     padding: 8px 12px;
   }
-  #detailsModal .inv-title {
+
+  /* عنوان الفاتورة أو العنوان الرئيسي */
+  #detailsModal .inv-title,
+  #orderModal  .inv-title {
     font-size: 22px;
     color: #6c1d2c;
   }
 }
+
