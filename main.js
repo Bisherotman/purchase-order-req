@@ -198,6 +198,7 @@ addLinkBtn.onclick = () => {
 
 const newMsg         = $("#newMsg");
 const submitOrderBtn = $("#submitOrder");
+// زر الإرسال – مستمع وحيد
 submitOrderBtn.addEventListener("click", async () => {
   hideMsg(newMsg);
 
@@ -244,18 +245,15 @@ submitOrderBtn.addEventListener("click", async () => {
     quantity:     Number(r.querySelector(".it-qty").value),
     price:        Number(r.querySelector(".it-price").value),
     shippingType: r.querySelector(".it-ship")?.value || "",
-    status:       r.querySelector(".it-status")?.value || "created",
-    deliveredQty: Number(r.querySelector(".it-delivered")?.value || 0)
-  })).filter(x =>
-    x.itemCode && x.shippingType &&
-    Number.isFinite(x.quantity) && x.quantity > 0 &&
-    Number.isFinite(x.price) && x.price >= 0
-  );
+    status:       "created",
+    deliveredQty: 0
+  }));
 
   if (items.length === 0) {
     showMsg(newMsg, "أضف صنفًا واحدًا على الأقل بشكل صحيح.", "error");
     return;
   }
+
   if (linksWrap.children.length > 3) {
     showMsg(newMsg, "مسموح بثلاث مرفقات كحد أقصى.", "error");
     return;
@@ -267,7 +265,7 @@ submitOrderBtn.addEventListener("click", async () => {
     return url ? { name, url } : null;
   }).filter(Boolean);
 
-  submitOrderBtn.addEventListener("click", async () => {
+  // 🔥 تنفيذ العملية
   submitOrderBtn.classList.add("loading");
   submitOrderBtn.disabled = true;
 
@@ -275,8 +273,6 @@ submitOrderBtn.addEventListener("click", async () => {
     const branch = userProfile.branch;
     const code   = branchCodes[branch] || "UNK";
     const counterRef = db.collection("counters").doc(branch);
-
-    // احصل على رقم التسلسل الجديد
     const seq = await db.runTransaction(async (tx) => {
       const s = await tx.get(counterRef);
       let next = 1;
@@ -284,10 +280,8 @@ submitOrderBtn.addEventListener("click", async () => {
       tx.set(counterRef, { next: next + 1 }, { merge: true });
       return next;
     });
-
     const tracking = code + pad5(seq);
 
-    // إنشاء المستند في مجموعة الطلبات
     await db.collection("orders").doc(tracking).set({
       tracking,
       branch,
@@ -301,7 +295,7 @@ submitOrderBtn.addEventListener("click", async () => {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    // إعادة ضبط الواجهة
+    // إعادة الضبط
     showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
     $("#projectName").value  = "";
     $("#customerName").value = "";
@@ -310,7 +304,6 @@ submitOrderBtn.addEventListener("click", async () => {
     linksWrap.innerHTML      = "";
     addLinkBtn.disabled      = false;
 
-    // تحديث الجداول
     subscribeMyOrders();
     if (canSeeAdmin) loadAdminOrders();
 
