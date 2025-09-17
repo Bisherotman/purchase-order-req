@@ -560,6 +560,8 @@ label{ font-weight:700; margin-top:14px; display:block; }
 .s-ordered   { background:#fff7ed; border-color:#fed7aa; }
 .s-shipped   { background:#fef3c7; border-color:#fde68a; }
 .s-delivered { background:#ecfdf5; border-color:#a7f3d0; }
+.s-partial  { background:#fef3c7; border-color:#fde68a; }
+
 
 /* =========================================================
    🔍 فلاتر صغيرة
