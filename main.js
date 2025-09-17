@@ -292,17 +292,18 @@ submitOrderBtn.addEventListener("click", async () => {
     const tracking = code + pad5(seq);
 
     await db.collection("orders").doc(tracking).set({
-      tracking,
-      branch,
-      projectName,
-      customerName,
-      items,
-      attachments,
-      createdBy: currentUser.uid,
-      createdByEmail: currentUser.email || "",
-      status: "created",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+  tracking,
+  branch,
+  projectName,
+  customerName,
+  items,
+  attachments,
+  createdBy: currentUser.uid,
+  createdByEmail: currentUser.email || "",
+  status: "created",
+  createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true });
+
 
     // إعادة الضبط
     showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
