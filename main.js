@@ -480,5 +480,29 @@ async function openDetails(tracking) {
 /***************************************************
  * 🚀 تشغيل أولي
  ***************************************************/
+// 🟢 جلب طلبات المستخدم (تحديث مباشر)
+let myUnsub = null;
+let myRows  = [];   // مصفوفة الطلبات الخاصة بالمستخدم
+
+function subscribeMyOrders() {
+  // إذا كان هناك اشتراك قديم، نفصله
+  if (myUnsub) { myUnsub(); myUnsub = null; }
+
+  // نتأكد أن المستخدم مسجّل دخول
+  if (!currentUser) return;
+
+  // الاشتراك في أوامر المستخدم الحالي
+  myUnsub = db.collection("orders")
+    .where("createdBy", "==", currentUser.uid)
+    .orderBy("createdAt", "desc")
+    .onSnapshot((snap) => {
+      myRows = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderMy(myRows);   // موجودة مسبقاً – ترسم جدول "طلبــاتي"
+    }, (err) => {
+      console.error("subscribeMyOrders error:", err);
+      showMsg(newMsg, "تعذّر تحميل الطلبات. حاول لاحقاً.", "error");
+    });
+}
+
 ensureAtLeastOneRow();
 route();
