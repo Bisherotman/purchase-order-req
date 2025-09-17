@@ -526,47 +526,54 @@ label { font-weight: 700; margin-top: 14px; display: block; }
   background: #f8fafc
 
 /* =========================================================
-   🎯 فلترة (Filters) على شكل Chips مثل لوحة الإدارة
+   🎯 فلاتر على شكل Chips
    ========================================================= */
 .filters {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin: 12px 0 20px;
+  align-items: center;
+  direction: rtl;                 /* نلزم الترتيب RTL */
 }
 
+/* مظهر الشيب */
 .filters .chip-input,
 .filters .chip-select {
   background: #fff;
   border: 1px solid #e2d3d9;
-  border-radius: 999px;       /* مظهر pill */
-  padding: 8px 16px;
+  border-radius: 999px;           /* pill */
+  height: 40px;
+  padding: 0 14px;
   font-size: 14px;
   color: var(--ink);
   min-width: 140px;
-  width: auto !important;     /* ✅ تجاوز width:100% */
-  margin-top: 0 !important;   /* ✅ إزالة مسافة العشرة بكسل */
+  width: auto !important;         /* نتجاوز عرض 100% */
+  margin-top: 0 !important;       /* نلغي هامش الـ inputs العام */
   transition: border .2s, box-shadow .2s;
 }
-
 .filters .chip-input:focus,
 .filters .chip-select:focus {
   border-color: var(--brand-light);
-  box-shadow: 0 0 0 3px rgba(108, 29, 44, 0.15);
+  box-shadow: 0 0 0 3px rgba(108,29,44,.15);
 }
 
+/* سهم select */
 .filters .chip-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
   padding-right: 2rem;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%236c1d2c' stroke-width='1.5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.8rem center;
   background-size: .8rem;
 }
+.filters .chip-input::placeholder { color: var(--muted); }
 
-.filters .chip-input::placeholder {
-  color: var(--muted);
-}
+/* ترتيب العناصر: نضع البحث أقصى اليمين ثم الفرع ثم الحالة ثم المستخدم ثم الترتيب */
+#adminSearch, #mySearch        { order: -1; flex: 1 1 260px; min-width: 240px; }
+#adminFilterBranch             { order: 0; }
+#adminFilterStatus, #myFilterStatus { order: 1; }
+#adminFilterUser               { order: 2; }
+#adminSort, #mySort            { order: 3; }
 
+/* لو بتحب العكس بس غيّر أرقام order */
