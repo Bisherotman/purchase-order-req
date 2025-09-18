@@ -574,14 +574,6 @@ async function updateOrderStatus(orderId){
   await db.collection("orders").doc(orderId).update({ status: overall });
 }
 
-// 🔵 فتح مودال إدارة الطلبات مع إمكانية تعديل حالة كل صنف
-document.addEventListener('click', async e=>{
-  const btn = e.target.closest('[data-admin]');
-  if (!btn) return;
-  e.preventDefault();
-  openAdminModal(btn.dataset.admin);
-});
-
 // =======================
 // 🟢 مودال إدارة الطلبات
 // =======================
@@ -705,3 +697,11 @@ document.addEventListener('click', (e) => {
 
 ensureAtLeastOneRow();
 route();
+
+// 🔵 فتح مودال إدارة الطلبات مع إمكانية تعديل حالة كل صنف
+document.addEventListener('click', async e=>{
+  const btn = e.target.closest('[data-admin]');
+  if (!btn) return;
+  e.preventDefault();
+  openAdminModal(btn.dataset.admin);
+});
