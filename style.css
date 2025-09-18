@@ -977,3 +977,11 @@ label{ font-weight:700; margin-top:14px; display:block; }
 #orderModal .order-details > .modal__close:hover {
   color: #a73a3a;
 }
+
+/* إجبار زر الإغلاق على الالتصاق باليسار داخل المربع الأبيض */
+#orderModal .order-details > .modal__close {
+  position: absolute !important;
+  top: 8px !important;
+  left: 8px !important;     /* ← استعمل !important هنا لتفوق القاعدة العامة */
+  right: auto !important;   /* ← إلغاء أي right موروث */
+}
