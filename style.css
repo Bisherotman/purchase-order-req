@@ -953,3 +953,27 @@ label{ font-weight:700; margin-top:14px; display:block; }
 #orderModal .modal__header .modal__close:hover {
   color: #a73a3a;
 }
+
+/* زر الإغلاق في زاوية المربع الأبيض */
+#orderModal .order-details {
+  position: relative; /* مرجع تموضع للزر */
+}
+
+#orderModal .order-details > .modal__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;     /* أو left:8px لو تريده يسار */
+  width: auto;
+  height: auto;
+  font-size: 1.4rem;
+  color: #6c1d2c;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color .2s;
+}
+#orderModal .order-details > .modal__close:hover {
+  color: #a73a3a;
+}
