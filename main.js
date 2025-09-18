@@ -611,12 +611,17 @@ async function openAdminModal(tracking) {
             <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
             <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
           </select>
-          <button type="button" class="btn-edit-note" data-index="${idx}"
-                  style="display:${['shipped','partial'].includes(it.status)?'inline-block':'none'}"
-                  title="تعديل">✏️</button>
-          <input type="text" class="manual-status" data-index="${idx}"
-                 style="display:none;width:100px;margin-top:4px;"
-                 placeholder="رقم جزئي" value="${it.note || ''}">
+          <button type="button" class="btn-edit-note" data-index="${idx}" title="تعديل">✏️</button>
+  <select class="item-status" data-index="${idx}" style="width:140px; display:none;">
+    <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
+    <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
+    <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
+    <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
+    <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
+  </select>
+  <input type="text" class="manual-status" data-index="${idx}"
+         style="display:none;width:100px;margin-top:4px;"
+         placeholder="رقم جزئي" value="${it.note || ''}">
         </div>
       </td>
     </tr>
@@ -662,20 +667,29 @@ async function openAdminModal(tracking) {
 
   // زر ✏️ لإظهار/إخفاء حقل الملاحظة
   document.querySelectorAll('.btn-edit-note').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const idx = e.target.dataset.index;
-      const input = document.querySelector(`.manual-status[data-index="${idx}"]`);
-      if (!input) return;
-      input.style.display = input.style.display === 'none' ? 'inline-block' : 'none';
-      if (confirmBtn) confirmBtn.style.display = 'inline-block';
+  btn.addEventListener('click', e => {
+    const idx = e.target.dataset.index;
+    const select = document.querySelector(`.item-status[data-index="${idx}"]`);
+    const input  = document.querySelector(`.manual-status[data-index="${idx}"]`);
 
+    // أخفِ زر ✏️
+    btn.style.display = 'none';
+
+    // أظهر القائمة وخانة الرقم
+    if (select) select.style.display = 'inline-block';
+    if (input)  input.style.display  = 'inline-block';
+
+    if (confirmBtn) confirmBtn.style.display = 'inline-block';
+
+    // سجل التغييرات
+    if (input) {
       input.addEventListener('input', e => {
         pendingChanges.push({ idx, field: 'note', value: e.target.value });
         if (confirmBtn) confirmBtn.style.display = 'inline-block';
       });
-    });
+    }
   });
-
+});
   // زر تأكيد التعديلات
   if (confirmBtn) {
     confirmBtn.onclick = async () => {
