@@ -437,8 +437,14 @@ async function openDetails(tracking) {
         <tr>
           <td>${i + 1}</td>
           <td>${it.itemCode || '-'}</td>
-          <td>${it.quantity ?? '-'}</td>
-          <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+          <td>${typeof it.quantity === 'number'
+       ? it.quantity.toLocaleString('en-US')
+       : (it.quantity || '-')
+   }</td>
+          <td>${typeof it.price === 'number'
+       ? it.price.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+       : (it.price || '-')
+   }</td>
           <td>${it.shippingType || '-'}</td>
         </tr>`).join('')
       : `<tr><td colspan="5" class="muted">لا توجد أصناف</td></tr>`;
@@ -591,7 +597,20 @@ async function openAdminModal(tracking) {
   document.getElementById('m_id').textContent      = order.tracking || '-';
   document.getElementById('m_date').textContent    = fmtDate(order.createdAt, {withTime:true}) || '-';
   document.getElementById('m_project').textContent = order.projectName || '-';
-  document.getElementById('m_user').textContent    = order.createdByEmail || '-';
+  let userName = '-';
+if (order.createdBy) {
+  try {
+    const userSnap = await db.collection('users').doc(order.createdBy).get();
+    if (userSnap.exists) {
+      const udata = userSnap.data();
+      userName = udata.name || order.createdByEmail || '-';
+    }
+  } catch (err) {
+    console.error('Error fetching user name:', err);
+    userName = order.createdByEmail || '-'; // احتياط
+  }
+}
+  document.getElementById('m_user').textContent = userName;
   document.getElementById('m_status').textContent  = statusLabel(order.status);
   const total = (order.items || []).reduce((sum,x)=> sum + (Number(x.price)||0), 0);
   document.getElementById('m_total').textContent   = total.toFixed(2);
@@ -602,8 +621,14 @@ async function openAdminModal(tracking) {
   <tr>
     <td>${idx + 1}</td>
     <td>${it.itemCode || '-'}</td>
-    <td>${it.quantity || '-'}</td>
-    <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+    <td>${typeof it.quantity === 'number'
+       ? it.quantity.toLocaleString('en-US')
+       : (it.quantity || '-')
+   }</td>
+    <td>${typeof it.price === 'number'
+       ? it.price.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+       : (it.price || '-')
+   }</td>
     <td>${it.shippingType || '-'}</td>
     <td>
       <div style="display:flex; align-items:center; gap:6px;">
