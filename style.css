@@ -926,3 +926,30 @@ label{ font-weight:700; margin-top:14px; display:block; }
   padding: 4px 8px;
 }
 
+/* زر × داخل الهيدر الأبيض على الجهة اليسرى مع RTL */
+#orderModal .modal__header {
+  position: relative;
+  display: flex;
+  justify-content: center; /* يبقى العنوان في الوسط */
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 0 1rem 0.5rem;
+}
+
+#orderModal .modal__header .modal__close {
+  position: absolute;
+  top: 0;
+  left: 0;          /* 👈 بدل right إلى left */
+  width: auto;
+  height: auto;
+  font-size: 1.4rem;
+  color: #6c1d2c;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+}
+#orderModal .modal__header .modal__close:hover {
+  color: #a73a3a;
+}
