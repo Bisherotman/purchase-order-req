@@ -416,21 +416,29 @@ document.addEventListener('click', async e=>{
 })();
 
 async function openDetails(tracking) {
- try {
-    let r =
-      (Array.isArray(myRows) && myRows.find(x => x.tracking === tracking)) ||
-      (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
+  try {
+    // 🔑 دائماً اجلب المستند الكامل أولاً
+    const doc = await db.collection('orders').doc(tracking).get();
+    let r = null;
 
-    // ✅ إضافة هذا الشرط:
-    if (!r || !Array.isArray(r.items)) {
-      const doc = await db.collection('orders').doc(tracking).get();
-      if (doc.exists) r = { id: doc.id, ...doc.data() };
+    if (doc.exists) {
+      r = { id: doc.id, ...doc.data() };
+    } else {
+      // احتياط: لو ما وجد المستند، جرّب من المصفوفات الحالية
+      r =
+        (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
+        (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
     }
 
     if (!r) {
-      alert('تعذر إيجاد تفاصيل هذا الطلب.');
+      alert('تعذّر إيجاد تفاصيل هذا الطلب.');
       return;
     }
+
+    // ✍️ بعد هذا أكمل بناء الـHTML كما هو عندك
+    const body  = document.getElementById('detailsBody');
+    // ... بقية القالب الحالي بدون تغيير
+
 
     const items = r.items || [];
     const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
