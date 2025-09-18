@@ -649,7 +649,7 @@ function exportCurrentOrderToCSV() {
     ].join(',') + '\n';
   });
 
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
   link.download = `order-${order.tracking}.csv`;
