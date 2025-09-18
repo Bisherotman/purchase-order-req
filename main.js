@@ -585,37 +585,77 @@ async function updateOrderStatus(orderId){
 // =======================
 
 // 🔧 تحديث الطلب كاملاً أو جزئياً
+// 🔧 تحديث الطلب كاملاً أو جزئياً
 async function updateOrderInDB(tracking, data) {
   return db.collection("orders").doc(tracking).update(data);
 }
+
 /* دالة فتح مودال إدارة الطلبات مع التعديل */
 async function openAdminModal(tracking) {
   const order = adminRows.find(row => row.tracking === tracking);
   if (!order) return;
 
+  // حفظ الطلب الحالي لاستخدامه في التصدير
+  window.currentAdminOrder = order;
+
   // تعبئة معلومات رأس المودال
   document.getElementById('m_id').textContent      = order.tracking || '-';
   document.getElementById('m_date').textContent    = fmtDate(order.createdAt, {withTime:true}) || '-';
   document.getElementById('m_project').textContent = order.projectName || '-';
+
   let userName = '-';
-if (order.createdBy) {
-  try {
-    const userSnap = await db.collection('users').doc(order.createdBy).get();
-    if (userSnap.exists) {
-      const udata = userSnap.data();
-      userName = udata.name || order.createdByEmail || '-';
+  if (order.createdBy) {
+    try {
+      const userSnap = await db.collection('users').doc(order.createdBy).get();
+      if (userSnap.exists) {
+        const udata = userSnap.data();
+        userName = udata.name || order.createdByEmail || '-';
+      }
+    } catch (err) {
+      console.error('Error fetching user name:', err);
+      userName = order.createdByEmail || '-';
     }
-  } catch (err) {
-    console.error('Error fetching user name:', err);
-    userName = order.createdByEmail || '-'; // احتياط
   }
-}
   document.getElementById('m_user').textContent = userName;
   document.getElementById('m_status').textContent  = statusLabel(order.status);
+
   const total = (order.items || []).reduce((sum,x)=> sum + (Number(x.price)||0), 0);
   document.getElementById('m_total').textContent =
     total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
+// 🟢 ضع هذا المستمع خارج الدالة
+document.addEventListener('click', e => {
+  if (e.target.id === 'exportExcel') {
+    exportCurrentOrderToCSV();
+  }
+});
+
+// 🟢 ودالة التصدير كما هي
+function exportCurrentOrderToCSV() {
+  if (!window.currentAdminOrder) return;
+
+  const order = window.currentAdminOrder;
+  const rows = order.items || [];
+  let csv = 'كود الصنف,الكمية,السعر,الشحن,الحالة,الرقم الجزئي\n';
+
+  rows.forEach(it => {
+    csv += [
+      it.itemCode,
+      it.quantity,
+      it.price,
+      it.shippingType,
+      it.status,
+      it.note || ''
+    ].join(',') + '\n';
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `order-${order.tracking}.csv`;
+  link.click();
+}
   // إنشاء صفوف جدول الأصناف
   const { items = [] } = order;
   const rowsHtml = items.map((it, idx) => `
