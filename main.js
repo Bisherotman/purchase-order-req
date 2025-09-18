@@ -596,36 +596,29 @@ async function openAdminModal(tracking) {
   // إنشاء صفوف جدول الأصناف
   const { items = [] } = order;
   const rowsHtml = items.map((it, idx) => `
-    <tr>
-      <td>${idx + 1}</td>
-      <td>${it.itemCode || '-'}</td>
-      <td>${it.quantity || '-'}</td>
-      <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
-      <td>${it.shippingType || '-'}</td>
-      <td>
-        <div style="display:flex; align-items:center; gap:6px;">
-          <select class="item-status" data-index="${idx}" style="width:140px">
-            <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
-            <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
-            <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
-            <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
-            <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
-          </select>
-          <button type="button" class="btn-edit-note" data-index="${idx}" title="تعديل">✏️</button>
-  <select class="item-status" data-index="${idx}" style="width:140px; display:none;">
-    <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
-    <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
-    <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
-    <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
-    <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
-  </select>
-  <input type="text" class="manual-status" data-index="${idx}"
-         style="display:none;width:100px;margin-top:4px;"
-         placeholder="رقم جزئي" value="${it.note || ''}">
-        </div>
-      </td>
-    </tr>
-  `).join('');
+  <tr>
+    <td>${idx + 1}</td>
+    <td>${it.itemCode || '-'}</td>
+    <td>${it.quantity || '-'}</td>
+    <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+    <td>${it.shippingType || '-'}</td>
+    <td>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <select class="item-status" data-index="${idx}" style="width:140px" disabled>
+          <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
+          <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
+          <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
+          <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
+          <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
+        </select>
+        <button type="button" class="btn-edit-note" data-index="${idx}" title="تعديل">✏️</button>
+        <input type="text" class="manual-status" data-index="${idx}"
+               style="display:none;width:100px;margin-top:4px;"
+               placeholder="رقم جزئي" value="${it.note || ''}">
+      </div>
+    </td>
+  </tr>
+`).join('');
 
   const tbody = document.getElementById('m_items');
   tbody.innerHTML = rowsHtml;
@@ -666,22 +659,24 @@ async function openAdminModal(tracking) {
   });
 
   // زر ✏️ لإظهار/إخفاء حقل الملاحظة
-  document.querySelectorAll('.btn-edit-note').forEach(btn => {
+ document.querySelectorAll('.btn-edit-note').forEach(btn => {
   btn.addEventListener('click', e => {
-    const idx = e.target.dataset.index;
+    const idx    = e.target.dataset.index;
     const select = document.querySelector(`.item-status[data-index="${idx}"]`);
     const input  = document.querySelector(`.manual-status[data-index="${idx}"]`);
 
-    // أخفِ زر ✏️
-    btn.style.display = 'none';
+    // فك القفل عن القائمة
+    if (select) select.disabled = false;
 
-    // أظهر القائمة وخانة الرقم
-    if (select) select.style.display = 'inline-block';
-    if (input)  input.style.display  = 'inline-block';
+    // أظهر حقل الرقم (اختياري)
+    if (input)  input.style.display = 'inline-block';
+
+    // إخفاء زر ✏️ بعد النقر (اختياري إذا لا تريد ضغطه مرتين)
+    btn.style.display = 'none';
 
     if (confirmBtn) confirmBtn.style.display = 'inline-block';
 
-    // سجل التغييرات
+    // تسجيل التغييرات
     if (input) {
       input.addEventListener('input', e => {
         pendingChanges.push({ idx, field: 'note', value: e.target.value });
@@ -690,6 +685,7 @@ async function openAdminModal(tracking) {
     }
   });
 });
+  
   // زر تأكيد التعديلات
   if (confirmBtn) {
     confirmBtn.onclick = async () => {
