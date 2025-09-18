@@ -688,3 +688,107 @@ document.addEventListener('click', async e => {
 // تشغيل أولي
 ensureAtLeastOneRow();
 route();
+
+// ...existing code...
+
+// فتح مودال تفاصيل الطلب (يعمل مع التصميم الحالي)
+async function openDetails(tracking) {
+  try {
+    const snap = await db.collection('orders').doc(tracking).get();
+    let r = null;
+    if (snap.exists) {
+      r = { id: snap.id, ...snap.data() };
+    } else {
+      r =
+        (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
+        (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
+    }
+    if (!r) {
+      alert('تعذّر إيجاد تفاصيل هذا الطلب.');
+      return;
+    }
+    const items       = Array.isArray(r.items)       ? r.items       : [];
+    const attachments = Array.isArray(r.attachments) ? r.attachments : [];
+    const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
+    const createdAtStr = fmtDate(r.createdAt, { withTime: true });
+    const rowsHtml = items.length
+      ? items.map((it, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${it.itemCode || '-'}</td>
+          <td>${typeof it.quantity === 'number'
+       ? it.quantity.toLocaleString('en-US')
+       : (it.quantity || '-')
+   }</td>
+          <td>${typeof it.price === 'number'
+       ? it.price.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+       : (it.price || '-')
+   }</td>
+          <td>${it.shippingType || '-'}</td>
+        </tr>`).join('')
+      : `<tr><td colspan="5" class="muted">لا توجد أصناف</td></tr>`;
+    const attachHtml = (attachments.length)
+      ? `<ul>${attachments.map(a => `<li><a href="${a.url}" target="_blank">${a.name}</a></li>`).join('')}</ul>`
+      : `<div class="muted">لا توجد مرفقات</div>`;
+    const body  = document.getElementById('detailsBody');
+    body.innerHTML = `
+      <div class="inv-head">
+        <div class="inv-brand">
+          <img src="img/pagelogo.png" alt="logo">
+          <div>
+            <div class="inv-title">طلب شراء</div>
+            <div class="muted">رقم التتبّع: <b>${r.tracking}</b></div>
+          </div>
+        </div>
+        <div style="margin-inline-start:auto;text-align:left">
+          <div>الفرع: <b>${r.branch || '-'}</b></div>
+          <div>التاريخ: ${createdAtStr}</div>
+        </div>
+      </div>
+      <div class="inv-grid" style="margin:10px 0 14px">
+        <div><b>اسم المشروع:</b> ${r.projectName || '-'}</div>
+        <div><b>اسم العميل:</b> ${r.customerName || '-'}</div>
+        <div><b>الحالة:</b> ${statusLabel(r.status || 'created')}</div>
+      </div>
+      <table class="table-like">
+        <thead><tr><th>#</th><th>كود الصنف</th><th>الكمية</th><th>السعر</th><th>الشحن</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+        <tfoot><tr><td colspan="2" class="total">الإجمالي</td><td class="total">${qtySum}</td><td colspan="2"></td></tr></tfoot>
+      </table>
+      <div style="margin-top:10px">
+        <b>المرفقات:</b>
+        ${attachHtml}
+      </div>
+    `;
+    // إظهار المودال
+    const modal = document.getElementById('detailsModal');
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    modal.style.display = 'grid';
+  } catch (err) {
+    console.error("openDetails error:", err);
+    alert("فشل تحميل تفاصيل الطلب.");
+  }
+}
+
+// إغلاق مودال تفاصيل الطلب عند الضغط على زر × أو خارج البطاقة
+document.getElementById('closeDetails').onclick = function() {
+  const modal = document.getElementById('detailsModal');
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden', 'true');
+  modal.style.display = 'none';
+};
+// إغلاق عند الضغط خارج البطاقة
+document.getElementById('detailsModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('show');
+    this.setAttribute('aria-hidden', 'true');
+    this.style.display = 'none';
+  }
+});
+
+// زر الطباعة داخل تفاصيل الطلب
+document.getElementById('printDetailsBtn').onclick = function() {
+  window.print();
+};
+// ...existing code...
