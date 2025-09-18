@@ -582,41 +582,64 @@ async function openAdminModal(tracking) {
   if (!order) return;
 
   const { items = [] } = order;
-  const rowsHtml = items.map((it, idx) => `
-    <tr>
-      <td>${idx + 1}</td>
-      <td>${it.itemCode || '-'}</td>
-      <td>${it.quantity || '-'}</td>
-      <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
-      <td>${it.shippingType || '-'}</td>
-      <td>
-        <div style="display:flex; align-items:center; gap:6px;">
-          <select class="item-status" data-index="${idx}" style="width:140px">
-            <option value="created" ${it.status==='created'?'selected':''}>جديد</option>
-            <option value="ordered" ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
-            <option value="shipped" ${it.status==='shipped'?'selected':''}>تم الشحن</option>
-            <option value="partial" ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
-            <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
-          </select>
-          <button type="button" class="btn-edit-note" data-index="${idx}" title="تعديل ملاحظة">✏️</button>
-        </div>
-        <input type="number" class="item-qty-extra" data-index="${idx}"
-          style="display:${['shipped','partial'].includes(it.status)?'inline-block':'none'};width:60px"
-          placeholder="كمية" value="${it.deliveredQty || ''}">
-        <input type="text" class="item-note-input" data-index="${idx}"
-          style="display:none;width:100px;margin-top:4px;"
-          placeholder="ملاحظة" value="${it.note || ''}">
-      </td>
-    </tr>
-  `).join('');
+const rowsHtml = items.map((it, idx) => `
+  <tr>
+    <td>${idx + 1}</td>
+    <td>${it.itemCode || '-'}</td>
+    <td>${it.quantity || '-'}</td>
+    <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+    <td>${it.shippingType || '-'}</td>
+    <td>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <select class="item-status" data-index="${idx}" style="width:140px">
+          <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
+          <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
+          <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
+          <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
+          <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
+        </select>
+        <button type="button" class="btn-edit-note" data-index="${idx}"
+                style="display:${['shipped','partial'].includes(it.status)?'inline-block':'none'}"
+                title="تعديل">✏️</button>
+        <input type="text" class="manual-status" data-index="${idx}"
+               style="display:none;width:100px;margin-top:4px;"
+               placeholder="رقم جزئي" value="${it.note || ''}">
+      </div>
+    </td>
+  </tr>
+`).join('');
 
-  const tbody = document.querySelector('#detailsTableBody');
-  tbody.innerHTML = rowsHtml;
+// ✅ أولاً: أدخل الصفوف في الـ DOM
+const tbody = document.querySelector('#detailsTableBody');
+tbody.innerHTML = rowsHtml;
 
-  const confirmBtn = document.querySelector('#confirmChangesBtn');
-  confirmBtn.style.display = 'none';
+// ✅ ثانياً: الآن اربط الأحداث بعد أن أصبحت العناصر موجودة
+document.querySelectorAll('.item-status').forEach(select => {
+  select.addEventListener('change', e => {
+    const idx = e.target.dataset.index;
+    const editBtn = document.querySelector(`.btn-edit-note[data-index="${idx}"]`);
+    const val = e.target.value;
+    if (val === 'shipped' || val === 'partial') {
+      editBtn.style.display = 'inline-block';
+    } else {
+      editBtn.style.display = 'none';
+      document.querySelector(`.manual-status[data-index="${idx}"]`).style.display = 'none';
+    }
+  });
+});
 
-  const pendingChanges = [];
+document.querySelectorAll('.btn-edit-note').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const idx = e.target.dataset.index;
+    const input = document.querySelector(`.manual-status[data-index="${idx}"]`);
+    input.style.display = input.style.display === 'none' ? 'inline-block' : 'none';
+  });
+});
+
+const confirmBtn = document.querySelector('#confirmChangesBtn');
+confirmBtn.style.display = 'none';
+
+const pendingChanges = [];
 
   // تسجيل تغييرات الحالة والكمية
   document.querySelectorAll('.item-status').forEach(select => {
