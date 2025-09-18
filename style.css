@@ -962,7 +962,7 @@ label{ font-weight:700; margin-top:14px; display:block; }
 #orderModal .order-details > .modal__close {
   position: absolute;
   top: 8px;
-  right: 8px;     /* أو left:8px لو تريده يسار */
+  left: 8px;     /* أو left:8px لو تريده يسار */
   width: auto;
   height: auto;
   font-size: 1.4rem;
