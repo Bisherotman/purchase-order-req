@@ -517,6 +517,7 @@ function subscribeMyOrders() {
     .onSnapshot((snap) => {
       myRows = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       renderMy(myRows);   // موجودة مسبقاً – ترسم جدول "طلبــاتي"
+      console.log('myRows', myRows);  // 👈 أضفه هنا
     }, (err) => {
       console.error("subscribeMyOrders error:", err);
       showMsg(newMsg, "تعذّر تحميل الطلبات. حاول لاحقاً.", "error");
