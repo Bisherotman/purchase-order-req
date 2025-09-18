@@ -385,7 +385,7 @@ function renderMy(rows){
         <td><span class="status ${statusClass(r.status)}">${statusLabel(r.status)}</span></td>
         <td>${typeof total==="number" ? total.toFixed(2) : total}</td>
         <td style="white-space:nowrap;text-align:left;">
-          <button type="button" class="btn-details btn-sm" data-admin="${r.tracking}">🗂️</button>
+          <button type="button" class="btn-details btn-sm" data-open="${r.tracking}">🗂️</button>
         </td>
       </tr>`;
   }).join("");
