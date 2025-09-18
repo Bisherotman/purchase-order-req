@@ -227,31 +227,22 @@
      <div id="orderModal" class="modal">
   <div class="modal__content order-details">
     <button class="modal__close">&times;</button>
-    <h2 class="order-title">تفاصيل الطلب</h2>
-    <div class="order-meta">
-  <div class="meta-pair">
-    <span class="label">رقم الطلب:</span>
-    <strong id="m_id"></strong>
-    <span class="label">التاريخ:</span>
-    <strong id="m_date"></strong>
-  </div>
+    <h2 class="modal__title">تفاصيل الطلب</h2>
+  <button class="modal__close" aria-label="إغلاق">
+    ✕
+  </button>
+  <div class="order-meta-grid">
+  <div><span class="label">رقم الطلب:</span> <strong id="m_id"></strong></div>
+  <div><span class="label">التاريخ:</span> <strong id="m_date"></strong></div>
 
-  <div class="meta-pair">
-    <span class="label">المشروع:</span>
-    <strong id="m_project"></strong>
-    <span class="label">العميل:</span>
-    <strong id="m_customer"></strong>
-  </div>
+  <div><span class="label">المشروع:</span> <strong id="m_project"></strong></div>
+  <div><span class="label">العميل:</span> <strong id="m_customer"></strong></div>
 
-  <div class="meta-pair">
-    <span class="label">المستخدم:</span>
-    <strong id="m_user"></strong>
-    <span class="label">الحالة:</span>
-    <strong id="m_status"></strong>
-    <span class="label">المبلغ:</span>
-    <strong id="m_total"></strong>
+  <div><span class="label">المستخدم:</span> <strong id="m_user"></strong></div>
+  <div><span class="label">الحالة:</span> <strong id="m_status"></strong></div>
+
+  <div><span class="label">المبلغ:</span> <strong id="m_total"></strong></div>
   </div>
-</div>
 
     <h3 class="items-title">الأصناف</h3>
     <table class="items-table">
