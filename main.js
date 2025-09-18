@@ -577,8 +577,11 @@ async function updateOrderStatus(orderId){
 // =======================
 // 🟢 مودال إدارة الطلبات
 // =======================
-// ====== من هنا تقريبًا السطر 500 ======
 
+// 🔧 تحديث الطلب كاملاً أو جزئياً
+async function updateOrderInDB(tracking, data) {
+  return db.collection("orders").doc(tracking).update(data);
+}
 /* دالة فتح مودال إدارة الطلبات مع التعديل */
 async function openAdminModal(tracking) {
   const order = adminRows.find(row => row.tracking === tracking);
