@@ -234,42 +234,31 @@
     </div>
   </div>
 </header>
-      <div class="modal__body">
-        <div class="meta">
-          <div><strong>رقم الطلب:</strong> <span id="m_id"></span></div>
-          <div><strong>التاريخ:</strong> <span id="m_date"></span></div>
-          <div><strong>المشروع:</strong> <span id="m_project"></span></div>
-          <div><strong>المستخدم:</strong> <span id="m_user"></span></div>
-          <div><strong>الحالة:</strong> <span id="m_status"></span></div>
-          <div><strong>المبلغ:</strong> <span id="m_total"></span></div>
-        </div>
-        <h4>الأصناف</h4>
-        <table class="items-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>كود الصنف</th>
-      <th>الكمية</th>
-      <th>السعر</th>
-      <th>الشحن</th>
-      <th>حالة الصنف</th> <!-- جديد -->
-    </tr>
-  </thead>
-  <tbody id="m_items"></tbody>
-</table>
-      </div>
-      <footer class="modal__footer modal-footer-flex">
-  <div class="left-buttons">
-    <button class="btn" id="confirmAdminChanges">تأكيد العملية</button>
-    <button class="btn modal__close">إغلاق</button>
-    <div id="adminConfirmMsg" class="msg" style="margin-top:8px; display:none"></div>
-  </div>
-  <div class="right-buttons">
-    <button class="btn" id="exportExcel">تصدير Excel</button>
-  </div>
-</footer>
+     <div id="orderModal" class="modal">
+  <div class="modal__content order-details">
+    <button class="modal__close">&times;</button>
+    <h2 class="order-title">تفاصيل الطلب</h2>
+    <div class="order-meta">
+      <div><span>رقم الطلب:</span> <strong id="m_id"></strong></div>
+      <div><span>التاريخ:</span> <strong id="m_date"></strong></div>
+      <div><span>المشروع:</span> <strong id="m_project"></strong></div>
+      <div><span>المستخدم:</span> <strong id="m_user"></strong></div>
+      <div><span>الحالة:</span> <strong id="m_status"></strong></div>
+      <div><span>المبلغ:</span> <strong id="m_total"></strong></div>
     </div>
+
+    <h3 class="items-title">الأصناف</h3>
+    <table class="items-table" id="m_items"></table>
+
+    <div class="actions">
+      <button id="exportExcel" class="btn-primary">تصدير Excel</button>
+      <button id="confirmAdminChanges" class="btn-success">تأكيد العملية</button>
+      <button class="btn-secondary modal__close">إغلاق</button>
+    </div>
+
+    <div id="adminConfirmMsg" class="msg"></div>
   </div>
+</div>
 
   <!-- تفاصيل/طباعة لطلباتي (المودال القديم) -->
   <div id="detailsModal" class="modal" aria-hidden="true">
