@@ -229,24 +229,54 @@
     <button class="modal__close">&times;</button>
     <h2 class="order-title">تفاصيل الطلب</h2>
     <div class="order-meta">
-      <div><span>رقم الطلب:</span> <strong id="m_id"></strong></div>
-      <div><span>التاريخ:</span> <strong id="m_date"></strong></div>
-      <div><span>المشروع:</span> <strong id="m_project"></strong></div>
-      <div><span>المستخدم:</span> <strong id="m_user"></strong></div>
-      <div><span>الحالة:</span> <strong id="m_status"></strong></div>
-      <div><span>المبلغ:</span> <strong id="m_total"></strong></div>
-    </div>
+  <div class="meta-pair">
+    <span class="label">رقم الطلب:</span>
+    <strong id="m_id"></strong>
+    <span class="label">التاريخ:</span>
+    <strong id="m_date"></strong>
+  </div>
+
+  <div class="meta-pair">
+    <span class="label">المشروع:</span>
+    <strong id="m_project"></strong>
+    <span class="label">العميل:</span>
+    <strong id="m_customer"></strong>
+  </div>
+
+  <div class="meta-pair">
+    <span class="label">المستخدم:</span>
+    <strong id="m_user"></strong>
+    <span class="label">الحالة:</span>
+    <strong id="m_status"></strong>
+    <span class="label">المبلغ:</span>
+    <strong id="m_total"></strong>
+  </div>
+</div>
 
     <h3 class="items-title">الأصناف</h3>
-    <table class="items-table" id="m_items"></table>
+    <table class="items-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>كود الصنف</th>
+      <th>الكمية</th>
+      <th>السعر</th>
+      <th>طريقة الشحن</th>
+      <th>حالة الصنف</th>
+    </tr>
+  </thead>
+  <tbody id="m_items"></tbody>
+</table>
 
-    <div class="actions">
-      <button id="exportExcel" class="btn-primary">تصدير Excel</button>
-      <button id="confirmAdminChanges" class="btn-success">تأكيد العملية</button>
-      <button class="btn-secondary modal__close">إغلاق</button>
-    </div>
-
-    <div id="adminConfirmMsg" class="msg"></div>
+   <div class="actions">
+  <div class="actions-left">
+    <button id="confirmAdminChanges" class="btn-success">تأكيد العملية</button>
+    <button class="btn-secondary modal__close">إغلاق</button>
+  </div>
+  <div class="actions-right">
+    <button id="exportExcel" class="btn-excel">
+      <img src="excel-icon.svg" alt="" class="icon-excel"> تصدير
+    </button>
   </div>
 </div>
 
