@@ -581,6 +581,15 @@ async function openAdminModal(tracking) {
   const order = adminRows.find(row => row.tracking === tracking);
   if (!order) return;
 
+  document.getElementById('m_id').textContent      = order.tracking || '-';
+  document.getElementById('m_date').textContent    = fmtDate(order.createdAt, {withTime:true}) || '-';
+  document.getElementById('m_project').textContent = order.projectName || '-';
+  document.getElementById('m_user').textContent    = order.createdByEmail || '-';
+  document.getElementById('m_status').textContent  = statusLabel(order.status);
+  const total = (order.items || []).reduce((sum,x)=> sum + (Number(x.price)||0), 0);
+  document.getElementById('m_total').textContent   = total.toFixed(2);
+}
+
   const { items = [] } = order;
 const rowsHtml = items.map((it, idx) => `
   <tr>
@@ -654,7 +663,7 @@ const pendingChanges = [];
       const qtyInput = document.querySelector(`.item-qty-extra[data-index="${idx}"]`);
       qtyInput.style.display = ['shipped','partial'].includes(e.target.value) ? 'inline-block' : 'none';
 
-      confirmBtn.style.display = 'inline-block';
+      if (confirmBtn) confirmBtn.style.display = 'inline-block
     });
   });
 
@@ -663,7 +672,7 @@ const pendingChanges = [];
       const idx = e.target.dataset.index;
       const val = Number(e.target.value) || 0;
       pendingChanges.push({ idx, field: 'deliveredQty', value: val });
-      confirmBtn.style.display = 'inline-block';
+      if (confirmBtn) confirmBtn.style.display = 'inline-block
     });
   });
 
@@ -677,7 +686,7 @@ const pendingChanges = [];
       // سجل التغيير تلقائيًا عند التعديل
       input.addEventListener('input', e => {
         pendingChanges.push({ idx, field: 'note', value: e.target.value });
-        confirmBtn.style.display = 'inline-block';
+        if (confirmBtn) confirmBtn.style.display = 'inline-block
       });
     });
   });
