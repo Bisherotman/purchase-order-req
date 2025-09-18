@@ -832,7 +832,7 @@ label{ font-weight:700; margin-top:14px; display:block; }
 .modal__close {
   position: absolute;
   top: 8px;
-  left: 8px;
+  right: 8px;
   background: none;
   border: none;
   font-size: 1.2rem;   /* حجم أصغر */
