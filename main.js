@@ -613,7 +613,8 @@ if (order.createdBy) {
   document.getElementById('m_user').textContent = userName;
   document.getElementById('m_status').textContent  = statusLabel(order.status);
   const total = (order.items || []).reduce((sum,x)=> sum + (Number(x.price)||0), 0);
-  document.getElementById('m_total').textContent   = total.toFixed(2);
+  document.getElementById('m_total').textContent =
+    total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   // إنشاء صفوف جدول الأصناف
   const { items = [] } = order;
