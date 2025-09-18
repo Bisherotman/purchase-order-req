@@ -602,6 +602,7 @@ async function openAdminModal(tracking) {
   document.getElementById('m_id').textContent      = order.tracking || '-';
   document.getElementById('m_date').textContent    = fmtDate(order.createdAt, {withTime:true}) || '-';
   document.getElementById('m_project').textContent = order.projectName || '-';
+  document.getElementById('m_customer').textContent = order.customerName || '-';
 
   let userName = '-';
   if (order.createdBy) {
