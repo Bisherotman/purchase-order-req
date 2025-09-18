@@ -845,3 +845,17 @@ label{ font-weight:700; margin-top:14px; display:block; }
 .modal__close:hover {
   color: #a73a3a;
 }
+
+.order-meta {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .5rem 1rem;
+  font-size: .9rem;      /* أصغر */
+}
+.meta-pair {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  gap: .3rem .8rem;
+  align-items: center;
+}
+.order-meta .label { color:#555; }
