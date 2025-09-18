@@ -1,6 +1,4 @@
-/***************************************************
- * 🔥 إعدادات Firebase
- ***************************************************/
+// إعدادات Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCP29UC4BnT4aJ9pEc4HeV3LGEpylVaSMg",
   authDomain: "purchase-order-req.firebaseapp.com",
@@ -13,15 +11,9 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
-/***************************************************
- * 🌐 دوال مساعدة + التوجيه بين الصفحات
- ***************************************************/
+// دوال مساعدة
 const $ = (s) => document.querySelector(s);
-const routes = { "#/login":"view-login", "#/new":"view-new", "#/my":"view-my", "#/admin":"view-admin" };
-const navLinks   = $("#navLinks");
-const sessionBtn = $("#sessionBtn");
-const AR_GREG    = 'ar-SA-u-ca-gregory-nu-latn';
-
+const AR_GREG = 'ar-SA-u-ca-gregory-nu-latn';
 function fmtDate(ts, {withTime=false}={}) {
   if (!ts?.toDate) return '';
   const d = ts.toDate();
@@ -35,13 +27,37 @@ function fmtDate(ts, {withTime=false}={}) {
       : d.toLocaleDateString('en-GB',{dateStyle:'medium'});
   }
 }
+function showMsg(el,text,type="success"){ el.textContent=text; el.className="msg "+type; el.style.display="block"; }
+function hideMsg(el){ el.style.display="none"; }
+function displayNameOrEmail(u,p){ return (p && p.name) ? p.name : (u.displayName || u.email); }
+function statusLabel(s) {
+  return {
+    created:   "جديد",
+    ordered:   "تم الطلب من المصنع",
+    shipped:   "تم الشحن",
+    partial:   "وصلت جزئياً",
+    delivered: "وصلت بالكامل"
+  }[s] || s || "غير معروف";
+}
+function statusClass(s) {
+  return {
+    created:   "s-created",
+    ordered:   "s-ordered",
+    shipped:   "s-shipped",
+    partial:   "s-partial",
+    delivered: "s-delivered"
+  }[s] || "s-created";
+}
+
+// التوجيه بين الصفحات
+const routes = { "#/login":"view-login", "#/new":"view-new", "#/my":"view-my", "#/admin":"view-admin" };
+const navLinks   = $("#navLinks");
+const sessionBtn = $("#sessionBtn");
 function setActive(hash){
   navLinks.querySelectorAll("a").forEach(a=>
     a.classList.toggle("active",a.getAttribute("href")==hash)
   );
 }
-function showMsg(el,text,type="success"){ el.textContent=text; el.className="msg "+type; el.style.display="block"; }
-function hideMsg(el){ el.style.display="none"; }
 function showView(id){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   document.getElementById(id).classList.add("active");
@@ -57,34 +73,20 @@ function route(){
 }
 window.addEventListener("hashchange",route);
 
-/***************************************************
- * 🧩 الحالة العامة + تسجيل الدخول
- ***************************************************/
+// الحالة العامة + تسجيل الدخول
+let currentUser = null, userProfile = null, canSeeAdmin = false;
 const loginForm = $("#loginForm"),
       loginMsg  = $("#loginMsg"),
       loginBtn  = $("#loginBtn");
 const whoami = $("#whoami"), whoamiMy = $("#whoamiMy"), whoamiAdmin = $("#whoamiAdmin");
-// عناصر صفحة "طلبــاتي"
-const myBody         = document.getElementById('myOrdersBody');
-const mySearch       = document.getElementById('mySearch');
-const mySort         = document.getElementById('mySort');
-const myFilterStatus = document.getElementById('myFilterStatus');
-
-// عناصر صفحة "إدارة الطلبات"
-const adminBody = document.getElementById('adminOrdersBody');
-
-let currentUser = null, userProfile = null, canSeeAdmin = false;
-
 const rememberCk = $("#rememberEmail");
 const savedEmail = localStorage.getItem("savedEmail");
 if (savedEmail){ $("#loginEmail").value=savedEmail; rememberCk.checked=true; showEmailClearIfNeeded(); }
-
 function showEmailClearIfNeeded(){
   $("#clearEmail").style.display = $("#loginEmail").value.trim() ? "flex":"none";
 }
 $("#loginEmail").addEventListener("input",showEmailClearIfNeeded);
 $("#clearEmail").onclick=()=>{ $("#loginEmail").value=""; $("#loginEmail").focus(); showEmailClearIfNeeded(); };
-
 function showPwdButtonsIfNeeded(){
   const has = $("#loginPassword").value.length>0;
   $("#togglePwd").style.display = has ? "flex":"none";
@@ -98,7 +100,6 @@ $("#togglePwd").onclick=()=>{
 };
 $("#loginPassword").addEventListener("input",showPwdButtonsIfNeeded);
 $("#clearPwd").onclick=()=>{ $("#loginPassword").value=""; $("#loginPassword").focus(); showPwdButtonsIfNeeded(); };
-
 loginForm.addEventListener("submit",async e=>{
   e.preventDefault(); hideMsg(loginMsg); loginBtn.classList.add("loading");
   try{
@@ -110,17 +111,13 @@ loginForm.addEventListener("submit",async e=>{
   finally{ loginBtn.classList.remove("loading"); }
 });
 sessionBtn.addEventListener("click",e=>{ if(currentUser){ e.preventDefault(); auth.signOut(); } });
-
-function displayNameOrEmail(u,p){ return (p && p.name) ? p.name : (u.displayName || u.email); }
 document.getElementById("brandLink").addEventListener("click",e=>{
   e.preventDefault(); location.hash = currentUser ? "#/new" : "#/login";
 });
-
 auth.onAuthStateChanged(async user=>{
   currentUser = user;
   document.body.classList.toggle('auth-out',!user);
   document.body.classList.toggle('auth-in', !!user);
-
   if (!user){
     userProfile=null; canSeeAdmin=false;
     navLinks.querySelectorAll("[data-auth]").forEach(a=>a.style.display="none");
@@ -130,33 +127,25 @@ auth.onAuthStateChanged(async user=>{
     showView("view-login"); setActive("#/login");
     return;
   }
-
   const snap=await db.collection("users").doc(user.uid).get();
   if (!snap.exists){ showMsg(loginMsg,"حسابك غير مهيأ.","error"); await auth.signOut(); return; }
-
   userProfile=snap.data();
   canSeeAdmin=!!userProfile.isAdmin || userProfile.branch==="HQ";
-
   const badge=`مرحباً، ${displayNameOrEmail(user,userProfile)} — الفرع: ${userProfile.branch}${canSeeAdmin?' — إدارة':''}`;
   $("#whoami").textContent=badge; $("#whoamiMy").textContent=badge; $("#whoamiAdmin").textContent=badge;
-
   navLinks.querySelectorAll("[data-auth]").forEach(a=>{
     const t=a.dataset.auth; a.style.display=(t==="user") ? "" : (canSeeAdmin ? "" : "none");
   });
   sessionBtn.textContent="خروج"; sessionBtn.setAttribute("href","#/login");
-
   if (location.hash==="#/login" || !location.hash) location.hash="#/new";
   route();
   subscribeMyOrders();
   if (canSeeAdmin) loadAdminOrders();
 });
 
-/***************************************************
- * 🆕 صفحة الطلب الجديد
- ***************************************************/
+// صفحة الطلب الجديد
 const branchCodes = { Riyadh:"RUH", Dammam:"DMM", Jeddah:"JED", Makkah:"MKK", Madina:"MED", HQ:"HQ" };
 const pad5 = n => String(n).padStart(5,"0");
-
 const itemsWrap=$("#itemsWrap"), addItemBtn=$("#addItemBtn");
 function makeItemRow(values = {}) {
   const row = document.createElement("div");
@@ -174,18 +163,16 @@ function makeItemRow(values = {}) {
     <button type="button" class="remove">🗑</button>
   `;
   row.querySelector(".remove").onclick = () => row.remove();
-  return row;}
-
+  return row;
+}
 function ensureAtLeastOneRow() {
   if (!itemsWrap.children.length) {
     itemsWrap.appendChild(makeItemRow());
   }
 }
 addItemBtn.onclick = () => itemsWrap.appendChild(makeItemRow());
-
 const linksWrap  = $("#linksWrap");
 const addLinkBtn = $("#addLinkBtn");
-
 function makeLinkRow(values = {}) {
   const r = document.createElement("div");
   r.className = "link-row";
@@ -204,24 +191,19 @@ addLinkBtn.onclick = () => {
   linksWrap.appendChild(makeLinkRow());
   if (linksWrap.children.length >= 3) addLinkBtn.disabled = true;
 };
-
 const newMsg         = $("#newMsg");
 const submitOrderBtn = $("#submitOrder");
-// زر الإرسال – مستمع وحيد
 submitOrderBtn.addEventListener("click", async () => {
   hideMsg(newMsg);
-
   if (!confirm("هل أنت متأكد أنك تريد إرسال الطلب؟")) return;
   if (!currentUser || !userProfile) {
     showMsg(newMsg, "يجب تسجيل الدخول أولاً.", "error");
     return;
   }
-
   const projectName  = $("#projectName").value.trim();
   const customerName = $("#customerName").value.trim();
   if (!projectName)  { showMsg(newMsg, "يرجى إدخال اسم المشروع", "error"); return; }
   if (!customerName) { showMsg(newMsg, "يرجى إدخال اسم العميل", "error"); return; }
-
   const itemRows = [...itemsWrap.querySelectorAll(".item-row")];
   for (let i = 0; i < itemRows.length; i++) {
     const row  = itemRows[i];
@@ -234,7 +216,6 @@ submitOrderBtn.addEventListener("click", async () => {
       return;
     }
   }
-
   if (linksWrap.children.length === 0) {
     showMsg(newMsg, "يجب إضافة مرفق واحد على الأقل", "error");
     return;
@@ -248,7 +229,6 @@ submitOrderBtn.addEventListener("click", async () => {
       return;
     }
   }
-
   const items = [...itemsWrap.querySelectorAll(".item-row")].map(r => ({
     itemCode:     r.querySelector(".it-code").value.trim(),
     quantity:     Number(r.querySelector(".it-qty").value),
@@ -257,27 +237,21 @@ submitOrderBtn.addEventListener("click", async () => {
     status:       "created",
     deliveredQty: 0
   }));
-
   if (items.length === 0) {
     showMsg(newMsg, "أضف صنفًا واحدًا على الأقل بشكل صحيح.", "error");
     return;
   }
-
   if (linksWrap.children.length > 3) {
     showMsg(newMsg, "مسموح بثلاث مرفقات كحد أقصى.", "error");
     return;
   }
-
   const attachments = [...linksWrap.querySelectorAll(".link-row")].map(r => {
     const name = (r.querySelector(".ln-name").value || "ملف").trim();
     const url  = r.querySelector(".ln-url").value.trim();
     return url ? { name, url } : null;
   }).filter(Boolean);
-
-  // 🔥 تنفيذ العملية
   submitOrderBtn.classList.add("loading");
   submitOrderBtn.disabled = true;
-
   try {
     const branch = userProfile.branch;
     const code   = branchCodes[branch] || "UNK";
@@ -290,22 +264,18 @@ submitOrderBtn.addEventListener("click", async () => {
       return next;
     });
     const tracking = code + pad5(seq);
-
     await db.collection("orders").doc(tracking).set({
-  tracking,
-  branch,
-  projectName,
-  customerName,
-  items,
-  attachments,
-  createdBy: currentUser.uid,
-  createdByEmail: currentUser.email || "",
-  status: "created",
-  createdAt: firebase.firestore.FieldValue.serverTimestamp()
-}, { merge: true });
-
-
-    // إعادة الضبط
+      tracking,
+      branch,
+      projectName,
+      customerName,
+      items,
+      attachments,
+      createdBy: currentUser.uid,
+      createdByEmail: currentUser.email || "",
+      status: "created",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
     showMsg(newMsg, `تم تسجيل الطلب. رقم التتبّع: ${tracking}`, "success");
     $("#projectName").value  = "";
     $("#customerName").value = "";
@@ -313,10 +283,8 @@ submitOrderBtn.addEventListener("click", async () => {
     ensureAtLeastOneRow();
     linksWrap.innerHTML      = "";
     addLinkBtn.disabled      = false;
-
     subscribeMyOrders();
     if (canSeeAdmin) loadAdminOrders();
-
   } catch (err) {
     console.error(err);
     showMsg(newMsg, "خطأ أثناء الإرسال: " + (err.message || err), "error");
@@ -325,36 +293,15 @@ submitOrderBtn.addEventListener("click", async () => {
     submitOrderBtn.disabled = false;
   }
 });
-  
-// تسميات الحالة + كلاس
-function statusLabel(s) {
-  return {
-    created:   "جديد",
-    ordered:   "تم الطلب من المصنع",
-    shipped:   "تم الشحن",
-    partial:   "وصلت جزئياً",
-    delivered: "وصلت بالكامل"
-  }[s] || s || "غير معروف";
-}
 
-function statusClass(s) {
-  return {
-    created:   "s-created",
-    ordered:   "s-ordered",
-    shipped:   "s-shipped",
-    partial:   "s-partial",
-    delivered: "s-delivered"
-  }[s] || "s-created";
-}
-
-
-/* ✅ تم التعديل هنا ليطابق جدول الإدارة لكن بلا أي تعديل حالة */
+// جدول طلباتي
+const myBody         = document.getElementById('myOrdersBody');
+const mySearch       = document.getElementById('mySearch');
+const mySort         = document.getElementById('mySort');
+const myFilterStatus = document.getElementById('myFilterStatus');
 function renderMy(rows){
-  // فلترة
   const selectedStatus=(myFilterStatus?.value||"").trim();
   if (selectedStatus) rows = rows.filter(r=>(r.status||"")===selectedStatus);
-
-  // بحث
   const term=(mySearch.value||"").trim().toLowerCase();
   rows = rows.filter(r=>{
     if(!term) return true;
@@ -364,18 +311,14 @@ function renderMy(rows){
     const inItems=(r.items||[]).some(it=>(it.itemCode||"").toLowerCase().includes(term));
     return inTracking || inProj || inCust || inItems;
   });
-
-  // ترتيب
   rows.sort((a,b)=> mySort.value==="createdAt_desc"
     ? (b.createdAt?.toMillis?.()||0) - (a.createdAt?.toMillis?.()||0)
     : (a.createdAt?.toMillis?.()||0) - (b.createdAt?.toMillis?.()||0));
-
-  // رسم الصفوف بأسلوب الإدارة لكن بلا select
   myBody.innerHTML = rows.map(r=>{
     const itemsArr = Array.isArray(r.items) ? r.items : [];
     const total = itemsArr.length
-  ? itemsArr.reduce((sum,x)=>sum + (x.price || 0), 0)
-  : 0;
+      ? itemsArr.reduce((sum,x)=>sum + (x.price || 0), 0)
+      : 0;
     return `
       <tr data-tracking="${r.tracking}">
         <td>${r.tracking}</td>
@@ -390,42 +333,30 @@ function renderMy(rows){
       </tr>`;
   }).join("");
 }
-
 mySearch.addEventListener("input",()=>renderMy(myRows));
 mySort.addEventListener("change",()=>renderMy(myRows));
 myFilterStatus.addEventListener("change",()=>renderMy(myRows));
 
-// ...existing code...
-/***************************************************
- * 🖨️ تفاصيل الطلب (مشترك بين الصفحات)
- ***************************************************/
+// تفاصيل الطلب (مشترك بين الصفحات)
 async function openDetails(tracking) {
   try {
-    // اجلب المستند الكامل دائماً من Firestore
     const snap = await db.collection('orders').doc(tracking).get();
     let r = null;
-
     if (snap.exists) {
       r = { id: snap.id, ...snap.data() };
     } else {
-      // احتياط: لو ما وجد، ابحث في الذاكرة
       r =
         (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
         (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
     }
-
     if (!r) {
       alert('تعذّر إيجاد تفاصيل هذا الطلب.');
       return;
     }
-
-    // حماية لو الحقول ناقصة
     const items       = Array.isArray(r.items)       ? r.items       : [];
     const attachments = Array.isArray(r.attachments) ? r.attachments : [];
-
     const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
     const createdAtStr = fmtDate(r.createdAt, { withTime: true });
-
     const rowsHtml = items.length
       ? items.map((it, i) => `
         <tr>
@@ -442,14 +373,11 @@ async function openDetails(tracking) {
           <td>${it.shippingType || '-'}</td>
         </tr>`).join('')
       : `<tr><td colspan="5" class="muted">لا توجد أصناف</td></tr>`;
-
     const attachHtml = (r.attachments?.length)
       ? `<ul>${r.attachments.map(a => `<li><a href="${a.url}" target="_blank">${a.name}</a></li>`).join('')}</ul>`
       : `<div class="muted">لا توجد مرفقات</div>`;
-
     const modal = document.getElementById('detailsModal');
     const body  = document.getElementById('detailsBody');
-
     body.innerHTML = `
       <div class="inv-head">
         <div class="inv-brand">
@@ -464,25 +392,21 @@ async function openDetails(tracking) {
           <div>التاريخ: ${createdAtStr}</div>
         </div>
       </div>
-
       <div class="inv-grid" style="margin:10px 0 14px">
         <div><b>اسم المشروع:</b> ${r.projectName || '-'}</div>
         <div><b>اسم العميل:</b> ${r.customerName || '-'}</div>
         <div><b>الحالة:</b> ${statusLabel(r.status || 'created')}</div>
       </div>
-
       <table class="table-like">
         <thead><tr><th>#</th><th>كود الصنف</th><th>الكمية</th><th>السعر</th><th>الشحن</th></tr></thead>
         <tbody>${rowsHtml}</tbody>
         <tfoot><tr><td colspan="2" class="total">الإجمالي</td><td class="total">${qtySum}</td><td colspan="2"></td></tr></tfoot>
       </table>
-
       <div style="margin-top:10px">
         <b>المرفقات:</b>
         ${attachHtml}
       </div>
     `;
-
     modal.classList.add('show');
     modal.removeAttribute('aria-hidden');
     modal.style.zIndex = '99999';
@@ -492,48 +416,35 @@ async function openDetails(tracking) {
   }
 }
 
-/***************************************************
- * 🚀 تشغيل أولي
- ***************************************************/
-// 🟢 جلب طلبات المستخدم (تحديث مباشر)
+// جلب طلبات المستخدم
 let myUnsub = null;
-let myRows  = [];   // مصفوفة الطلبات الخاصة بالمستخدم
-
+let myRows  = [];
 function subscribeMyOrders() {
-  // إذا كان هناك اشتراك قديم، نفصله
   if (myUnsub) { myUnsub(); myUnsub = null; }
-
-  // نتأكد أن المستخدم مسجّل دخول
   if (!currentUser) return;
-
-  // الاشتراك في أوامر المستخدم الحالي
   myUnsub = db.collection("orders")
     .where("createdBy", "==", currentUser.uid)
     .orderBy("createdAt", "desc")
     .onSnapshot((snap) => {
       myRows = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderMy(myRows);   // موجودة مسبقاً – ترسم جدول "طلبــاتي"
-      console.log('myRows', myRows);  // 👈 أضفه هنا
+      renderMy(myRows);
     }, (err) => {
       console.error("subscribeMyOrders error:", err);
       showMsg(newMsg, "تعذّر تحميل الطلبات. حاول لاحقاً.", "error");
     });
 }
 
-// 🟢 جلب كل الطلبات لصفحة الإدارة
+// جلب كل الطلبات لصفحة الإدارة
 let adminUnsub = null;
 let adminRows  = [];
-
+const adminBody = document.getElementById('adminOrdersBody');
 function loadAdminOrders() {
   if (adminUnsub) { adminUnsub(); adminUnsub = null; }
   if (!currentUser || !canSeeAdmin) return;
-
   adminUnsub = db.collection("orders")
     .orderBy("createdAt", "desc")
     .onSnapshot((snap) => {
       adminRows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      // إن كانت عندك دالة لعرض جدول الإدارة استدعها هنا:
-      // renderAdmin(adminRows);
       renderAdmin(adminRows);
     }, (err) => {
       console.error("loadAdminOrders error:", err);
@@ -560,7 +471,6 @@ async function updateOrderStatus(orderId){
   const snap = await db.collection("orders").doc(orderId).get();
   const items = snap.data().items || [];
   const statuses = items.map(i => i.status);
-
   let overall;
   if (statuses.every(s => s === 'delivered')) {
     overall = 'delivered';
@@ -573,34 +483,21 @@ async function updateOrderStatus(orderId){
   } else {
     overall = 'created';
   }
-
   await db.collection("orders").doc(orderId).update({ status: overall });
 }
-
-// =======================
-// 🟢 مودال إدارة الطلبات
-// =======================
-
-// 🔧 تحديث الطلب كاملاً أو جزئياً
-// 🔧 تحديث الطلب كاملاً أو جزئياً
 async function updateOrderInDB(tracking, data) {
   return db.collection("orders").doc(tracking).update(data);
 }
 
-/* دالة فتح مودال إدارة الطلبات مع التعديل */
+// مودال إدارة الطلبات
 async function openAdminModal(tracking) {
   const order = adminRows.find(row => row.tracking === tracking);
   if (!order) return;
-
-  // حفظ الطلب الحالي لاستخدامه في التصدير
   window.currentAdminOrder = order;
-
-  // تعبئة معلومات رأس المودال
   document.getElementById('m_id').textContent      = order.tracking || '-';
   document.getElementById('m_date').textContent    = fmtDate(order.createdAt, {withTime:true}) || '-';
   document.getElementById('m_project').textContent = order.projectName || '-';
   document.getElementById('m_customer').textContent = order.customerName || '-';
-
   let userName = '-';
   if (order.createdBy) {
     try {
@@ -616,44 +513,37 @@ async function openAdminModal(tracking) {
   }
   document.getElementById('m_user').textContent = userName;
   document.getElementById('m_status').textContent  = statusLabel(order.status);
-
   const total = (order.items || []).reduce((sum,x)=> sum + (Number(x.price)||0), 0);
   document.getElementById('m_total').textContent =
     total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-// 🟢 ضع هذا المستمع خارج الدالة
-document.addEventListener('click', e => {
-  if (e.target.id === 'exportExcel') {
-    exportCurrentOrderToCSV();
-  }
-});
-
-// 🟢 ودالة التصدير كما هي
-function exportCurrentOrderToCSV() {
-  if (!window.currentAdminOrder) return;
-
-  const order = window.currentAdminOrder;
-  const rows = order.items || [];
-  let csv = 'كود الصنف,الكمية,السعر,الشحن,الحالة,الرقم الجزئي\n';
-
-  rows.forEach(it => {
-    csv += [
-      it.itemCode,
-      it.quantity,
-      it.price,
-      it.shippingType,
-      it.status,
-      it.note || ''
-    ].join(',') + '\n';
+  // تصدير الطلب
+  document.addEventListener('click', e => {
+    if (e.target.id === 'exportExcel') {
+      exportCurrentOrderToCSV();
+    }
   });
-
-  const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `order-${order.tracking}.csv`;
-  link.click();
-}
-  // إنشاء صفوف جدول الأصناف
+  function exportCurrentOrderToCSV() {
+    if (!window.currentAdminOrder) return;
+    const order = window.currentAdminOrder;
+    const rows = order.items || [];
+    let csv = 'كود الصنف,الكمية,السعر,الشحن,الحالة,الرقم الجزئي\n';
+    rows.forEach(it => {
+      csv += [
+        it.itemCode,
+        it.quantity,
+        it.price,
+        it.shippingType,
+        it.status,
+        it.note || ''
+      ].join(',') + '\n';
+    });
+    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `order-${order.tracking}.csv`;
+    link.click();
+  }
+  // جدول الأصناف
   const { items = [] } = order;
   const rowsHtml = items.map((it, idx) => `
   <tr>
@@ -670,13 +560,10 @@ function exportCurrentOrderToCSV() {
     <td>${it.shippingType || '-'}</td>
     <td>
       <div style="display:flex; align-items:center; gap:6px;">
-        <!-- حالة الصنف + الرقم المخزن -->
         <span class="status-display">
           ${statusLabel(it.status)}
           ${it.note ? ` (<span class="note-display">${it.note}</span>)` : ''}
         </span>
-
-        <!-- عناصر التعديل مخفية بالبداية -->
         <select class="item-status" data-index="${idx}" style="width:140px; display:none;">
           <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
           <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
@@ -687,28 +574,20 @@ function exportCurrentOrderToCSV() {
         <input type="number" class="manual-status" data-index="${idx}"
                style="display:none;width:60px;margin-top:4px;"
                placeholder="رقم جزئي" value="${it.note || ''}">
-
-        <!-- زر التعديل -->
         <button type="button" class="btn-edit-note" data-index="${idx}" title="تعديل">✏️</button>
       </div>
     </td>
   </tr>
 `).join('');
-
   const tbody = document.getElementById('m_items');
   tbody.innerHTML = rowsHtml;
-
   const confirmBtn = document.getElementById('confirmAdminChanges');
   if (confirmBtn) confirmBtn.style.display = 'none';
-
   const pendingChanges = [];
-
-  // تغييرات الحالة
   document.querySelectorAll('.item-status').forEach(select => {
     select.addEventListener('change', e => {
       const idx = e.target.dataset.index;
       pendingChanges.push({ idx, field: 'status', value: e.target.value });
-
       const editBtn = document.querySelector(`.btn-edit-note[data-index="${idx}"]`);
       const val = e.target.value;
       if (val === 'shipped' || val === 'partial') {
@@ -718,12 +597,9 @@ function exportCurrentOrderToCSV() {
         const ms = document.querySelector(`.manual-status[data-index="${idx}"]`);
         if (ms) ms.style.display = 'none';
       }
-
       if (confirmBtn) confirmBtn.style.display = 'inline-block';
     });
   });
-
-  // إدخال الكمية
   document.querySelectorAll('.item-qty-extra').forEach(inp => {
     inp.addEventListener('input', e => {
       const idx = e.target.dataset.index;
@@ -732,97 +608,68 @@ function exportCurrentOrderToCSV() {
       if (confirmBtn) confirmBtn.style.display = 'inline-block';
     });
   });
-
-  // زر ✏️ لإظهار/إخفاء حقل الملاحظة
-document.querySelectorAll('.btn-edit-note').forEach(btn => {
-  btn.addEventListener('click', e => {
-    const idx    = e.target.dataset.index;
-    const select = document.querySelector(`.item-status[data-index="${idx}"]`);
-    const input  = document.querySelector(`.manual-status[data-index="${idx}"]`);
-    const display= e.target.closest('div').querySelector('.status-display');
-
-    // أخفِ النص العادي
-    if (display) display.style.display = 'none';
-
-    // أظهر عناصر التعديل
-    if (select) select.style.display = 'inline-block';
-    if (input)  input.style.display  = 'inline-block';
-
-    // إخفاء زر ✏️ بعد النقر
-    btn.style.display = 'none';
-
-    if (confirmBtn) confirmBtn.style.display = 'inline-block';
-
-    // تسجيل التغييرات
-    select.addEventListener('change', e => {
-      pendingChanges.push({ idx, field: 'status', value: e.target.value });
-    });
-    input.addEventListener('input', e => {
-      pendingChanges.push({ idx, field: 'note', value: e.target.value });
+  document.querySelectorAll('.btn-edit-note').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx    = e.target.dataset.index;
+      const select = document.querySelector(`.item-status[data-index="${idx}"]`);
+      const input  = document.querySelector(`.manual-status[data-index="${idx}"]`);
+      const display= e.target.closest('div').querySelector('.status-display');
+      if (display) display.style.display = 'none';
+      if (select) select.style.display = 'inline-block';
+      if (input)  input.style.display  = 'inline-block';
+      btn.style.display = 'none';
+      if (confirmBtn) confirmBtn.style.display = 'inline-block';
+      select.addEventListener('change', e => {
+        pendingChanges.push({ idx, field: 'status', value: e.target.value });
+      });
+      input.addEventListener('input', e => {
+        pendingChanges.push({ idx, field: 'note', value: e.target.value });
+      });
     });
   });
-});
-  
-  // زر تأكيد التعديلات
   if (confirmBtn) {
-  const msgBox = document.getElementById('adminConfirmMsg');
-  msgBox.style.display = 'none';
-  msgBox.textContent = '';
-  confirmBtn.onclick = async () => {
+    const msgBox = document.getElementById('adminConfirmMsg');
     msgBox.style.display = 'none';
     msgBox.textContent = '';
-    try {
-      for (const { idx, field, value } of pendingChanges) {
-        order.items[idx][field] = value;
+    confirmBtn.onclick = async () => {
+      msgBox.style.display = 'none';
+      msgBox.textContent = '';
+      try {
+        for (const { idx, field, value } of pendingChanges) {
+          order.items[idx][field] = value;
+        }
+        await updateOrderInDB(order.tracking, { items: order.items });
+        msgBox.textContent = 'تم تغيير حالة الأصناف بنجاح';
+        msgBox.className = 'msg success';
+        msgBox.style.display = 'block';
+        confirmBtn.style.display = 'none';
+        setTimeout(() => {
+          const modal = document.getElementById('orderModal');
+          modal.classList.remove('show');
+          modal.hidden = true;
+        }, 2000);
+      } catch (err) {
+        console.error(err);
+        msgBox.textContent = 'حدث خطأ أثناء التحديث';
+        msgBox.className = 'msg error';
+        msgBox.style.display = 'block';
       }
-      await updateOrderInDB(order.tracking, { items: order.items });
-
-      msgBox.textContent = 'تم تغيير حالة الأصناف بنجاح';
-      msgBox.className = 'msg success';
-      msgBox.style.display = 'block';
-
-      // إخفاء زر التأكيد
-      confirmBtn.style.display = 'none';
-
-      // إغلاق المودال بعد ثانيتين
-      setTimeout(() => {
-        const modal = document.getElementById('orderModal');
-        modal.classList.remove('show');
-        modal.hidden = true;
-      }, 2000);
-    } catch (err) {
-      console.error(err);
-      msgBox.textContent = 'حدث خطأ أثناء التحديث';
-      msgBox.className = 'msg error';
-      msgBox.style.display = 'block';
-    }
-  };
-}
-
-  // فتح المودال
+    };
+  }
   const modal = document.getElementById('orderModal');
   modal.hidden = false;
   modal.classList.add('show');
 }
-
-// ===== مستمعات إغلاق وطباعة المودال الإداري =====
 document.addEventListener('click', (e) => {
   const modal = document.getElementById('orderModal');
-
-  // زر إغلاق
   if (e.target.closest('.modal__close')) {
     modal.classList.remove('show');
     modal.hidden = true;
   }
-
-  // زر الطباعة
   if (e.target.dataset.action === 'print') {
     window.print();
   }
 });
-
-// كان يبحث عن أي عنصر فيه data-admin
-// نجعله يبحث فقط عن الأزرار الخاصة بجدول الإدارة
 document.addEventListener('click', async e => {
   const btn = e.target.closest('.btn-admin-details');
   if (!btn) return;
@@ -830,6 +677,14 @@ document.addEventListener('click', async e => {
   openAdminModal(btn.dataset.admin);
 });
 
+// مستمع تفاصيل الطلب للمستخدم
+document.addEventListener('click', async e => {
+  const btn = e.target.closest('.btn-details');
+  if (!btn) return;
+  e.preventDefault();
+  openDetails(btn.dataset.open);
+});
 
+// تشغيل أولي
 ensureAtLeastOneRow();
 route();
