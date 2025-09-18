@@ -416,17 +416,21 @@ document.addEventListener('click', async e=>{
 })();
 
 async function openDetails(tracking) {
-  try {
+ try {
     let r =
-      (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
+      (Array.isArray(myRows) && myRows.find(x => x.tracking === tracking)) ||
       (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
 
-    if (!r) {
+    // ✅ إضافة هذا الشرط:
+    if (!r || !Array.isArray(r.items)) {
       const doc = await db.collection('orders').doc(tracking).get();
       if (doc.exists) r = { id: doc.id, ...doc.data() };
     }
 
-    if (!r) { alert('تعذّر إيجاد تفاصيل هذا الطلب.'); return; }
+    if (!r) {
+      alert('تعذر إيجاد تفاصيل هذا الطلب.');
+      return;
+    }
 
     const items = r.items || [];
     const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
