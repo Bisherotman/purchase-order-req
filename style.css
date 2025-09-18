@@ -910,3 +910,19 @@ label{ font-weight:700; margin-top:14px; display:block; }
   align-items: center;
   justify-content: center;
 }
+
+/* إصلاح موضع زر الإغلاق داخل مربع تفاصيل الطلب */
+#orderModal .modal__header {
+  position: relative; /* مرجع تموضع للزر */
+}
+
+#orderModal .modal__header .modal__close {
+  position: absolute; /* يتمركز داخل الهيدر فقط */
+  top: 0;
+  right: 0;
+  width: auto;
+  height: auto;
+  font-size: 1.4rem;
+  padding: 4px 8px;
+}
+
