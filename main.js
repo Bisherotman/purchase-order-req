@@ -609,22 +609,23 @@ const rowsHtml = items.map((it, idx) => `
   </tr>
 `).join('');
 
-// ✅ أولاً: أدخل الصفوف في الـ DOM
-const tbody = document.querySelector('#detailsTableBody');
+const tbody = document.getElementById('m_items');
 tbody.innerHTML = rowsHtml;
 
-// ✅ ثانياً: الآن اربط الأحداث بعد أن أصبحت العناصر موجودة
+// فعّل الإظهار/الإخفاء حسب الحالة
 document.querySelectorAll('.item-status').forEach(select => {
   select.addEventListener('change', e => {
     const idx = e.target.dataset.index;
     const editBtn = document.querySelector(`.btn-edit-note[data-index="${idx}"]`);
     const val = e.target.value;
     if (val === 'shipped' || val === 'partial') {
-      editBtn.style.display = 'inline-block';
+      if (editBtn) editBtn.style.display = 'inline-block';
     } else {
-      editBtn.style.display = 'none';
-      document.querySelector(`.manual-status[data-index="${idx}"]`).style.display = 'none';
+      if (editBtn) editBtn.style.display = 'none';
+      const ms = document.querySelector(`.manual-status[data-index="${idx}"]`);
+      if (ms) ms.style.display = 'none';
     }
+    if (confirmBtn) confirmBtn.style.display = 'inline-block';
   });
 });
 
@@ -632,13 +633,16 @@ document.querySelectorAll('.btn-edit-note').forEach(btn => {
   btn.addEventListener('click', e => {
     const idx = e.target.dataset.index;
     const input = document.querySelector(`.manual-status[data-index="${idx}"]`);
+    if (!input) return;
     input.style.display = input.style.display === 'none' ? 'inline-block' : 'none';
+    if (confirmBtn) confirmBtn.style.display = 'inline-block';
   });
 });
 
-const confirmBtn = document.querySelector('#confirmChangesBtn');
-confirmBtn.style.display = 'none';
-
+// زر التأكيد الصحيح
+const confirmBtn = document.getElementById('confirmAdminChanges');
+if (confirmBtn) confirmBtn.style.display = 'none';
+  
 const pendingChanges = [];
 
   // تسجيل تغييرات الحالة والكمية
@@ -689,7 +693,8 @@ const pendingChanges = [];
     alert('تم تحديث الأصناف بنجاح');
   };
 
-  const modal = document.querySelector('#detailsModal');
+  const modal = document.getElementById('orderModal');
+  modal.hidden = false;
   modal.classList.add('show');
 }
 
