@@ -577,10 +577,13 @@ async function updateOrderStatus(orderId){
 // =======================
 // 🟢 مودال إدارة الطلبات
 // =======================
+// === فتح مودال إدارة الطلبات مع إمكانية التعديل ===
 async function openAdminModal(tracking) {
+  // العثور على الطلب
   const order = adminRows.find(row => row.tracking === tracking);
   if (!order) return;
 
+  // تعبئة معلومات رأس المودال
   document.getElementById('m_id').textContent      = order.tracking || '-';
   document.getElementById('m_date').textContent    = fmtDate(order.createdAt, {withTime:true}) || '-';
   document.getElementById('m_project').textContent = order.projectName || '-';
@@ -588,85 +591,64 @@ async function openAdminModal(tracking) {
   document.getElementById('m_status').textContent  = statusLabel(order.status);
   const total = (order.items || []).reduce((sum,x)=> sum + (Number(x.price)||0), 0);
   document.getElementById('m_total').textContent   = total.toFixed(2);
-}
 
+  // إنشاء صفوف جدول الأصناف
   const { items = [] } = order;
-const rowsHtml = items.map((it, idx) => `
-  <tr>
-    <td>${idx + 1}</td>
-    <td>${it.itemCode || '-'}</td>
-    <td>${it.quantity || '-'}</td>
-    <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
-    <td>${it.shippingType || '-'}</td>
-    <td>
-      <div style="display:flex; align-items:center; gap:6px;">
-        <select class="item-status" data-index="${idx}" style="width:140px">
-          <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
-          <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
-          <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
-          <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
-          <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
-        </select>
-        <button type="button" class="btn-edit-note" data-index="${idx}"
-                style="display:${['shipped','partial'].includes(it.status)?'inline-block':'none'}"
-                title="تعديل">✏️</button>
-        <input type="text" class="manual-status" data-index="${idx}"
-               style="display:none;width:100px;margin-top:4px;"
-               placeholder="رقم جزئي" value="${it.note || ''}">
-      </div>
-    </td>
-  </tr>
-`).join('');
+  const rowsHtml = items.map((it, idx) => `
+    <tr>
+      <td>${idx + 1}</td>
+      <td>${it.itemCode || '-'}</td>
+      <td>${it.quantity || '-'}</td>
+      <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
+      <td>${it.shippingType || '-'}</td>
+      <td>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <select class="item-status" data-index="${idx}" style="width:140px">
+            <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
+            <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
+            <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
+            <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
+            <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
+          </select>
+          <button type="button" class="btn-edit-note" data-index="${idx}"
+                  style="display:${['shipped','partial'].includes(it.status)?'inline-block':'none'}"
+                  title="تعديل">✏️</button>
+          <input type="text" class="manual-status" data-index="${idx}"
+                 style="display:none;width:100px;margin-top:4px;"
+                 placeholder="رقم جزئي" value="${it.note || ''}">
+        </div>
+      </td>
+    </tr>
+  `).join('');
 
-const tbody = document.getElementById('m_items');
-tbody.innerHTML = rowsHtml;
+  const tbody = document.getElementById('m_items');
+  tbody.innerHTML = rowsHtml;
 
-// فعّل الإظهار/الإخفاء حسب الحالة
-document.querySelectorAll('.item-status').forEach(select => {
-  select.addEventListener('change', e => {
-    const idx = e.target.dataset.index;
-    const editBtn = document.querySelector(`.btn-edit-note[data-index="${idx}"]`);
-    const val = e.target.value;
-    if (val === 'shipped' || val === 'partial') {
-      if (editBtn) editBtn.style.display = 'inline-block';
-    } else {
-      if (editBtn) editBtn.style.display = 'none';
-      const ms = document.querySelector(`.manual-status[data-index="${idx}"]`);
-      if (ms) ms.style.display = 'none';
-    }
-    if (confirmBtn) confirmBtn.style.display = 'inline-block';
-  });
-});
+  const confirmBtn = document.getElementById('confirmAdminChanges');
+  if (confirmBtn) confirmBtn.style.display = 'none';
 
-document.querySelectorAll('.btn-edit-note').forEach(btn => {
-  btn.addEventListener('click', e => {
-    const idx = e.target.dataset.index;
-    const input = document.querySelector(`.manual-status[data-index="${idx}"]`);
-    if (!input) return;
-    input.style.display = input.style.display === 'none' ? 'inline-block' : 'none';
-    if (confirmBtn) confirmBtn.style.display = 'inline-block';
-  });
-});
+  const pendingChanges = [];
 
-// زر التأكيد الصحيح
-const confirmBtn = document.getElementById('confirmAdminChanges');
-if (confirmBtn) confirmBtn.style.display = 'none';
-  
-const pendingChanges = [];
-
-  // تسجيل تغييرات الحالة والكمية
+  // تغييرات الحالة
   document.querySelectorAll('.item-status').forEach(select => {
     select.addEventListener('change', e => {
       const idx = e.target.dataset.index;
       pendingChanges.push({ idx, field: 'status', value: e.target.value });
 
-      const qtyInput = document.querySelector(`.item-qty-extra[data-index="${idx}"]`);
-      qtyInput.style.display = ['shipped','partial'].includes(e.target.value) ? 'inline-block' : 'none';
+      const editBtn = document.querySelector(`.btn-edit-note[data-index="${idx}"]`);
+      if (['shipped','partial'].includes(e.target.value)) {
+        if (editBtn) editBtn.style.display = 'inline-block';
+      } else {
+        if (editBtn) editBtn.style.display = 'none';
+        const ms = document.querySelector(`.manual-status[data-index="${idx}"]`);
+        if (ms) ms.style.display = 'none';
+      }
 
       if (confirmBtn) confirmBtn.style.display = 'inline-block';
     });
   });
 
+  // تعديل الكمية
   document.querySelectorAll('.item-qty-extra').forEach(inp => {
     inp.addEventListener('input', e => {
       const idx = e.target.dataset.index;
@@ -676,14 +658,15 @@ const pendingChanges = [];
     });
   });
 
-  // زر تعديل الملاحظة ✏️
+  // زر ✏️ لإظهار حقل الملاحظة
   document.querySelectorAll('.btn-edit-note').forEach(btn => {
     btn.addEventListener('click', e => {
       const idx = e.target.dataset.index;
       const input = document.querySelector(`.manual-status[data-index="${idx}"]`);
-      input.style.display = input.style.display === 'none' ? 'block' : 'none';
+      if (!input) return;
+      input.style.display = input.style.display === 'none' ? 'inline-block' : 'none';
+      if (confirmBtn) confirmBtn.style.display = 'inline-block';
 
-      // سجل التغيير تلقائيًا عند التعديل
       input.addEventListener('input', e => {
         pendingChanges.push({ idx, field: 'note', value: e.target.value });
         if (confirmBtn) confirmBtn.style.display = 'inline-block';
@@ -692,21 +675,22 @@ const pendingChanges = [];
   });
 
   // زر تأكيد
-  confirmBtn.onclick = async () => {
-    for (const { idx, field, value } of pendingChanges) {
-      order.items[idx][field] = value;
-    }
+  if (confirmBtn) {
+    confirmBtn.onclick = async () => {
+      for (const { idx, field, value } of pendingChanges) {
+        order.items[idx][field] = value;
+      }
+      await updateOrderInDB(order.tracking, { items: order.items });
+      confirmBtn.style.display = 'none';
+      alert('تم تحديث الأصناف بنجاح');
+    };
+  }
 
-    await updateOrderInDB(order.tracking, { items: order.items });
-    confirmBtn.style.display = 'none';
-    alert('تم تحديث الأصناف بنجاح');
-  };
-
+  // فتح المودال
   const modal = document.getElementById('orderModal');
   modal.hidden = false;
   modal.classList.add('show');
 }
-
 // مستمعات إغلاق وطباعة لمودال الإدارة
 document.addEventListener('click', (e) => {
   const modal = document.getElementById('orderModal');
