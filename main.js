@@ -622,7 +622,6 @@ async function openAdminModal(tracking) {
   const total = (order.items || []).reduce((sum,x)=> sum + (Number(x.price)||0), 0);
   document.getElementById('m_total').textContent =
     total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
 
 // 🟢 ضع هذا المستمع خارج الدالة
 document.addEventListener('click', e => {
