@@ -417,14 +417,13 @@ document.addEventListener('click', async e=>{
 
 async function openDetails(tracking) {
   try {
-    // 🔑 دائماً اجلب المستند الكامل أولاً
+    // دائماً اجلب المستند الكامل أولاً
     const doc = await db.collection('orders').doc(tracking).get();
     let r = null;
 
     if (doc.exists) {
       r = { id: doc.id, ...doc.data() };
     } else {
-      // احتياط: لو ما وجد المستند، جرّب من المصفوفات الحالية
       r =
         (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
         (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
@@ -435,11 +434,11 @@ async function openDetails(tracking) {
       return;
     }
 
-    // ✍️ بعد هذا أكمل بناء الـHTML كما هو عندك
-    const body  = document.getElementById('detailsBody');
-    // ... بقية القالب الحالي بدون تغيير
-
-
+    // *** لا تضف هنا تعريف body من جديد ***
+    // استمر إلى بقية الكود الأصلي حيث يوجد:
+    // const body = document.getElementById('detailsBody');
+    // ...
+    
     const items = r.items || [];
     const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
     const createdAtStr = fmtDate(r.createdAt, { withTime: true });
