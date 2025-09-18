@@ -606,18 +606,24 @@ document.getElementById('m_total').textContent  = totalPrice;
       <td>${typeof it.price === 'number' ? it.price.toFixed(2) : (it.price || '-')}</td>
       <td>${it.shippingType || '-'}</td>
       <td>
-        <select class="item-status" data-index="${idx}">
-          <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
-          <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
-          <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
-          <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
-          <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
-        </select>
-        <input type="number" class="item-qty-extra"
-               data-index="${idx}"
-               style="display:${['shipped','partial'].includes(it.status)?'inline-block':'none'};width:80px;margin-top:6px"
-               placeholder="الكمية" value="${it.deliveredQty || ''}">
-      </td>
+  <div style="display:flex; align-items:center; gap:6px;">
+    <select class="item-status" data-index="${idx}" style="width:140px">
+      <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
+      <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
+      <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
+      <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
+      <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
+    </select>
+    <button type="button" class="btn-edit-note" data-index="${idx}" title="تعديل ملاحظة">🖉</button>
+  </div>
+  <input type="text" class="item-note-input" data-index="${idx}"
+         style="display:none; margin-top:6px; width:100%; border:1px solid #ccc; border-radius:6px; padding:6px"
+         placeholder="ملاحظة / تعديل إضافي" value="${it.note || ''}">
+  <input type="number" class="item-qty-extra" data-index="${idx}"
+         style="display:${['shipped','partial'].includes(it.status)?'inline-block':'none'}; width:60px; margin-top:6px"
+         placeholder="الكمية" value="${it.deliveredQty || ''}">
+</td>
+
     </tr>`).join('');
   document.getElementById('m_items').innerHTML = rowsHtml;
 
@@ -647,6 +653,21 @@ document.getElementById('m_total').textContent  = totalPrice;
     confirmBtn.style.display = 'inline-block';
   });
 });
+  // 🖉 زر تعديل الملاحظة
+document.querySelectorAll('.btn-edit-note').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const idx = e.target.dataset.index;
+    const input = document.querySelector(`.item-note-input[data-index="${idx}"]`);
+    input.style.display = input.style.display === 'none' ? 'block' : 'none';
+
+    // سجل التغيير تلقائياً إن حبيت
+    input.addEventListener('input', e => {
+      pendingChanges.push({ idx, field:'note', value: e.target.value });
+      confirmBtn.style.display = 'inline-block';
+    });
+  });
+});
+
 
 
   // زر تأكيد: يحدّث Firestore دفعة واحدة
