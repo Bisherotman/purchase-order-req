@@ -739,3 +739,22 @@ label{ font-weight:700; margin-top:14px; display:block; }
 .edit-btn:hover {
   background: #e5e7eb;
 }
+/* زر تعديل الحالة (أيقونة المرسام) */
+.btn-edit-note {
+  width: auto;           /* يلغي 100% من القاعدة العامة */
+  padding: 2px 6px;       /* تصغير الحواف الداخلية */
+  font-size: 14px;        /* حجم الأيقونة */
+  border-radius: 6px;
+  background: #f3f4f6;    /* خلفية خفيفة */
+  border: 1px solid #ccc;
+  cursor: pointer;
+  display: inline-flex;   /* يضبط المحاذاة مع النص */
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;          /* يلغي الـ margin-top من القاعدة العامة */
+  transition: background 0.2s ease;
+}
+
+.btn-edit-note:hover {
+  background: #e5e7eb;
+}
