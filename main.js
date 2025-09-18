@@ -581,6 +581,7 @@ async function openAdminModal(tracking) {
   const doc = await db.collection("orders").doc(tracking).get();
   if (!doc.exists) return;
   const r = { id: doc.id, ...doc.data() };
+  const confirmBtn = document.getElementById('confirmAdminChanges');
   // تعبئة الحقول العلوية في المودال
 document.getElementById('m_id').textContent     = r.tracking || '-';
 document.getElementById('m_date').textContent   = fmtDate(r.createdAt, {withTime:true}) || '-';
@@ -649,7 +650,6 @@ document.getElementById('m_total').textContent  = totalPrice;
 
 
   // زر تأكيد: يحدّث Firestore دفعة واحدة
-  const confirmBtn = document.getElementById('confirmAdminChanges');
   confirmBtn.onclick = async () => {
     if (!pendingChanges.length) { alert('لا توجد تغييرات للحفظ.'); return; }
 
