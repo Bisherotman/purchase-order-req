@@ -541,7 +541,7 @@ async function openDetails(tracking) {
     `;
 
     modal.classList.add('show');
-  } catch (err) {
+    catch (err) {
     console.error("openDetails error:", err);
     alert("فشل تحميل تفاصيل الطلب.");
   }
