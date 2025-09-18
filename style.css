@@ -758,3 +758,72 @@ label{ font-weight:700; margin-top:14px; display:block; }
 .btn-edit-note:hover {
   background: #e5e7eb;
 }
+
+/* ==== تحسين مودال تفاصيل الطلب ==== */
+.order-details {
+  background: #fff;
+  border-radius: 16px;
+  width: min(90%, 950px);
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,.25);
+  animation: fadeIn .3s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.order-details h2.order-title {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--brand);
+  border-bottom: 2px solid #eee;
+  padding-bottom: .5rem;
+}
+
+.order-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: .75rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.order-meta span { color: #555; }
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.items-table th,
+.items-table td {
+  border-bottom: 1px solid #ddd;
+  padding: .6rem;
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+}
+
+.actions button {
+  border: none;
+  border-radius: 8px;
+  padding: .5rem 1rem;
+  font-size: .95rem;
+  cursor: pointer;
+  background: var(--brand);
+  color: #fff;
+  transition: background .2s;
+}
+
+.actions button:hover {
+  background: var(--brand-dark);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
