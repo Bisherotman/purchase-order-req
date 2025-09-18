@@ -398,32 +398,16 @@ myFilterStatus.addEventListener("change",()=>renderMy(myRows));
 /***************************************************
  * 🖨️ تفاصيل الطلب (مشترك بين الصفحات)
  ***************************************************/
-document.addEventListener('click', async e=>{
-  const btn = e.target.closest('[data-open], .btn-details');
-  if (!btn) return;
-  e.preventDefault();
-  const tr = btn.closest('tr');
-  const tracking = btn.dataset.open || btn.dataset.id || tr?.dataset.tracking;
-  if (!tracking) return;
-  openDetails(tracking);
-});
-
-(function(){
-  const modal = document.getElementById('detailsModal');
-  document.getElementById('closeDetails').onclick = ()=> modal.classList.remove('show');
-  modal.querySelector('.backdrop')?.addEventListener('click',()=>modal.classList.remove('show'));
-  document.getElementById('printDetailsBtn').onclick = ()=> window.print();
-})();
-
 async function openDetails(tracking) {
   try {
-    // دائماً اجلب المستند الكامل أولاً
-    const doc = await db.collection('orders').doc(tracking).get();
+    // اجلب المستند الكامل دائماً من Firestore
+    const snap = await db.collection('orders').doc(tracking).get();
     let r = null;
 
-    if (doc.exists) {
-      r = { id: doc.id, ...doc.data() };
+    if (snap.exists) {
+      r = { id: snap.id, ...snap.data() };
     } else {
+      // احتياط: لو ما وجد، ابحث في الذاكرة
       r =
         (Array.isArray(myRows)    && myRows.find(x => x.tracking === tracking)) ||
         (Array.isArray(adminRows) && adminRows.find(x => x.tracking === tracking));
@@ -433,6 +417,69 @@ async function openDetails(tracking) {
       alert('تعذّر إيجاد تفاصيل هذا الطلب.');
       return;
     }
+
+    // حماية لو الحقول ناقصة
+    const items       = Array.isArray(r.items)       ? r.items       : [];
+    const attachments = Array.isArray(r.attachments) ? r.attachments : [];
+
+    // بناء محتوى التفاصيل
+    const body = document.getElementById('detailsBody');
+    let html = `
+      <div style="margin-bottom:12px;">
+        <strong>رقم الطلب:</strong> ${r.tracking || r.id}<br>
+        <strong>التاريخ:</strong> ${r.createdAt ? new Date(r.createdAt.seconds*1000).toLocaleDateString() : '-'}<br>
+        <strong>المشروع:</strong> ${r.projectName || '-'}<br>
+        <strong>العميل:</strong> ${r.customerName || '-'}<br>
+        <strong>المستخدم:</strong> ${r.createdByName || '-'}<br>
+        <strong>الحالة:</strong> ${r.status || '-'}<br>
+      </div>
+      <h3>الأصناف</h3>
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>كود الصنف</th>
+            <th>الكمية</th>
+            <th>السعر</th>
+            <th>طريقة الشحن</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${
+            items.length
+              ? items.map((it,i)=>`
+                  <tr>
+                    <td>${i+1}</td>
+                    <td>${it.code||'-'}</td>
+                    <td>${it.qty||'-'}</td>
+                    <td>${it.price||'-'}</td>
+                    <td>${it.shipping||'-'}</td>
+                  </tr>
+                `).join('')
+              : `<tr><td colspan="5" class="muted">لا توجد أصناف</td></tr>`
+          }
+        </tbody>
+      </table>
+      <h3>المرفقات</h3>
+      <ul>
+        ${
+          attachments.length
+            ? attachments.map(a=>`<li><a href="${a}" target="_blank">${a}</a></li>`).join('')
+            : '<li class="muted">لا توجد مرفقات</li>'
+        }
+      </ul>
+    `;
+    body.innerHTML = html;
+
+    const modal = document.getElementById('detailsModal');
+    modal.classList.add('show');
+    modal.removeAttribute('aria-hidden');
+    modal.style.zIndex = '99999';
+  } catch (err) {
+    console.error('openDetails error:', err);
+    alert('فشل تحميل تفاصيل الطلب.');
+  }
+}
 
     // *** لا تضف هنا تعريف body من جديد ***
     // استمر إلى بقية الكود الأصلي حيث يوجد:
