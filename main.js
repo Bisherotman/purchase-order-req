@@ -481,6 +481,7 @@ async function openDetails(tracking) {
   }
 }
 
+
     // *** لا تضف هنا تعريف body من جديد ***
     // استمر إلى بقية الكود الأصلي حيث يوجد:
     // const body = document.getElementById('detailsBody');
