@@ -663,7 +663,7 @@ const pendingChanges = [];
       const qtyInput = document.querySelector(`.item-qty-extra[data-index="${idx}"]`);
       qtyInput.style.display = ['shipped','partial'].includes(e.target.value) ? 'inline-block' : 'none';
 
-      if (confirmBtn) confirmBtn.style.display = 'inline-block
+      if (confirmBtn) confirmBtn.style.display = 'inline-block';
     });
   });
 
@@ -672,7 +672,7 @@ const pendingChanges = [];
       const idx = e.target.dataset.index;
       const val = Number(e.target.value) || 0;
       pendingChanges.push({ idx, field: 'deliveredQty', value: val });
-      if (confirmBtn) confirmBtn.style.display = 'inline-block
+      if (confirmBtn) confirmBtn.style.display = 'inline-block';
     });
   });
 
@@ -680,13 +680,13 @@ const pendingChanges = [];
   document.querySelectorAll('.btn-edit-note').forEach(btn => {
     btn.addEventListener('click', e => {
       const idx = e.target.dataset.index;
-      const input = document.querySelector(`.item-note-input[data-index="${idx}"]`);
+      const input = document.querySelector(`.manual-status[data-index="${idx}"]`);
       input.style.display = input.style.display === 'none' ? 'block' : 'none';
 
       // سجل التغيير تلقائيًا عند التعديل
       input.addEventListener('input', e => {
         pendingChanges.push({ idx, field: 'note', value: e.target.value });
-        if (confirmBtn) confirmBtn.style.display = 'inline-block
+        if (confirmBtn) confirmBtn.style.display = 'inline-block';
       });
     });
   });
@@ -697,7 +697,7 @@ const pendingChanges = [];
       order.items[idx][field] = value;
     }
 
-    await updateOrderInDB(order.trackingNumber, { items: order.items });
+    await updateOrderInDB(order.tracking, { items: order.items });
     confirmBtn.style.display = 'none';
     alert('تم تحديث الأصناف بنجاح');
   };
