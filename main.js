@@ -395,6 +395,7 @@ mySearch.addEventListener("input",()=>renderMy(myRows));
 mySort.addEventListener("change",()=>renderMy(myRows));
 myFilterStatus.addEventListener("change",()=>renderMy(myRows));
 
+// ...existing code...
 /***************************************************
  * 🖨️ تفاصيل الطلب (مشترك بين الصفحات)
  ***************************************************/
@@ -422,64 +423,6 @@ async function openDetails(tracking) {
     const items       = Array.isArray(r.items)       ? r.items       : [];
     const attachments = Array.isArray(r.attachments) ? r.attachments : [];
 
-    // بناء محتوى التفاصيل
-    const body = document.getElementById('detailsBody');
-    let html = `
-      <div style="margin-bottom:12px;">
-        <strong>رقم الطلب:</strong> ${r.tracking || r.id}<br>
-        <strong>التاريخ:</strong> ${r.createdAt ? new Date(r.createdAt.seconds*1000).toLocaleDateString() : '-'}<br>
-        <strong>المشروع:</strong> ${r.projectName || '-'}<br>
-        <strong>العميل:</strong> ${r.customerName || '-'}<br>
-        <strong>المستخدم:</strong> ${r.createdByName || '-'}<br>
-        <strong>الحالة:</strong> ${r.status || '-'}<br>
-      </div>
-      <h3>الأصناف</h3>
-      <table class="items-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>كود الصنف</th>
-            <th>الكمية</th>
-            <th>السعر</th>
-            <th>طريقة الشحن</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${
-            items.length
-              ? items.map((it,i)=>`
-                  <tr>
-                    <td>${i+1}</td>
-                    <td>${it.code||'-'}</td>
-                    <td>${it.qty||'-'}</td>
-                    <td>${it.price||'-'}</td>
-                    <td>${it.shipping||'-'}</td>
-                  </tr>
-                `).join('')
-              : `<tr><td colspan="5" class="muted">لا توجد أصناف</td></tr>`
-          }
-        </tbody>
-      </table>
-      <h3>المرفقات</h3>
-      <ul>
-        ${
-          attachments.length
-            ? attachments.map(a=>`<li><a href="${a}" target="_blank">${a}</a></li>`).join('')
-            : '<li class="muted">لا توجد مرفقات</li>'
-        }
-      </ul>
-    `;
-    body.innerHTML = html;
-
-    const modal = document.getElementById('detailsModal');
-    modal.classList.add('show');
-    modal.removeAttribute('aria-hidden');
-    modal.style.zIndex = '99999';
-  } catch (err) {
-    console.error('openDetails error:', err);
-    alert('فشل تحميل تفاصيل الطلب.');
-  }
-}
     const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
     const createdAtStr = fmtDate(r.createdAt, { withTime: true });
 
@@ -541,7 +484,9 @@ async function openDetails(tracking) {
     `;
 
     modal.classList.add('show');
-    catch (err) {
+    modal.removeAttribute('aria-hidden');
+    modal.style.zIndex = '99999';
+  } catch (err) {
     console.error("openDetails error:", err);
     alert("فشل تحميل تفاصيل الطلب.");
   }
