@@ -480,14 +480,6 @@ async function openDetails(tracking) {
     alert('فشل تحميل تفاصيل الطلب.');
   }
 }
-
-
-    // *** لا تضف هنا تعريف body من جديد ***
-    // استمر إلى بقية الكود الأصلي حيث يوجد:
-    // const body = document.getElementById('detailsBody');
-    // ...
-    
-    const items = r.items || [];
     const qtySum = items.reduce((s, x) => s + (x.quantity || 0), 0);
     const createdAtStr = fmtDate(r.createdAt, { withTime: true });
 
