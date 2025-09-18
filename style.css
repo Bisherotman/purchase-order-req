@@ -859,3 +859,31 @@ label{ font-weight:700; margin-top:14px; display:block; }
   align-items: center;
 }
 .order-meta .label { color:#555; }
+
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.modal__title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #6c1d2c;
+}
+
+.modal__close {
+  background: none;
+  border: none;
+  font-size: 1.4rem; /* أيقونة صغيرة */
+  color: #6c1d2c;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.modal__close:hover { color: #a73a3a; }
