@@ -607,17 +607,26 @@ async function openAdminModal(tracking) {
     <td>${it.shippingType || '-'}</td>
     <td>
       <div style="display:flex; align-items:center; gap:6px;">
-        <select class="item-status" data-index="${idx}" style="width:140px" disabled>
+        <!-- حالة الصنف + الرقم المخزن -->
+        <span class="status-display">
+          ${statusLabel(it.status)}
+          ${it.note ? ` (<span class="note-display">${it.note}</span>)` : ''}
+        </span>
+
+        <!-- عناصر التعديل مخفية بالبداية -->
+        <select class="item-status" data-index="${idx}" style="width:140px; display:none;">
           <option value="created"   ${it.status==='created'?'selected':''}>جديد</option>
           <option value="ordered"   ${it.status==='ordered'?'selected':''}>تم الطلب من المصنع</option>
           <option value="shipped"   ${it.status==='shipped'?'selected':''}>تم الشحن</option>
           <option value="partial"   ${it.status==='partial'?'selected':''}>وصلت جزئياً</option>
           <option value="delivered" ${it.status==='delivered'?'selected':''}>وصلت بالكامل</option>
         </select>
-        <button type="button" class="btn-edit-note" data-index="${idx}" title="تعديل">✏️</button>
-        <input type="text" class="manual-status" data-index="${idx}"
-               style="display:none;width:100px;margin-top:4px;"
+        <input type="number" class="manual-status" data-index="${idx}"
+               style="display:none;width:60px;margin-top:4px;"
                placeholder="رقم جزئي" value="${it.note || ''}">
+
+        <!-- زر التعديل -->
+        <button type="button" class="btn-edit-note" data-index="${idx}" title="تعديل">✏️</button>
       </div>
     </td>
   </tr>
@@ -662,30 +671,32 @@ async function openAdminModal(tracking) {
   });
 
   // زر ✏️ لإظهار/إخفاء حقل الملاحظة
- document.querySelectorAll('.btn-edit-note').forEach(btn => {
+document.querySelectorAll('.btn-edit-note').forEach(btn => {
   btn.addEventListener('click', e => {
     const idx    = e.target.dataset.index;
     const select = document.querySelector(`.item-status[data-index="${idx}"]`);
     const input  = document.querySelector(`.manual-status[data-index="${idx}"]`);
+    const display= e.target.closest('div').querySelector('.status-display');
 
-    // فك القفل عن القائمة
-    if (select) select.disabled = false;
+    // أخفِ النص العادي
+    if (display) display.style.display = 'none';
 
-    // أظهر حقل الرقم (اختياري)
-    if (input)  input.style.display = 'inline-block';
+    // أظهر عناصر التعديل
+    if (select) select.style.display = 'inline-block';
+    if (input)  input.style.display  = 'inline-block';
 
-    // إخفاء زر ✏️ بعد النقر (اختياري إذا لا تريد ضغطه مرتين)
+    // إخفاء زر ✏️ بعد النقر
     btn.style.display = 'none';
 
     if (confirmBtn) confirmBtn.style.display = 'inline-block';
 
     // تسجيل التغييرات
-    if (input) {
-      input.addEventListener('input', e => {
-        pendingChanges.push({ idx, field: 'note', value: e.target.value });
-        if (confirmBtn) confirmBtn.style.display = 'inline-block';
-      });
-    }
+    select.addEventListener('change', e => {
+      pendingChanges.push({ idx, field: 'status', value: e.target.value });
+    });
+    input.addEventListener('input', e => {
+      pendingChanges.push({ idx, field: 'note', value: e.target.value });
+    });
   });
 });
   
