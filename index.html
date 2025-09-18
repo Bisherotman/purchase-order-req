@@ -17,6 +17,7 @@
 </head>
 
 <body class="auth-out">
+  <!-- الهيدر -->
   <header>
     <nav class="nav">
       <a class="brand" href="#/login" id="brandLink">
@@ -36,7 +37,7 @@
   </header>
 
   <main class="container">
-    <!-- LOGIN -->
+    <!-- تسجيل الدخول -->
     <section id="view-login" class="view active">
       <div class="card">
         <h2>تسجيل الدخول</h2>
@@ -66,7 +67,7 @@
       </div>
     </section>
 
-    <!-- NEW ORDER -->
+    <!-- تسجيل طلب جديد -->
     <section id="view-new" class="view">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -109,59 +110,53 @@
       </div>
     </section>
 
-    <!-- MY ORDERS -->
-<section id="view-my" class="view">
-  <div class="card">
-    <div class="row" style="justify-content:space-between">
-      <h2>طلبــاتي</h2>
-      <div class="helper" id="whoamiMy">—</div>
-    </div>
+    <!-- طلباتي -->
+    <section id="view-my" class="view">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>طلبــاتي</h2>
+          <div class="helper" id="whoamiMy">—</div>
+        </div>
 
-    <!-- نفس فلاتر الإدارة مع استثناءات -->
-    <div class="filters">
-      <input id="mySearch" class="chip-input"
-        placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
+        <div class="filters">
+          <input id="mySearch" class="chip-input"
+            placeholder="ابحث برقم التتبّع، كود الصنف، اسم المشروع أو العميل" />
+          <select id="myFilterStatus" class="chip-select" title="الحالة">
+            <option value="">كل الحالات</option>
+            <option value="created">جديد</option>
+            <option value="ordered">تم الطلب من المصنع</option>
+            <option value="shipped">تم الشحن</option>
+            <option value="partial">وصلت جزئياً</option>
+            <option value="delivered">وصلت بالكامل</option>
+          </select>
+          <select id="mySort" class="chip-select" title="الترتيب">
+            <option value="createdAt_desc">الأحدث أولاً</option>
+            <option value="createdAt_asc">الأقدم أولاً</option>
+          </select>
+        </div>
 
-      <!-- فلتر الحالة فقط -->
-      <select id="myFilterStatus" class="chip-select" title="الحالة">
-        <option value="">كل الحالات</option>
-  <option value="created">جديد</option>
-  <option value="ordered">تم الطلب من المصنع</option>
-  <option value="shipped">تم الشحن</option>
-  <option value="partial">وصلت جزئياً</option>
-  <option value="delivered">وصلت بالكامل</option>
-      </select>
-
-      <!-- ترتيب حسب التاريخ -->
-      <select id="mySort" class="chip-select" title="الترتيب">
-        <option value="createdAt_desc">الأحدث أولاً</option>
-        <option value="createdAt_asc">الأقدم أولاً</option>
-      </select>
-    </div>
-
-    <!-- جدول مطابق لجدول الإدارة لكن بدون أي عناصر تعديل -->
-    <div id="myTableWrap" class="card" style="padding:0">
-      <div class="table-wrap">
-        <table id="myOrdersTable">
-          <thead>
-            <tr>
-              <th>رقم</th>
-              <th>التاريخ</th>
-              <th>المشروع</th>
-              <th>المستخدم</th>
-              <th>الحالة</th>
-              <th>المبلغ</th>
-              <th>تفاصيل</th>
-            </tr>
-          </thead>
-          <tbody id="myOrdersBody"></tbody>
-        </table>
+        <div id="myTableWrap" class="card" style="padding:0">
+          <div class="table-wrap">
+            <table id="myOrdersTable">
+              <thead>
+                <tr>
+                  <th>رقم</th>
+                  <th>التاريخ</th>
+                  <th>المشروع</th>
+                  <th>المستخدم</th>
+                  <th>الحالة</th>
+                  <th>المبلغ</th>
+                  <th>تفاصيل</th>
+                </tr>
+              </thead>
+              <tbody id="myOrdersBody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-    <!-- ADMIN -->
+    <!-- إدارة الطلبات -->
     <section id="view-admin" class="view">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -182,11 +177,11 @@
           </select>
           <select id="adminFilterStatus" class="chip-select" title="الحالة">
             <option value="">كل الحالات</option>
-  <option value="created">جديد</option>
-  <option value="ordered">تم الطلب من المصنع</option>
-  <option value="shipped">تم الشحن</option>
-  <option value="partial">وصلت جزئياً</option>
-  <option value="delivered">وصلت بالكامل</option>
+            <option value="created">جديد</option>
+            <option value="ordered">تم الطلب من المصنع</option>
+            <option value="shipped">تم الشحن</option>
+            <option value="partial">وصلت جزئياً</option>
+            <option value="delivered">وصلت بالكامل</option>
           </select>
           <select id="adminFilterUser" class="chip-select" title="المستخدم">
             <option value="">كل المستخدمين</option>
@@ -223,60 +218,52 @@
     &copy; 2025 بشر شيخ عثمان – جميع الحقوق محفوظة
   </footer>
 
-  <!-- مودال تفاصيل الطلب (للأدمِن) -->
-     <div id="orderModal" class="modal">
-  <div class="order-details">
-    <button class="modal__close" aria-label="إغلاق">✕</button>
-    <div class="modal__header">
-      <h2 class="modal__title">تفاصيل الطلب</h2>
+  <!-- مودال إدارة الطلبات (للأدمِن) -->
+  <div id="orderModal" class="modal" aria-hidden="true" style="display:none;">
+    <div class="order-details">
+      <button class="modal__close" aria-label="إغلاق">✕</button>
+      <div class="modal__header">
+        <h2 class="modal__title">تفاصيل الطلب</h2>
+      </div>
+      <div class="order-meta-grid">
+        <div><span class="label">رقم الطلب:</span> <strong id="m_id"></strong></div>
+        <div><span class="label">التاريخ:</span> <strong id="m_date"></strong></div>
+        <div><span class="label">المشروع:</span> <strong id="m_project"></strong></div>
+        <div><span class="label">العميل:</span> <strong id="m_customer"></strong></div>
+        <div><span class="label">المستخدم:</span> <strong id="m_user"></strong></div>
+        <div><span class="label">الحالة:</span> <strong id="m_status"></strong></div>
+        <div><span class="label">المبلغ:</span> <strong id="m_total"></strong></div>
+      </div>
+      <h3 class="items-title">الأصناف</h3>
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>كود الصنف</th>
+            <th>الكمية</th>
+            <th>السعر</th>
+            <th>طريقة الشحن</th>
+            <th>حالة الصنف</th>
+          </tr>
+        </thead>
+        <tbody id="m_items"></tbody>
+      </table>
+      <div class="actions">
+        <div class="actions-left">
+          <button id="confirmAdminChanges" class="btn-success">تأكيد العملية</button>
+        </div>
+        <div class="actions-right">
+          <button id="exportExcel" class="btn-excel">
+            <img src="excel-icon.svg" alt="" class="icon-excel"> تصدير
+          </button>
+        </div>
+      </div>
+      <div id="adminConfirmMsg" class="msg"></div>
     </div>
-    
-  <div class="order-meta-grid">
-  <div><span class="label">رقم الطلب:</span> <strong id="m_id"></strong></div>
-  <div><span class="label">التاريخ:</span> <strong id="m_date"></strong></div>
-
-  <div><span class="label">المشروع:</span> <strong id="m_project"></strong></div>
-  <div><span class="label">العميل:</span> <strong id="m_customer"></strong></div>
-
-  <div><span class="label">المستخدم:</span> <strong id="m_user"></strong></div>
-  <div><span class="label">الحالة:</span> <strong id="m_status"></strong></div>
-
-  <div><span class="label">المبلغ:</span> <strong id="m_total"></strong></div>
   </div>
 
-    <h3 class="items-title">الأصناف</h3>
-    <table class="items-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>كود الصنف</th>
-      <th>الكمية</th>
-      <th>السعر</th>
-      <th>طريقة الشحن</th>
-      <th>حالة الصنف</th>
-    </tr>
-  </thead>
-  <tbody id="m_items"></tbody>
-</table>
-
-  <div class="actions">
-  <div class="actions-left">
-    <button id="confirmAdminChanges" class="btn-success">تأكيد العملية</button>
-  </div>
-  <div class="actions-right">
-    <button id="exportExcel" class="btn-excel">
-      <img src="excel-icon.svg" alt="" class="icon-excel"> تصدير
-    </button>
-  </div>
-</div>
-
-<!-- ✅ صندوق رسائل نجاح/خطأ -->
-<div id="adminConfirmMsg" class="msg"></div>
-
-
-  <!-- تفاصيل/طباعة لطلباتي (المودال القديم) -->
-  <div id="detailsModal" class="modal" aria-hidden="true">
-    <div class="backdrop"></div>
+  <!-- مودال تفاصيل الطلب (للمستخدم والطباعة) - يجب أن يكون خارج orderModal -->
+  <div id="detailsModal" class="modal" aria-hidden="true" style="display:none;">
     <div class="modal-card printable">
       <div class="modal-header">
         <div class="inv-brand">
