@@ -578,7 +578,7 @@ async function updateOrderStatus(orderId){
 // 🟢 مودال إدارة الطلبات
 // =======================
 async function openAdminModal(tracking) {
-  const order = adminRows.find(row => row.trackingNumber === tracking);
+  const order = adminRows.find(row => row.tracking === tracking);
   if (!order) return;
 
   const { items = [] } = order;
