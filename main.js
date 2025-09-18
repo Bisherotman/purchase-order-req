@@ -709,7 +709,7 @@ document.addEventListener('click', (e) => {
   const modal = document.getElementById('orderModal');
 
   // زر إغلاق
-  if (e.target.closest('.modal_close')) {
+  if (e.target.closest('.modal__close')) {
     modal.classList.remove('show');
     modal.hidden = true;
   }
