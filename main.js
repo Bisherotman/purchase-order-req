@@ -577,9 +577,10 @@ async function updateOrderStatus(orderId){
 // =======================
 // 🟢 مودال إدارة الطلبات
 // =======================
-// === فتح مودال إدارة الطلبات مع إمكانية التعديل ===
+// ====== من هنا تقريبًا السطر 500 ======
+
+/* دالة فتح مودال إدارة الطلبات مع التعديل */
 async function openAdminModal(tracking) {
-  // العثور على الطلب
   const order = adminRows.find(row => row.tracking === tracking);
   if (!order) return;
 
@@ -636,7 +637,8 @@ async function openAdminModal(tracking) {
       pendingChanges.push({ idx, field: 'status', value: e.target.value });
 
       const editBtn = document.querySelector(`.btn-edit-note[data-index="${idx}"]`);
-      if (['shipped','partial'].includes(e.target.value)) {
+      const val = e.target.value;
+      if (val === 'shipped' || val === 'partial') {
         if (editBtn) editBtn.style.display = 'inline-block';
       } else {
         if (editBtn) editBtn.style.display = 'none';
@@ -648,7 +650,7 @@ async function openAdminModal(tracking) {
     });
   });
 
-  // تعديل الكمية
+  // إدخال الكمية
   document.querySelectorAll('.item-qty-extra').forEach(inp => {
     inp.addEventListener('input', e => {
       const idx = e.target.dataset.index;
@@ -658,7 +660,7 @@ async function openAdminModal(tracking) {
     });
   });
 
-  // زر ✏️ لإظهار حقل الملاحظة
+  // زر ✏️ لإظهار/إخفاء حقل الملاحظة
   document.querySelectorAll('.btn-edit-note').forEach(btn => {
     btn.addEventListener('click', e => {
       const idx = e.target.dataset.index;
@@ -674,7 +676,7 @@ async function openAdminModal(tracking) {
     });
   });
 
-  // زر تأكيد
+  // زر تأكيد التعديلات
   if (confirmBtn) {
     confirmBtn.onclick = async () => {
       for (const { idx, field, value } of pendingChanges) {
@@ -691,12 +693,13 @@ async function openAdminModal(tracking) {
   modal.hidden = false;
   modal.classList.add('show');
 }
-// مستمعات إغلاق وطباعة لمودال الإدارة
+
+// ===== مستمعات إغلاق وطباعة المودال الإداري =====
 document.addEventListener('click', (e) => {
   const modal = document.getElementById('orderModal');
 
-  // زر × أو زر إغلاق
-  if (e.target.closest('.modal__close')) {
+  // زر إغلاق
+  if (e.target.closest('.modal_close')) {
     modal.classList.remove('show');
     modal.hidden = true;
   }
@@ -707,14 +710,13 @@ document.addEventListener('click', (e) => {
   }
 });
 
-
-ensureAtLeastOneRow();
-route();
-
-// 🔵 فتح مودال إدارة الطلبات مع إمكانية تعديل حالة كل صنف
-document.addEventListener('click', async e=>{
+// ===== مستمع زر تفاصيل الإدارة =====
+document.addEventListener('click', async e => {
   const btn = e.target.closest('[data-admin]');
   if (!btn) return;
   e.preventDefault();
   openAdminModal(btn.dataset.admin);
 });
+
+ensureAtLeastOneRow();
+route();
