@@ -688,15 +688,39 @@ async function openAdminModal(tracking) {
   
   // زر تأكيد التعديلات
   if (confirmBtn) {
-    confirmBtn.onclick = async () => {
+  const msgBox = document.getElementById('adminConfirmMsg');
+  msgBox.style.display = 'none';
+  msgBox.textContent = '';
+  confirmBtn.onclick = async () => {
+    msgBox.style.display = 'none';
+    msgBox.textContent = '';
+    try {
       for (const { idx, field, value } of pendingChanges) {
         order.items[idx][field] = value;
       }
       await updateOrderInDB(order.tracking, { items: order.items });
+
+      msgBox.textContent = 'تم تغيير حالة الأصناف بنجاح';
+      msgBox.className = 'msg success';
+      msgBox.style.display = 'block';
+
+      // إخفاء زر التأكيد
       confirmBtn.style.display = 'none';
-      alert('تم تحديث الأصناف بنجاح');
-    };
-  }
+
+      // إغلاق المودال بعد ثانيتين
+      setTimeout(() => {
+        const modal = document.getElementById('orderModal');
+        modal.classList.remove('show');
+        modal.hidden = true;
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      msgBox.textContent = 'حدث خطأ أثناء التحديث';
+      msgBox.className = 'msg error';
+      msgBox.style.display = 'block';
+    }
+  };
+}
 
   // فتح المودال
   const modal = document.getElementById('orderModal');
