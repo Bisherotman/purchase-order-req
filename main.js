@@ -824,13 +824,15 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// ===== مستمع زر تفاصيل الإدارة =====
+// كان يبحث عن أي عنصر فيه data-admin
+// نجعله يبحث فقط عن الأزرار الخاصة بجدول الإدارة
 document.addEventListener('click', async e => {
-  const btn = e.target.closest('[data-admin]');
+  const btn = e.target.closest('.btn-admin-details');
   if (!btn) return;
   e.preventDefault();
   openAdminModal(btn.dataset.admin);
 });
+
 
 ensureAtLeastOneRow();
 route();
