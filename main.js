@@ -377,6 +377,10 @@ async function openDetails(tracking) {
       ? `<ul>${r.attachments.map(a => `<li><a href="${a.url}" target="_blank">${a.name}</a></li>`).join('')}</ul>`
       : `<div class="muted">لا توجد مرفقات</div>`;
     const modal = document.getElementById('detailsModal');
+    modal.hidden = false;
+modal.classList.add("show");
+modal.style.display = "grid";        // أو block
+modal.removeAttribute("aria-hidden");
     const body  = document.getElementById('detailsBody');
     body.innerHTML = `
       <div class="inv-head">
