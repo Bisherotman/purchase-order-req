@@ -413,7 +413,6 @@ function loadAdminOrders() {
       renderAdmin(adminRows);
     }, (err) => {
       console.error("loadAdminOrders error:", err);
-      showMsg(newMsg, "تعذّر تحميل طلبات الإدارة. حاول لاحقاً.", "error");
     });
 }
 
