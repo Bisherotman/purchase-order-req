@@ -221,7 +221,7 @@
   <!-- مودال إدارة الطلبات (للأدمِن) -->
   <div id="orderModal" class="modal" aria-hidden="true" style="display:none;">
     <div class="order-details">
-      <button class="modal__close" aria-label="إغلاق">✕</button>
+      <button class="modal__close" aria-label="إغلاق">×</button>
       <div class="modal__header">
         <h2 class="modal__title">تفاصيل الطلب</h2>
       </div>
@@ -248,6 +248,11 @@
         </thead>
         <tbody id="m_items"></tbody>
       </table>
+      <h3 class="items-title" style="margin-top: 1.5rem;">المرفقات</h3>
+      <div id="attachmentsSection" style="margin-bottom: 1.5rem;">
+        <!-- المرفقات ستظهر هنا -->
+        </div>
+
       <div class="actions">
         <div class="actions-left">
           <button id="confirmAdminChanges" class="btn-success">تأكيد العملية</button>
@@ -259,23 +264,6 @@
         </div>
       </div>
       <div id="adminConfirmMsg" class="msg"></div>
-    </div>
-  </div>
-
-  <!-- مودال تفاصيل الطلب (للمستخدم والطباعة) - يجب أن يكون خارج orderModal -->
-  <div id="detailsModal" class="modal" aria-hidden="true" style="display:none;">
-    <div class="modal-card printable">
-      <div class="modal-header">
-        <div class="inv-brand">
-          <img src="img/pagelogo.png" alt="logo">
-          <div class="inv-title">نموذج طلب شراء</div>
-        </div>
-        <div style="display:flex; gap:8px">
-          <button class="btn-strong" id="printDetailsBtn" style="padding:8px 12px;border-radius:10px">طباعة</button>
-          <button class="close-x" id="closeDetails">✕</button>
-        </div>
-      </div>
-      <div id="detailsBody" class="t-small"></div>
     </div>
   </div>
 
